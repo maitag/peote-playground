@@ -6,7 +6,7 @@ import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
 
-import elements.ElementSimple;
+import elements.ElementSimple; // <- todo !!!
 
 class Main extends lime.app.Application
 {
@@ -14,9 +14,9 @@ class Main extends lime.app.Application
 	
 	public function new() super();
 	
-	// -------------- detecting rendercontext
 	public override function onWindowCreate():Void
 	{
+		// to get sure into rendercontext
 		switch (window.context.type)
 		{
 			case WEBGL, OPENGL, OPENGLES: 
@@ -26,10 +26,6 @@ class Main extends lime.app.Application
 		}
 	}
 		
-	public override function onPreloadComplete():Void
-	{	// after all embedded assets is loaded
-	}
-
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
@@ -54,7 +50,12 @@ class Main extends lime.app.Application
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
+	// for game-engine logic-loop
 	// public override function update(deltaTime:Int):Void {}
+	
+	// for asset embedflow
+	// public override function onPreloadComplete():Void {}
+
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
@@ -66,9 +67,6 @@ class Main extends lime.app.Application
 	{
 		peoteView.resize(width, height);
 	}
-
-	public override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");		
-	public override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");		
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	// public override function onMouseMove (x:Float, y:Float):Void {}	
@@ -100,4 +98,8 @@ class Main extends lime.app.Application
 	// public override function onWindowMove(x:Float, y:Float):Void { trace("onWindowMove"); }
 	// public override function onWindowMinimize():Void { trace("onWindowMinimize"); }
 	// public override function onWindowRestore():Void { trace("onWindowRestore"); }
+	
+	// public override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");		
+	// public override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");		
+
 }
