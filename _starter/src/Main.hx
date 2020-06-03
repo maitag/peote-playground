@@ -7,10 +7,11 @@ import peote.view.Program;
 import peote.view.Color;
 import peote.view.Element;
 
+
 class Sprite implements Element
 {
-	@posX public var x:Int=0; // signed 2 bytes integer
-	@posY public var y:Int=0; // signed 2 bytes integer
+	@posX public var x:Int=0;
+	@posY public var y:Int=0;
 	
 	@sizeX public var w:Int=100;
 	@sizeY public var h:Int=100;
@@ -19,15 +20,9 @@ class Sprite implements Element
 		
 	@zIndex public var z:Int = 0;	
 	
-	public function new(positionX:Int=0, positionY:Int=0, width:Int=100, height:Int=100, c:Int=0xFF0000FF )
-	{
-		this.x = positionX;
-		this.y = positionY;
-		this.w = width;
-		this.h = height;
-		this.c = c;
-	}
+	public function new() {}
 }
+
 
 class Main extends lime.app.Application
 {
@@ -53,18 +48,18 @@ class Main extends lime.app.Application
 	
 	public function initPeoteView(window:lime.ui.Window)
 	{
-			peoteView = new PeoteView(window.context, window.width, window.height);
-			
-			var buffer = new Buffer<Sprite>(4, 4, true);
-			var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
-			var program = new Program(buffer);
-			
-			peoteView.addDisplay(display);
-			display.addProgram(program);
-			
-			// add element to Buffer
-			var sprite = new Sprite();
-			buffer.addElement(sprite);
+		peoteView = new PeoteView(window.context, window.width, window.height);
+
+		var buffer = new Buffer<Sprite>(4, 4, true);
+		var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
+		var program = new Program(buffer);
+
+		peoteView.addDisplay(display);
+		display.addProgram(program);
+
+		// add element to Buffer
+		var sprite = new Sprite();
+		buffer.addElement(sprite);
 	}
 	
 	// ------------------------------------------------------------
