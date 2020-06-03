@@ -5,8 +5,29 @@ import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
+import peote.view.Element;
 
-import elements.ElementSimple; // <- todo !!!
+class Sprite implements Element
+{
+	@posX public var x:Int=0; // signed 2 bytes integer
+	@posY public var y:Int=0; // signed 2 bytes integer
+	
+	@sizeX public var w:Int=100;
+	@sizeY public var h:Int=100;
+	
+	@color public var c:Color = 0xff0000ff;
+		
+	@zIndex public var z:Int = 0;	
+	
+	public function new(positionX:Int=0, positionY:Int=0, width:Int=100, height:Int=100, c:Int=0xFF0000FF )
+	{
+		this.x = positionX;
+		this.y = positionY;
+		this.w = width;
+		this.h = height;
+		this.c = c;
+	}
+}
 
 class Main extends lime.app.Application
 {
@@ -34,16 +55,16 @@ class Main extends lime.app.Application
 	{
 			peoteView = new PeoteView(window.context, window.width, window.height);
 			
-			var buffer = new Buffer<ElementSimple>(4, 4, true);
-			var display = new Display(10,10, window.width-20, window.height-20, Color.GREEN);
+			var buffer = new Buffer<Sprite>(4, 4, true);
+			var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
 			var program = new Program(buffer);
 			
 			peoteView.addDisplay(display);
 			display.addProgram(program);
 			
 			// add element to Buffer
-			var element = new ElementSimple();
-			buffer.addElement(element);
+			var sprite = new Sprite();
+			buffer.addElement(sprite);
 	}
 	
 	// ------------------------------------------------------------
@@ -59,7 +80,7 @@ class Main extends lime.app.Application
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
-		// rendering View => Displays => Programs -> Buffer
+		// rendering all Displays -> Programs - Buffer
 		peoteView.render();
 	}
 	
