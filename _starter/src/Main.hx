@@ -5,23 +5,6 @@ import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
-import peote.view.Element;
-
-
-class Sprite implements Element
-{
-	@posX public var x:Int=0;
-	@posY public var y:Int=0;
-	
-	@sizeX public var w:Int=100;
-	@sizeY public var h:Int=100;
-	
-	@color public var c:Color = 0xff0000ff;
-		
-	@zIndex public var z:Int = 0;	
-	
-	public function new() {}
-}
 
 
 class Main extends lime.app.Application
@@ -66,17 +49,17 @@ class Main extends lime.app.Application
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
-	// for game-engine logic-loop
-	// public override function update(deltaTime:Int):Void {}
-	
-	// for asset embedflow
-	// public override function onPreloadComplete():Void {}
+	public override function onPreloadComplete():Void {
+		// access embeded assets here
+	}
 
+	public override function update(deltaTime:Int):Void {
+		// for game-logic update
+	}
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
-		// rendering all Displays -> Programs - Buffer
-		peoteView.render();
+		peoteView.render(); // rendering all Displays -> Programs - Buffer
 	}
 	
 	public override function onWindowResize (width:Int, height:Int):Void
