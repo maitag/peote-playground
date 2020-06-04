@@ -6,6 +6,7 @@ import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
 
+import echo.Echo;
 
 class Main extends lime.app.Application
 {
@@ -42,7 +43,33 @@ class Main extends lime.app.Application
 
 
 		
+		// ---- ECHO PHYSICS ----------------
 		
+		var world = Echo.start({
+			width: 64, // Affects the bounds for collision checks.
+			height: 64, // Affects the bounds for collision checks.
+			gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
+			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
+		});
+		
+		
+		// should this be inside Body.hx constructor :) ?
+		
+		var blue = world.make({
+			mass: 0, // Setting this to zero makes the body unmovable by forces and collisions
+			y: 48, // Set the object's Y position below the Circle, so that gravity makes them collide
+			elasticity: 0.2,
+			shape: {
+				type: RECT,
+				width: 10,
+				height: 10
+			}
+		});
+		
+		
+		
+		
+		// 2 testing peote-bodies
 		
 		var bodyBlue = new Body();
 		bodyBlue.color = Color.BLUE;
