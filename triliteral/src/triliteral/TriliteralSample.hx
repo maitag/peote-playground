@@ -15,6 +15,10 @@ class TriliteralSample
 	// ---------------------  EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
+	public function update(deltaTime:Int):Void
+	{
+	}
+	
 	public function render(context:lime.graphics.RenderContext):Void
 	{
 	}

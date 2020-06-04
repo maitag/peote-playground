@@ -34,19 +34,19 @@ class Main extends lime.app.Application
 
 	public override function update(deltaTime:Int):Void {
 		// for game-logic update
-		// triliteral.update();
+		if (triliteral != null) triliteral.update(deltaTime);
 	}
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
-		//triliteral.render();
-		peote.render(); // Todo: param or new method to render without gl-clear
+		if (triliteral != null) triliteral.render(context);
+		if (peote != null) peote.render(); // Todo: param or new method to render without gl-clear
 	}
 	
 	public override function onWindowResize (width:Int, height:Int):Void
 	{
-		//triliteral.onWindowResize(width, height);
-		peote.onWindowResize(width, height);
+		if (triliteral != null) triliteral.onWindowResize(width, height);
+		if (peote != null) peote.onWindowResize(width, height);
 	}
 
 	// ----------------- MOUSE EVENTS ------------------------------
