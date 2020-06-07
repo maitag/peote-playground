@@ -11,6 +11,7 @@ import echo.Echo;
 class Main extends lime.app.Application
 {
 	var peoteView:PeoteView;
+	var buffer:Buffer<PhysicSprite>;
 	
 	public function new() super();
 	
@@ -34,7 +35,7 @@ class Main extends lime.app.Application
 	{
 		peoteView = new PeoteView(window.context, window.width, window.height);
 
-		var buffer = new Buffer<Body>(1024, 1024, true);
+		buffer = new Buffer<PhysicSprite>(1024, 1024, true);
 		var display = new Display(0, 0, window.width, window.height, Color.GREEN);
 		var program = new Program(buffer);
 
@@ -53,54 +54,62 @@ class Main extends lime.app.Application
 		});
 		
 		
-		// should this be inside Body.hx constructor :) ?
-		
-		var blue = world.make({
-			mass: 0, // Setting this to zero makes the body unmovable by forces and collisions
-			y: 48, // Set the object's Y position below the Circle, so that gravity makes them collide
-			elasticity: 0.2,
-			shape: {
-				type: RECT,
-				width: 10,
-				height: 10
-			}
-		});
-		
-		
-		
-		
 		// 2 testing peote-bodies
 		
-		var bodyBlue = new Body();
-		bodyBlue.color = Color.BLUE;
-		bodyBlue.x = 150;
-		bodyBlue.y = 0;
+		var red = new PhysicSprite(buffer, Color.RED, world,
+			{
+				//mass: 4,
+				x: 200,
+				y: 10,
+				rotation: 10,
+				elasticity: 0.2,
+				shape: {
+					type: RECT,
+					width: 50,
+					height: 50
+				}
+			}
+		);
 		
-		buffer.addElement(bodyBlue);
-		
-		
-		
-		
-		
-		var bodyRed = new Body();
-		bodyRed.color = Color.RED;
-		bodyRed.x = 200;
-		bodyRed.y = 200;
-		
-		buffer.addElement(bodyRed);
-		
-		
-		
+		var blue = new PhysicSprite(buffer, Color.BLUE, world,
+			{
+				mass: 0, // static
+				x: 10,
+				y: 300,
+				rotation: 0,
+				elasticity: 0.2,
+				shape: {
+					type: RECT,
+					width: 500,
+					height: 50
+				}
+			}
+		);
 		
 		// test animation
-		bodyBlue.animPosition(150, 0, 150, 300); // x_start, y_start, x_end, y_end
+		// blue.animPosition(150, 0, 150, 300); // x_start, y_start, x_end, y_end
+		// blue.timePosition(0, 3); // starting at Time 0 ... should need 3 seconds to move to
+		// buffer.updateElement(blue);
+		// peoteView.start();
 		
-		bodyBlue.timePosition(0, 3); // starting at Time 0 ... should need 3 seconds to move to
-		
-		buffer.updateElement(bodyBlue);
 		
 		
-		peoteView.start();
+		world.listen(red.body, blue.body, {
+			separate: true, // Setting this to true will cause the Bodies to separate on Collision. This defaults to true
+			enter: (a, b, c) -> trace("Collision Entered"), // This callback is called on the first frame that a collision starts
+			//stay: (a, b, c) -> trace("Collision Stayed"), // This callback is called on frames when the two Bodies are continuing to collide
+			exit: (a, b) -> trace("Collision Exited"), // This callback is called when a collision between the two Bodies ends
+		});
+
+		// Set up a Timer to act as an update loop (at 60fps)
+		new haxe.Timer(16).run = () -> {
+			// Step the World's Physics Simulation forward (at 60fps)
+			world.step(16 / 1000);
+			// Log the World State in the Console
+			//echo.util.Debug.log(world);
+		}		
+		
+		
 	}
 	
 	// ------------------------------------------------------------
@@ -109,10 +118,12 @@ class Main extends lime.app.Application
 
 	public override function update(deltaTime:Int):Void {
 		// for game-logic update
+		//trace("update", deltaTime);
 	}
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
+		//trace("peote", peoteView.time);
 		peoteView.render(); // rendering all Displays -> Programs - Buffer
 	}
 	

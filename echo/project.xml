@@ -16,6 +16,7 @@
 	
 	<haxelib name="lime" />	
 	<haxelib name="echo" />	
+	<haxelib name="hxmath" />	
 	<haxelib name="peote-view" />
 	
 	<!-- <define name="stats" if="html5" /> -->
