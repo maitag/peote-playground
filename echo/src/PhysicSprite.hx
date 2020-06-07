@@ -48,8 +48,8 @@ class PhysicSprite implements Element
 		pivotX = width / 2;
 		pivotY = height / 2;
 
-		x = options.x - pivotX;
-		y = options.y - pivotY;
+		x = options.x;// - pivotX;
+		y = options.y;// - pivotY;
 		
 		if (options.rotation != null) rotation = options.rotation;
 		
@@ -63,7 +63,9 @@ class PhysicSprite implements Element
 	
 	public function onMove(buffer: Buffer<PhysicSprite>, x:Float, y:Float)
 	{
-		setPosition(x - pivotX, y - pivotY);
+		//trace("onMove", y - body.last_y);
+		//setPosition(x - pivotX, y - pivotY);
+		setPosition(x, y);
 		buffer.updateElement(this);
 	}
 	

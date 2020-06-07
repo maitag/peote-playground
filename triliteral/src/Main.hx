@@ -1,11 +1,11 @@
 package;
 
-import triliteral.TriliteralSample;
+import triliteralx.TrilateralBase;
 import peote.PeoteViewSample;
 
 class Main extends lime.app.Application
 {
-	var triliteral:TriliteralSample;
+	var trilateralBase:TrilateralBase;
 	var peote:PeoteViewSample;
 	
 	public function new() super();
@@ -16,7 +16,7 @@ class Main extends lime.app.Application
 		{
 			case WEBGL, OPENGL, OPENGLES: 
 			
-				triliteral = new TriliteralSample(window); // init Triliteral
+				trilateralBase = new TrilateralBase(window); // init Triliteral
 				peote = new PeoteViewSample(window); // init PeoteView
 				
 			default:
@@ -34,18 +34,23 @@ class Main extends lime.app.Application
 
 	public override function update(deltaTime:Int):Void {
 		// for game-logic update
-		if (triliteral != null) triliteral.update(deltaTime);
+		if (trilateralBase != null) trilateralBase.update(deltaTime);
 	}
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
-		if (triliteral != null) triliteral.render(context);
-		if (peote != null) peote.render(); // Todo: param or new method to render without gl-clear
+		// to render peote-view first (into background)
+		//if (peote != null) peote.render();
+		
+		if (trilateralBase != null) trilateralBase.render(context);
+		
+		// to render peote-view after (into foreground)
+		if (peote != null) peote.renderPart(); // rendering without gl-initialization and viewport clearing
 	}
 	
 	public override function onWindowResize (width:Int, height:Int):Void
 	{
-		if (triliteral != null) triliteral.onWindowResize(width, height);
+		if (trilateralBase != null) trilateralBase.onWindowResize(width, height);
 		if (peote != null) peote.onWindowResize(width, height);
 	}
 

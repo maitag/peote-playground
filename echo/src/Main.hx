@@ -7,11 +7,14 @@ import peote.view.Program;
 import peote.view.Color;
 
 import echo.Echo;
+import echo.World;
 
 class Main extends lime.app.Application
 {
 	var peoteView:PeoteView;
 	var buffer:Buffer<PhysicSprite>;
+	
+	var world:World;
 	
 	public function new() super();
 	
@@ -46,12 +49,15 @@ class Main extends lime.app.Application
 		
 		// ---- ECHO PHYSICS ----------------
 		
-		var world = Echo.start({
+		world = Echo.start({
 			width: 64, // Affects the bounds for collision checks.
 			height: 64, // Affects the bounds for collision checks.
 			gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
 			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
 		});
+		
+		
+		// create echo bodies
 				
 		var red = new PhysicSprite(buffer, Color.RED, world,
 			{
@@ -95,14 +101,6 @@ class Main extends lime.app.Application
 		});
 
 		
-		// testing updating
-		
-		new haxe.Timer(16).run = () -> {
-			// Step the World's Physics Simulation forward (at 60fps)
-			world.step(16 / 1000);
-			//echo.util.Debug.log(world);
-		}		
-		
 		
 	}
 	
@@ -110,14 +108,13 @@ class Main extends lime.app.Application
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
-	public override function update(deltaTime:Int):Void {
-		// for game-logic update
-		//trace("update", deltaTime);
+	public override function update(deltaTime:Int):Void
+	{
+		world.step(deltaTime / 1000);
 	}
 
 	public override function render(context:lime.graphics.RenderContext):Void
 	{
-		//trace("peote", peoteView.time);
 		peoteView.render(); // rendering all Displays -> Programs - Buffer
 	}
 	
