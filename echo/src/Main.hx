@@ -57,14 +57,14 @@ class Main extends lime.app.Application
 			{
 				//mass: 4,
 				x: 200,
-				y: 10,
-				rotation: 10,
+				y: 100,
+				rotation: 45,
 				rotational_velocity:15,
 				elasticity: 0.5,
 				shape: {
 					type: RECT,
-					width: 50,
-					height: 50
+					width: 100,
+					height: 100
 				}
 			}
 		);
@@ -72,7 +72,7 @@ class Main extends lime.app.Application
 		var blue = new PhysicSprite(buffer, Color.BLUE, world,
 			{
 				mass: 0, // static
-				x: 10,
+				x: 250,
 				y: 300,
 				rotation: 0,
 				elasticity: 0.5,

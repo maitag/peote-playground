@@ -42,15 +42,16 @@ class PhysicSprite implements Element
 	{
 		this.color = color;
 		
-		if (options.x != null) x = options.x;
-		if (options.y != null) y = options.y;
-		
 		width = options.shape.width;
 		height = options.shape.height;
 		
-		if (options.rotation != null) rotation = options.rotation;
 		pivotX = width / 2;
 		pivotY = height / 2;
+
+		x = options.x - pivotX;
+		y = options.y - pivotY;
+		
+		if (options.rotation != null) rotation = options.rotation;
 		
 		body = world.make(options);
 		
@@ -62,7 +63,7 @@ class PhysicSprite implements Element
 	
 	public function onMove(buffer: Buffer<PhysicSprite>, x:Float, y:Float)
 	{
-		setPosition(x, y);
+		setPosition(x - pivotX, y - pivotY);
 		buffer.updateElement(this);
 	}
 	
