@@ -52,17 +52,15 @@ class Main extends lime.app.Application
 			gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
 			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
 		});
-		
-		
-		// 2 testing peote-bodies
-		
+				
 		var red = new PhysicSprite(buffer, Color.RED, world,
 			{
 				//mass: 4,
 				x: 200,
 				y: 10,
 				rotation: 10,
-				elasticity: 0.2,
+				rotational_velocity:15,
+				elasticity: 0.5,
 				shape: {
 					type: RECT,
 					width: 50,
@@ -77,7 +75,7 @@ class Main extends lime.app.Application
 				x: 10,
 				y: 300,
 				rotation: 0,
-				elasticity: 0.2,
+				elasticity: 0.5,
 				shape: {
 					type: RECT,
 					width: 500,
@@ -86,26 +84,22 @@ class Main extends lime.app.Application
 			}
 		);
 		
-		// test animation
-		// blue.animPosition(150, 0, 150, 300); // x_start, y_start, x_end, y_end
-		// blue.timePosition(0, 3); // starting at Time 0 ... should need 3 seconds to move to
-		// buffer.updateElement(blue);
-		// peoteView.start();
 		
-		
+		// let them collide
 		
 		world.listen(red.body, blue.body, {
-			separate: true, // Setting this to true will cause the Bodies to separate on Collision. This defaults to true
-			enter: (a, b, c) -> trace("Collision Entered"), // This callback is called on the first frame that a collision starts
-			//stay: (a, b, c) -> trace("Collision Stayed"), // This callback is called on frames when the two Bodies are continuing to collide
-			exit: (a, b) -> trace("Collision Exited"), // This callback is called when a collision between the two Bodies ends
+			separate: true, // red and blue collides
+			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
+			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
+			exit: (a, b) -> trace("Collision Exited"), // at collision ends
 		});
 
-		// Set up a Timer to act as an update loop (at 60fps)
+		
+		// testing updating
+		
 		new haxe.Timer(16).run = () -> {
 			// Step the World's Physics Simulation forward (at 60fps)
 			world.step(16 / 1000);
-			// Log the World State in the Console
 			//echo.util.Debug.log(world);
 		}		
 		

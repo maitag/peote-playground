@@ -11,8 +11,10 @@ import echo.data.Options.BodyOptions;
 class PhysicSprite implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@posX @anim("Position") public var x:Float = 0.0;
-	@posY @anim("Position") public var y:Float = 0.0;
+	//@posX @anim("Position") public var x:Float = 0.0;
+	//@posY @anim("Position") public var y:Float = 0.0;
+	@posX @set("Position") public var x:Float = 0.0;
+	@posY @set("Position") public var y:Float = 0.0;
 	
 	// size in pixel
 	@sizeX public var width:Float;
@@ -22,10 +24,10 @@ class PhysicSprite implements Element
 	@rotation public var rotation:Float = 0.0;
 	
 	// pivot x (rotation offset)
-	@pivotX public var pivotX:Int = 0;
+	@pivotX public var pivotX:Float = 0.0;
 
 	// pivot y (rotation offset)
-	@pivotY public var pivotY:Int = 0;
+	@pivotY public var pivotY:Float = 0.0;
 	
 	// color (RGBA)
 	@color public var color:Color = 0x000000ff;
@@ -39,26 +41,34 @@ class PhysicSprite implements Element
 	public function new(buffer:Buffer<PhysicSprite>, color:Color, world:World, options:BodyOptions)
 	{
 		this.color = color;
+		
 		if (options.x != null) x = options.x;
 		if (options.y != null) y = options.y;
+		
 		width = options.shape.width;
 		height = options.shape.height;
+		
 		if (options.rotation != null) rotation = options.rotation;
+		pivotX = width / 2;
+		pivotY = height / 2;
+		
 		body = world.make(options);
+		
 		body.on_move = onMove.bind(buffer, _);
 		body.on_rotate = onRotate.bind(buffer, _);
+		
 		buffer.addElement(this);
 	}
 	
 	public function onMove(buffer: Buffer<PhysicSprite>, x:Float, y:Float)
 	{
-		this.x = x;
-		this.y = y;
+		setPosition(x, y);
 		buffer.updateElement(this);
 	}
 	
 	public function onRotate(buffer: Buffer<PhysicSprite>, rotation:Float) 
 	{
+		//trace("onRotate", rotation);
 		this.rotation = rotation;
 		buffer.updateElement(this);
 	}

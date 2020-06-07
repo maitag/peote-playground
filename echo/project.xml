@@ -11,6 +11,7 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
+	<define name="stats" if="html5" />
 	
 	<source path="src" />
 	
@@ -19,7 +20,6 @@
 	<haxelib name="hxmath" />	
 	<haxelib name="peote-view" />
 	
-	<!-- <define name="stats" if="html5" /> -->
 	<!--<set name="angle" if="windows" />-->
 
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
