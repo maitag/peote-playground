@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="PeoteViewInsideOpenFL" package="peote.view" version="0.1.0" company="semmi" />
+	<app main="Main" path="bin" file="PeoteViewInsideOpenFL" />
+	
+	<source path="src" />
+	
+	<haxelib name="openfl" />
+	<haxelib name="peote-view" />
+	
+	<assets path="assets" rename="assets" />
+	
+</project>
