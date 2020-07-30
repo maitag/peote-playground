@@ -30,9 +30,8 @@ class Main extends Sprite {
 		y = 0;
 		addEventListener (RenderEvent.RENDER_OPENGL, renderOpenGL);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
-		// addEventListener( Event.RESIZE, resize);
 		
-		// only at html5 yet
+		// addEventListener( Event.RESIZE, resize);
 		Lib.current.stage.addEventListener( Event.RESIZE, resize);
 	}
 	
@@ -43,7 +42,7 @@ class Main extends Sprite {
 	
 	public function resize(event:Event):Void
 	{
-		peoteView.resize(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+		if (!init) peoteView.resize(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 	}
 	
 	private function renderOpenGL (event:RenderEvent):Void {
