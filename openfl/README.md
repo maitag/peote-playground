@@ -2,7 +2,7 @@
 
 (work in progress)  
 
-Simple integration into [OpenFL](https://github.com/openfl) via RENDER_OPENGL event folowing [this sample](https://github.com/openfl/openfl-samples-haxe/tree/master/features/display/CustomRendering).  
+Simple integration into [OpenFL](https://github.com/openfl) via RENDER_OPENGL event following [this sample](https://github.com/openfl/openfl-samples-haxe/tree/master/features/display/CustomRendering).  
   
 ## TODO
 
