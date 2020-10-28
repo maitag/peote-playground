@@ -1,4 +1,4 @@
-# peote-views-samples
+# peote-view-samples
 
 Samples and demos for [peote-view](https://github.com/maitag/peote-view) library. 
 
