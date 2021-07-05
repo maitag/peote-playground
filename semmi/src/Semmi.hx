@@ -5,28 +5,15 @@ import peote.view.Color;
 
 class Semmi implements Element
 {
-	// position in pixel (relative to upper left corner of Display)
-	@posX public var x:Int=0;
-	@posY public var y:Int=0;
+	@sizeX @const public var w:Int=60;
+	@sizeY @const public var h:Int=64;
 	
-	// size in pixel
-	@sizeX public var w:Int=100;
-	@sizeY public var h:Int=100;
-	
-	// rotation around pivot point
-	@rotation public var r:Float;
-	
-	// pivot x (rotation offset)
-	@pivotX public var px:Int = 0;
+	@posX @constStart(0) @constEnd(800) @anim("X","pingpong") @formula("xStart+(xEnd-w-xStart)*time0") public var x:Int;
+	@posY @constStart(0) @constEnd(600) @anim("Y","pingpong") @formula("yStart+(yEnd-h-yStart)*time1*time1") public var y:Int;
 
-	// pivot y (rotation offset)
-	@pivotY public var py:Int = 0;
-	
-	// color (RGBA)
-	@color public var c:Color = 0xff0000ff;
-	
-	// z-index
-	@zIndex public var z:Int = 0;	
-	
-	public function new() {}
+	public function new(x:Int, y:Int, currTime:Float) {
+		this.timeX(currTime, 10);
+		this.timeY(currTime, 3);
+	}
+
 }
