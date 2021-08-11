@@ -1,5 +1,7 @@
 package peote;
 
+import lime.ui.Window;
+
 import peote.view.PeoteView;
 import peote.view.Buffer;
 import peote.view.Display;
@@ -9,11 +11,11 @@ import peote.view.Color;
 
 class PeoteViewSample
 {
-	var peoteView:PeoteView;
+	public var peoteView:PeoteView;
 	
-	public function new(window: lime.ui.Window) {
+	public function new(window:Window) {
 	
-		peoteView = new PeoteView(window.context, window.width, window.height);
+		peoteView = new PeoteView(window, false);
 
 		var buffer = new Buffer<Sprite>(4, 4, true);
 		var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
@@ -28,19 +30,4 @@ class PeoteViewSample
 	
 	}
 	
-	
-	// ------------------------------------------------------------
-	// ---------------------  EVENTS ------------------------------
-	// ------------------------------------------------------------	
-
-	public function render():Void
-	{
-		peoteView.render(); // rendering all Displays -> Programs - Buffer
-	}
-	
-	public function onWindowResize (width:Int, height:Int):Void
-	{
-		peoteView.resize(width, height);
-	}
-
 }

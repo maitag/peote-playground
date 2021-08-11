@@ -17,7 +17,7 @@
 	
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />	
-	
+	<!--
 	<haxelib name="dsHelper"/>
 	<haxelib name="fracs"/>
 	<haxelib name="justPath"/>
@@ -28,6 +28,7 @@
 	<haxelib name="poly2trihx"/>
 	<haxelib name="hxGeomAlgo"/>
 	<haxelib name="kitGL"/>
+	-->
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->

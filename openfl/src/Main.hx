@@ -20,12 +20,11 @@ import utils.Loader;
 
 class Main extends Sprite {
 	
-	var init = true;
 	var peoteView:PeoteView;
 
-	public function new () {
-		
-		super ();
+	public function new()
+	{		
+		super();
 		x = 0;
 		y = 0;
 		addEventListener (RenderEvent.RENDER_OPENGL, renderOpenGL);
@@ -33,39 +32,16 @@ class Main extends Sprite {
 		
 		// addEventListener( Event.RESIZE, resize);
 		Lib.current.stage.addEventListener( Event.RESIZE, resize);
+		
+		initPeoteView();
 	}
 	
-	private function enterFrame(event:Event):Void
+	private function initPeoteView():Void
 	{
-		invalidate();
-	}
-	
-	public function resize(event:Event):Void
-	{
-		if (!init) peoteView.resize(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
-	}
-	
-	private function renderOpenGL (event:RenderEvent):Void {
-		if (init) {
-			initPeoteView(event);
-			init = false;
-		}
-		else peoteView.renderPart();
-	}
-	
-	
-	// ----------- init peote-view -----------------
-	
-	@:access( openfl.display.DisplayObjectRenderer.__context)
-	private function initPeoteView (event:RenderEvent):Void {
+		peoteView = new PeoteView(Lib.application.window, false);
 		
-		var renderer:OpenGLRenderer = cast event.renderer;
-		var context:lime.graphics.RenderContext = renderer.__context;
-		
-		peoteView = new PeoteView(context, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
-		
-		var display   = new Display(0, 0, 800, 600, Color.BLUE);
-		peoteView.addDisplay(display);  // display to peoteView
+		var display = new Display(0, 0, 800, 600, Color.BLUE);
+		peoteView.addDisplay(display); // display to peoteView
 		
 		var buffer  = new Buffer<PeoteSprite>(100);
 		var program = new Program(buffer);
@@ -85,6 +61,23 @@ class Main extends Sprite {
 		
 		
 	}
+	
+	private function enterFrame(event:Event):Void
+	{
+		invalidate();
+	}
+	
+	public function resize(event:Event):Void
+	{
+		peoteView.resize(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+	}
+	
+	private function renderOpenGL (event:RenderEvent):Void
+	{
+		peoteView.renderPart();
+	}
+	
+	
 	
 }
 

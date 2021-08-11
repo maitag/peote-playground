@@ -6,6 +6,6 @@ Simple integration into [OpenFL](https://github.com/openfl) via RENDER_OPENGL ev
   
 ## TODO
 
-- for non html5-targets it needs little fixing for resize and inside gl-renderloop 
+- needs little fixing for resize and inside gl-renderloop 
 - using OpenFL-Sprites matrix-transformation inside the invoked peote-view
 - testing together with default OpenFL-rendering, z-depth and alphachannels

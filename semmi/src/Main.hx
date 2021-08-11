@@ -1,31 +1,30 @@
 package;
 
+import lime.app.Application;
+import lime.graphics.Image;
+
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Buffer;
 import peote.view.Texture;
 import peote.view.Color;
+
 import utils.Loader;
 
-import lime.graphics.Image;
-
-class Main extends lime.app.Application
-{
-	var peoteView:PeoteView;
-	
-	public function new() super();
-	
-	public override function onWindowCreate():Void
-	{
+class Main extends Application
+{	
+	override function onWindowCreate():Void
+	{		
 		switch (window.context.type)
 		{
-			case WEBGL, OPENGL, OPENGLES: 
+			case WEBGL, OPENGL, OPENGLES:
 				
-				peoteView = new PeoteView(window.context, window.width, window.height);
+				var peoteView = new PeoteView(window, Color.GREY3);
 
+				var display = new Display(0, 0, 800, 590, Color.GREY6);
+				
 				var buffer = new Buffer<Semmi>(4, 4, true);
-				var display = new Display(0, 0, window.width, window.height, Color.GREY6);
 				var program = new Program(buffer);
 				
 				Loader.image("assets/semmi_colors_by_yenoPenn.png", true, function(image:Image)
@@ -33,10 +32,8 @@ class Main extends lime.app.Application
 					var texture = new Texture(image.width, image.height);
 					texture.setImage(image);
 					
-					program.addTexture(texture, "custom");
-					
-					// for smooth animation:
-					program.snapToPixel(1);
+					program.addTexture(texture, "custom");					
+					program.snapToPixel(1); // for smooth animation
 
 					peoteView.addDisplay(display);
 					display.addProgram(program);
@@ -44,18 +41,10 @@ class Main extends lime.app.Application
 					buffer.addElement(new Semmi(0, 0, peoteView.time));
 					
 					peoteView.start();
-				});
+				});				
 				
-				
-				
-			default: throw("Sorry, only works with OpenGL.");
-			
-		}
-	}
-		
-	// ------------------------------------------------------------
-	
-	public override function render(context:lime.graphics.RenderContext)  peoteView.render();
-	public override function onWindowResize (width:Int, height:Int)       peoteView.resize(width, height);
+			default: throw("Sorry, only works with OpenGL.");			
+		}		
+	}		
 
 }
