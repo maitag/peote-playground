@@ -69,7 +69,7 @@ class Main extends Application
 			var b = lineSegment.y - y;
 			
 			lineSegment.w = Std.int( Math.sqrt( a * a + b * b ) );
-			lineSegment.r = Math.atan( a / b ); // WHAT THE ..... FUUUUCKKKK :;) -> needs radians!
+			lineSegment.r = Math.atan2(x - lineSegment.x, - (y - lineSegment.y) )*(180 / Math.PI) - 90; // thx to halfwheat \o/
 			
 			buffer.updateElement(lineSegment);
 		}
