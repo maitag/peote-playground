@@ -24,11 +24,11 @@ class LineSegment implements Element
 	
 	// ----------------------------------------------------------
 
+	// calculating on gpu into depend of start and endpoint
+	@sizeX @const @formula("sqrt( (xStart-xEnd)*(xStart-xEnd) + (yStart-yEnd)*(yStart-yEnd) )") public var w:Int;
+
 	// T O D O :
 	
-	// calculating on gpu into depend of start and endpoint
-	@sizeX public var w:Int = 100;
-
 	// rotation around pivot point
 	@rotation public var r:Float;
 	

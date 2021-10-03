@@ -61,10 +61,13 @@ class Main extends Application
 	override function onMouseMove (x:Float, y:Float):Void {
 		if (isInit) 
 		{
+			lineSegment.xEnd = Std.int(x);
+			lineSegment.yEnd = Std.int(y);
+			
 			// calculating line width
-			var a = lineSegment.xStart - x;
-			var b = lineSegment.yStart - y;			
-			lineSegment.w = Std.int( Math.sqrt( a * a + b * b ) );
+			//var a = lineSegment.xStart - x;
+			//var b = lineSegment.yStart - y;			
+			//lineSegment.w = Std.int( Math.sqrt( a * a + b * b ) );
 			
 			// calculating line rotation
 			lineSegment.r = Math.atan2(x - lineSegment.xStart, - (y - lineSegment.yStart) )*(180 / Math.PI) - 90; // thx to halfwheat \o/
