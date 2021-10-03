@@ -17,8 +17,8 @@ class LineSegment implements Element
 	@sizeY public var h:Int = 1;
 	
 	// calculating the pivot point by formulas on gpu
-	@pivotX @const @formula("0") public var px:Int;
-	@pivotY @const @formula("h/2") public var py:Int;
+	@pivotX @const @formula("0.0") public var px:Int;
+	@pivotY @const @formula("h/2.0") public var py:Int;
 	
 
 	
