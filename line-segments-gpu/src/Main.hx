@@ -50,6 +50,8 @@ class Main extends Application
 		// line starts at middle of the window
 		lineSegment.xStart = Std.int(window.width / 2);
 		lineSegment.yStart = Std.int(window.height / 2);
+		
+		// line thicknes
 		lineSegment.h = 3;
 				
 		buffer.addElement(lineSegment);
@@ -61,17 +63,10 @@ class Main extends Application
 	override function onMouseMove (x:Float, y:Float):Void {
 		if (isInit) 
 		{
+			// line ends at mousepointer
 			lineSegment.xEnd = Std.int(x);
 			lineSegment.yEnd = Std.int(y);
-			
-			// calculating line width
-			//var a = lineSegment.xStart - x;
-			//var b = lineSegment.yStart - y;			
-			//lineSegment.w = Std.int( Math.sqrt( a * a + b * b ) );
-			
-			// calculating line rotation
-			lineSegment.r = Math.atan2(x - lineSegment.xStart, - (y - lineSegment.yStart) )*(180 / Math.PI) - 90; // thx to halfwheat \o/
-			
+						
 			buffer.updateElement(lineSegment);
 		}
 	}
@@ -79,7 +74,8 @@ class Main extends Application
 	// -------------- WINDOWS EVENTS ----------------------------
 	override function onWindowResize (width:Int, height:Int):Void {
 		if (isInit) 
-		{	// keep line starting at middle of the window on resize
+		{
+			// keep line starting at middle of the window on resize
 			lineSegment.xStart = Std.int(width / 2);
 			lineSegment.yStart = Std.int(height / 2);
 		}

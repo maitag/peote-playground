@@ -20,21 +20,9 @@ class LineSegment implements Element
 	@pivotX @const @formula("0.0") public var px:Int;
 	@pivotY @const @formula("h/2.0") public var py:Int;
 	
-
-	
-	// ----------------------------------------------------------
-
-	// calculating on gpu into depend of start and endpoint
+	// calculating width and rotation on gpu into depend of start and endpoint
 	@sizeX @const @formula("sqrt( (xStart-xEnd)*(xStart-xEnd) + (yStart-yEnd)*(yStart-yEnd) )") public var w:Int;
-
-	// T O D O :
-	
-	// rotation around pivot point
-	@rotation public var r:Float;
-	
-	
-	
-	// ----------------------------------------------------------
+	@rotation @const @formula("-((xEnd-xStart) == 0.0 ? sign(-(yEnd-yStart))*1.5707963 : atan(-(yEnd-yStart),xEnd-xStart))*57.2957795") public var r:Float;
 	
 	// color (RGBA)
 	@color public var c:Color = 0xff0000ff;
