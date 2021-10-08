@@ -17,7 +17,7 @@ class ElectroBolts implements Element
 	@sizeY @varying public var h:Int;
 	
 	// time fake (until injection not works)
-	@custom @varying @constStart(0.0) @constEnd(0.000001) @anim("", "constant") var fakedTime:Float;
+	@custom("fTime") @varying @constStart(0.0) @constEnd(0.000005) @anim("", "constant") var fakedTime:Float;
 		
 	// color (RGBA)
 	// @color public var c:Color = 0xff0000ff;
@@ -63,9 +63,9 @@ class ElectroBolts implements Element
 				 return v;
 			}
 
-			vec4 electroBolt( vec2 texCoord, vec2 size )
+			vec4 electroBolt( vec2 texCoord, vec2 size, float time )
 			{
-				float time = vPack0; // TODO: how to set an Identifier for fakedTime ?
+				//float time = vPack0; // TODO: how to set an Identifier for fakedTime ?
 				
 				// original:
 				//vec2 uv = ( fragCoord.xy / resolution.xy ) * 2.0 - 1.0;
@@ -89,7 +89,7 @@ class ElectroBolts implements Element
 			}			
 		");
 		
-		program.setColorFormula( 'electroBolt(vTexCoord, vSize)' );
+		program.setColorFormula( 'electroBolt(vTexCoord, vSize, fTime)' );
 		
 		display.addProgram(program);
 	}

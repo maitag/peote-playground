@@ -36,7 +36,7 @@ class Main extends Application
 
 		
 		// electric bolt like shader
-		ElectroBolts.init(display); new ElectroBolts(0, 0, 200, 160);
+		ElectroBolts.init(display); new ElectroBolts(0, 0, 300, 300);
 		
 		
 		peoteView.start();
