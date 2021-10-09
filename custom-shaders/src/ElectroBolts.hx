@@ -17,7 +17,9 @@ class ElectroBolts implements Element
 	@sizeY @varying public var h:Int;
 	
 	// time fake (until injection not works)
-	@custom("fTime") @varying @constStart(0.0) @constEnd(0.000005) @anim("", "constant") var fakedTime:Float;
+	@custom("fTime") @varying @constStart(0.000005) @constEnd(0.0) @anim("", "constant") var fakedTime:Float;
+	// reverse flow-direction
+	//@custom("fTime") @varying @constStart(0.0) @constEnd(0.000005) @anim("", "constant") var fakedTime:Float;
 		
 	// color (RGBA)
 	// @color public var c:Color = 0xff0000ff;
@@ -63,34 +65,30 @@ class ElectroBolts implements Element
 				 return v;
 			}
 
-			vec4 electroBolt( vec2 texCoord, vec2 size, float time )
+			vec4 electroBolt( vec2 texCoord, vec2 size, float fTime )
 			{
-				//float time = vPack0; // TODO: how to set an Identifier for fakedTime ?
+				//float sizeX = 1.0;
+				float scale = 0.7;
 				
-				// original:
-				//vec2 uv = ( fragCoord.xy / resolution.xy ) * 2.0 - 1.0;
-				//uv.x *= resolution.x / resolution.y;
-
-				// TODO: better transformation into peote-space 
-				// (not works same as into the common shadertools!)
-				vec2 uv = ( texCoord.xy  ) * 2.0 - 1.0;
-				uv.x *= size.x / size.y;
+				vec2 uv = vec2( (texCoord.y/scale - 2.0 + scale) * 0.67, texCoord.x * 2.0 * size.x / size.y );
+				// from top to down
+				//vec2 uv = vec2( (texCoord.x/scale - 2.0 + scale) * 0.67, texCoord.y * 2.0 * size.y / size.x  );
 				
-
 				vec3 finalColor = vec3( 0.0 );
 				
-				for( float i=1.0; i < 2.0; ++i )
+				for( float i=1.0; i < 4.0; ++i )
 				{
-					float t = abs( 1.0 / ( (uv.x + fbm( uv + time/i ) ) * (i*50.0) )) ;
+					float t = abs( 1.0 / ( (uv.x + fbm( uv + fTime/i ) ) * (i*50.0) )) ;
 					finalColor +=  t * vec3( i * 0.075 + 0.1, 0.5, 2.0 );
 				}
 
-				return vec4( finalColor, 1.0 );
+				return vec4( finalColor, (finalColor.x + finalColor.y + finalColor.z)/3.0 -0.13*scale  );
 			}			
 		");
 		
 		program.setColorFormula( 'electroBolt(vTexCoord, vSize, fTime)' );
-		
+		program.alphaEnabled = true;
+		program.discardAtAlpha(0.0);
 		display.addProgram(program);
 	}
 	

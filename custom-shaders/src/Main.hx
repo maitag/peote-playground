@@ -30,13 +30,15 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-		var display = new Display(0, 0, window.width, window.height);
+		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 
 		peoteView.addDisplay(display);
 
 		
 		// electric bolt like shader
-		ElectroBolts.init(display); new ElectroBolts(0, 0, 300, 300);
+		ElectroBolts.init(display); new ElectroBolts(0, 200, 800, 200);
+		// from top to down
+		//ElectroBolts.init(display); new ElectroBolts(300, 0, 200, 800);
 		
 		
 		peoteView.start();
