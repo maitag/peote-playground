@@ -8,6 +8,9 @@ import lime.ui.Window;
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Color;
+import peote.view.Texture;
+import utils.Loader;
+import lime.graphics.Image;
 
 
 class Main extends Application
@@ -26,10 +29,12 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
+	var peoteView:PeoteView;
+	var shaking:Shaking; 
 	
 	public function startSample(window:Window)
 	{
-		var peoteView = new PeoteView(window);
+		peoteView = new PeoteView(window);
 		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 
 		peoteView.addDisplay(display);
@@ -40,12 +45,15 @@ class Main extends Application
 		// from top to down
 		//ElectroBolts.init(display); new ElectroBolts(300, 0, 200, 800);
 		
+		// shaking
+		Loader.image ("assets/test0.png", true, function (image:Image) {
+			var texture = new Texture(image.width, image.height);
+			texture.setImage(image);
+			Shaking.init(display, texture); shaking = new Shaking(20, 20, 200, 150);
+		});
 		
 		peoteView.start();
 	}
-	
-
-	
 	
 	
 	
@@ -53,21 +61,14 @@ class Main extends Application
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
-	override function onPreloadComplete():Void {
-		// access embeded assets from here
-	}
-
-	override function update(deltaTime:Int):Void {
-		// for game-logic update
-	}
-
-	// override function render(context:lime.graphics.RenderContext):Void {}
-	// override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");		
-	// override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");		
-
 	// ----------------- MOUSE EVENTS ------------------------------
+	
+	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void
+	{
+		shaking.shake(peoteView.time);
+	}
+	
 	// override function onMouseMove (x:Float, y:Float):Void {}	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
@@ -83,18 +84,5 @@ class Main extends Application
 
 	// -------------- other WINDOWS EVENTS ----------------------------
 	// override function onWindowResize (width:Int, height:Int):Void { trace("onWindowResize", width, height); }
-	// override function onWindowLeave():Void { trace("onWindowLeave"); }
-	// override function onWindowActivate():Void { trace("onWindowActivate"); }
-	// override function onWindowClose():Void { trace("onWindowClose"); }
-	// override function onWindowDeactivate():Void { trace("onWindowDeactivate"); }
-	// override function onWindowDropFile(file:String):Void { trace("onWindowDropFile"); }
-	// override function onWindowEnter():Void { trace("onWindowEnter"); }
-	// override function onWindowExpose():Void { trace("onWindowExpose"); }
-	// override function onWindowFocusIn():Void { trace("onWindowFocusIn"); }
-	// override function onWindowFocusOut():Void { trace("onWindowFocusOut"); }
-	// override function onWindowFullscreen():Void { trace("onWindowFullscreen"); }
-	// override function onWindowMove(x:Float, y:Float):Void { trace("onWindowMove"); }
-	// override function onWindowMinimize():Void { trace("onWindowMinimize"); }
-	// override function onWindowRestore():Void { trace("onWindowRestore"); }
 	
 }
