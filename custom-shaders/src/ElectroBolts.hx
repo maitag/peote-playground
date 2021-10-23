@@ -16,7 +16,7 @@ class ElectroBolts implements Element
 	@sizeX @varying public var w:Int;
 	@sizeY @varying public var h:Int;
 	
-	@pivotY @const @formula("h/2") var py:Float;
+	@pivotY @const @formula("h/2.0") var py:Float;
 	
 	@custom("speed") @varying public var speed:Float = 1.0; 
 	@custom("absoluteTime") @varying public var absoluteTime:Float = 0.0; 
