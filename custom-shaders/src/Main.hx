@@ -30,6 +30,8 @@ class Main extends Application
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
+	
+	var electroBolt:ElectroBolts; 
 	var shaking:Shaking; 
 	
 	public function startSample(window:Window)
@@ -41,15 +43,18 @@ class Main extends Application
 
 		
 		// electric bolt like shader
-		ElectroBolts.init(display); new ElectroBolts(0, 200, 800, 200);
+		ElectroBolts.init(display);
+		electroBolt = new ElectroBolts(0, 300, 800, 200);
 		// from top to down
-		//ElectroBolts.init(display); new ElectroBolts(300, 0, 200, 800);
+		//ElectroBolts.init(display);
+		// electroBolt = new ElectroBolts(300, 0, 200, 800);
 		
 		// shaking
 		Loader.image ("assets/test0.png", true, function (image:Image) {
 			var texture = new Texture(image.width, image.height);
 			texture.setImage(image);
-			Shaking.init(display, texture); shaking = new Shaking(20, 20, 200, 150);
+			Shaking.init(display, texture);
+			shaking = new Shaking(20, 20, 200, 150);
 		});
 		
 		peoteView.start();
@@ -68,7 +73,24 @@ class Main extends Application
 		shaking.shake(peoteView.time);
 	}
 	
-	// override function onMouseMove (x:Float, y:Float):Void {}	
+	var absoluteTime:Float = 0.0;
+	
+	override function onMouseMove (x:Float, y:Float):Void {
+		if (peoteView.isRun) {
+
+			electroBolt.absoluteTime += (peoteView.time - electroBolt.actTime) * electroBolt.speed;
+			electroBolt.actTime = peoteView.time;
+			
+			electroBolt.speed = (x - 400) / 50;
+			
+			// TODO: make scaling about the middle !
+			// electroBolt.scale = Math.max(0.3, Math.abs(y - 300) / 300);
+			
+			electroBolt.h = Std.int( Math.max(40, Math.abs(y - 300)) );
+			
+			electroBolt.update();
+		}
+	}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}

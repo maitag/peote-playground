@@ -16,11 +16,13 @@ class ElectroBolts implements Element
 	@sizeX @varying public var w:Int;
 	@sizeY @varying public var h:Int;
 	
-	// time fake (until injection not works)
-	@custom("fTime") @varying @constStart(0.000005) @constEnd(0.0) @anim("", "constant") var fakedTime:Float;
-	// reverse flow-direction
-	//@custom("fTime") @varying @constStart(0.0) @constEnd(0.000005) @anim("", "constant") var fakedTime:Float;
-		
+	@pivotY @const @formula("h/2") var py:Float;
+	
+	@custom("speed") @varying public var speed:Float = 1.0; 
+	@custom("absoluteTime") @varying public var absoluteTime:Float = 0.0; 
+	@custom("actTime") @varying public var actTime:Float = 0.0; 
+	@custom("scale") @varying public var scale:Float = 0.7; 
+			
 	// color (RGBA)
 	// @color public var c:Color = 0xff0000ff;
 	
@@ -65,10 +67,13 @@ class ElectroBolts implements Element
 				 return v;
 			}
 
-			vec4 electroBolt( vec2 texCoord, vec2 size, float fTime )
+			vec4 electroBolt( vec2 texCoord, vec2 size, float speed, float absoluteTime, float actTime, float scale )
 			{
-				//float sizeX = 1.0;
-				float scale = 0.7;
+				// change speed
+				float t = (actTime-uTime) * speed - absoluteTime;
+				
+				// TODO: make scaling about the middle !
+				// float scale = 0.7;
 				
 				vec2 uv = vec2( (texCoord.y/scale - 2.0 + scale) * 0.67, texCoord.x * 2.0 * size.x / size.y );
 				// from top to down
@@ -78,15 +83,16 @@ class ElectroBolts implements Element
 				
 				for( float i=1.0; i < 4.0; ++i )
 				{
-					float t = abs( 1.0 / ( (uv.x + fbm( uv + fTime/i ) ) * (i*50.0) )) ;
-					finalColor +=  t * vec3( i * 0.075 + 0.1, 0.5, 2.0 );
+					finalColor += vec3( i * 0.075 + 0.1, 0.5, 2.0 ) * abs( 1.0 / ( (uv.x + fbm( uv + t/i ) ) * (i*50.0) ));
 				}
 
 				return vec4( finalColor, (finalColor.x + finalColor.y + finalColor.z)/3.0 -0.13*scale  );
 			}			
-		");
+		"
+		, true // inject uTime
+		);
 		
-		program.setColorFormula( 'electroBolt(vTexCoord, vSize, fTime)' );
+		program.setColorFormula( 'electroBolt(vTexCoord, vSize, speed, absoluteTime, actTime, scale)' );
 		program.alphaEnabled = true;
 		program.discardAtAlpha(0.0);
 		display.addProgram(program);
@@ -102,5 +108,7 @@ class ElectroBolts implements Element
 		this.h = h;
 		buffer.addElement(this);
 	}
+	
+	public function update() buffer.updateElement(this);
 
 }
