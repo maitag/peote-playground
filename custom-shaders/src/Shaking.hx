@@ -23,9 +23,7 @@ class Shaking implements Element
 	// --------------------------------------------------------------------------
 	
 	static public var buffer:Buffer<Shaking>;
-	static public var program:Program;
-
-	
+	static public var program:Program;	
 	
 	static public function init(display:Display, texture:Texture)
 	{	
@@ -41,7 +39,8 @@ class Shaking implements Element
 			{
 				float t = max(0.0, uTime - atTime);				
 				t = (clamp(t, 0.0, duration) / duration);			
-				return 1.0 - size + size * sin(freq * TWO_PI * t) * (t+0.5)*t*t*(t-1.0)*(t-1.0)*15.5;
+				//return 1.0 - size + size * sin(freq * TWO_PI * t) * (t+0.5)*t*t*(t-1.0)*(t-1.0)*15.5;
+				return size * sin(freq * TWO_PI * t) * (t+0.5)*t*t*(t-1.0)*(t-1.0)*15.5;
 			}
 			
 		"

@@ -33,6 +33,7 @@ class Main extends Application
 	
 	var electroBolt:ElectroBolts; 
 	var shaking:Shaking; 
+	var blur:GaussianBlurHQ; 
 	
 	public function startSample(window:Window)
 	{
@@ -43,19 +44,24 @@ class Main extends Application
 
 		
 		// electric bolt like shader
-		ElectroBolts.init(display);
-		electroBolt = new ElectroBolts(0, 300, 800, 200);
+		ElectroBolts.init(display); electroBolt = new ElectroBolts(0, 300, 800, 200);
 		// from top to down
-		//ElectroBolts.init(display);
-		// electroBolt = new ElectroBolts(300, 0, 200, 800);
+		//ElectroBolts.init(display); electroBolt = new ElectroBolts(300, 0, 200, 800);
 		
-		// shaking
-		Loader.image ("assets/test0.png", true, function (image:Image) {
-			var texture = new Texture(image.width, image.height);
+		Loader.image ("assets/test0.png", true, function (image:Image) 
+		{
+			var texture = new Texture(image.width, image.height, 1, 4, true);
 			texture.setImage(image);
-			Shaking.init(display, texture);
-			shaking = new Shaking(20, 20, 200, 150);
+			
+			// shaking
+			Shaking.init(display, texture); shaking = new Shaking(20, 20, 200, 150);
+		
+			// blur
+			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(220, 20, 200, 150);
 		});
+		
+		
+		
 		
 		peoteView.start();
 	}
@@ -70,25 +76,28 @@ class Main extends Application
 	
 	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void
 	{
+		// shaking
 		shaking.shake(peoteView.time);
+		
 	}
 	
+
 	var absoluteTime:Float = 0.0;
 	
 	override function onMouseMove (x:Float, y:Float):Void {
 		if (peoteView.isRun) {
-
+			
+			// electric bolt like shader
 			electroBolt.absoluteTime += (peoteView.time - electroBolt.actTime) * electroBolt.speed;
-			electroBolt.actTime = peoteView.time;
-			
-			electroBolt.speed = (x - 400) / 50;
-			
+			electroBolt.actTime = peoteView.time;			
+			electroBolt.speed = (x - 400) / 50;			
 			// TODO: make scaling about the middle !
-			// electroBolt.scale = Math.max(0.3, Math.abs(y - 300) / 300);
-			
-			electroBolt.h = Std.int( Math.max(40, Math.abs(y - 300)) );
-			
+			// electroBolt.scale = Math.max(0.3, Math.abs(y - 300) / 300);			
+			electroBolt.h = Std.int( Math.max(40, Math.abs(y - 300)) );			
 			electroBolt.update();
+			
+			
+			
 		}
 	}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	

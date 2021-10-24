@@ -26,12 +26,10 @@ class ElectroBolts implements Element
 	// color (RGBA)
 	// @color public var c:Color = 0xff0000ff;
 	
-	
+	// --------------------------------------------------------------------------	
 	
 	static public var buffer:Buffer<ElectroBolts>;
-	static public var program:Program;
-
-	
+	static public var program:Program;	
 	
 	static public function init(display:Display)
 	{	
