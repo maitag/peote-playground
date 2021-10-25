@@ -50,7 +50,8 @@ class Main extends Application
 		
 		Loader.image ("assets/test0.png", true, function (image:Image) 
 		{
-			var texture = new Texture(image.width, image.height, 1, 4, true);
+			var texture = new Texture(image.width, image.height);
+			//var texture = new Texture(image.width, image.height, 1, 4, true);
 			texture.setImage(image);
 			
 			// shaking
@@ -58,6 +59,7 @@ class Main extends Application
 		
 			// blur
 			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(220, 20, 200, 150);
+			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(420, 20, 400, 300);
 		});
 		
 		

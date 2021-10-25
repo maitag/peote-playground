@@ -14,10 +14,10 @@ class GaussianBlurHQ implements Element
 	@posY public var y:Int;
 	
 	// size in pixel
-	@sizeX @varying public var w:Int;
-	@sizeY @varying public var h:Int;
+	@sizeX public var w:Int;
+	@sizeY public var h:Int;
 	
-	@unit("texture") public var unit:Int;
+	@texUnit("base") public var unit:Int;
 	
 	// --------------------------------------------------------------------------
 	
@@ -29,46 +29,49 @@ class GaussianBlurHQ implements Element
 		buffer = new Buffer<GaussianBlurHQ>(1, 1, true);
 		program = new Program(buffer);
 		
-		program.setTexture(texture, "texture", false);
+		program.setTexture(texture, "base", true);
 
 		program.injectIntoFragmentShader(
-		"
-			float normpdf(in float x, in float sigma)
-			{
-				return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma;
-			}
+		"				
+			float normpdf(in float x, in float sigma) { return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma; }
 			
-			vec4 blur( vec4 texData, vec2 size )
+			vec4 blur( int textureNumber )
 			{
 				const int mSize = 11;
+				
 				const int kSize = (mSize-1)/2;
 				float kernel[mSize];
-				vec3 final_colour = vec3(0.0);
 				
 				float sigma = 7.0;
 				float Z = 0.0;
+				
 				for (int j = 0; j <= kSize; ++j) kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
 				for (int j = 0; j <  mSize; ++j) Z += kernel[j];
+				
+				// get the FULL-texture-size manually (into this case 512x512)
+				ivec2 itxsize = textureSize(uTexture0, 0);
+				vec2 txtSize = vec2(float(itxsize.x), float(itxsize.y));
+				
+				vec3 final_colour = vec3(0.0);
 				
 				for (int i = -kSize; i <= kSize; ++i)
 				{
 					for (int j = -kSize; j <= kSize; ++j)
 					{
 						final_colour += kernel[kSize+j] * kernel[kSize+i] *
-						texture(uTexture0, (vTexCoord.xy + vec2(float(i),float(j))/vSize ) * vec2(0.78125, 0.5859375) ).rgb;
+							getTextureColor(  textureNumber, vTexCoord.xy + (vec2(float(i), float(j))/ txtSize)  ).rgb;
 					}
 				}
-				return vec4(final_colour / (Z * Z), 1.0);
 				
-				// TODO: needs better coordinate-transforming here for gl_FragCoord-usage
-				//return vec4( texture(uTexture0, vec2((gl_FragCoord.x-200.0)*0.78125/vSize.x, vTexCoord.y *  0.5859375) ) );
-				//return texData;
+				return vec4(final_colour / (Z * Z), 1.0);
 			}			
 		");
 		
-		program.setColorFormula( 'blur(texture, vSize)' );
-		//program.alphaEnabled = true;
-		//program.discardAtAlpha(0.0);
+		program.setColorFormula( "blur(baseTexture)" );
+		
+		// TODO: replacing the textureColor formula inside of glsl
+		// program.setTextureFormula("base", "blur(baseTexture)" );
+		
 		display.addProgram(program);
 	}
 	
