@@ -29,13 +29,14 @@ class GaussianBlurHQ implements Element
 		buffer = new Buffer<GaussianBlurHQ>(1, 1, true);
 		program = new Program(buffer);
 		
+		// create a texture-layer named "base"
 		program.setTexture(texture, "base", true);
 
 		program.injectIntoFragmentShader(
 		"				
 			float normpdf(in float x, in float sigma) { return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma; }
 			
-			vec4 blur( int textureNumber )
+			vec4 blur( int textureID )
 			{
 				const int mSize = 11;
 				
@@ -48,10 +49,6 @@ class GaussianBlurHQ implements Element
 				for (int j = 0; j <= kSize; ++j) kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
 				for (int j = 0; j <  mSize; ++j) Z += kernel[j];
 				
-				// get the FULL-texture-size manually (into this case 512x512)
-				ivec2 itxsize = textureSize(uTexture0, 0);
-				vec2 txtSize = vec2(float(itxsize.x), float(itxsize.y));
-				
 				vec3 final_colour = vec3(0.0);
 				
 				for (int i = -kSize; i <= kSize; ++i)
@@ -59,7 +56,7 @@ class GaussianBlurHQ implements Element
 					for (int j = -kSize; j <= kSize; ++j)
 					{
 						final_colour += kernel[kSize+j] * kernel[kSize+i] *
-							getTextureColor(  textureNumber, vTexCoord.xy + (vec2(float(i), float(j))/ txtSize)  ).rgb;
+							getTextureColor(  textureID, vTexCoord + vec2(float(i), float(j)) / getTextureResolution(textureID)  ).rgb;
 					}
 				}
 				
@@ -67,10 +64,10 @@ class GaussianBlurHQ implements Element
 			}			
 		");
 		
+		// instead of using normal "base" identifier to get the texture-color
+		// the "Texture" postfix is to give access to use getTextureColor() manually 
+		// from inside of the injected blur() function to that texture-layer
 		program.setColorFormula( "blur(baseTexture)" );
-		
-		// TODO: replacing the textureColor formula inside of glsl
-		// program.setTextureFormula("base", "blur(baseTexture)" );
 		
 		display.addProgram(program);
 	}
