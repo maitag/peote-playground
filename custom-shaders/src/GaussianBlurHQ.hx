@@ -45,8 +45,8 @@ class GaussianBlurHQ implements Element
 				
 				const int kSize = (mSize-1)/2;
 				float kernel[mSize];
-				
 				float sigma = 7.0;
+				
 				float Z = 0.0;
 				
 				for (int j = 0; j <= kSize; ++j) kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
@@ -54,12 +54,25 @@ class GaussianBlurHQ implements Element
 				
 				vec3 final_colour = vec3(0.0);
 				
-				for (int i = -kSize; i <= kSize; ++i)
+				//vec2 texRes = getTextureResolution(textureID);
+				//for (int i = -kSize; i <= kSize; ++i)
+				//{
+					//for (int j = -kSize; j <= kSize; ++j)
+					//{
+						//final_colour += kernel[kSize+j] * kernel[kSize+i] *
+							//getTextureColor( textureID, vTexCoord + vec2(float(i), float(j)) / texRes ).rgb;
+					//}
+				//}
+				
+				// fix if kernel-offset is over the border
+				vec2 texRes = getTextureResolution(textureID);
+				vec2 texResSize = texRes + vec2(float(kSize+kSize),float(kSize+kSize));			
+				for (int i = 0; i <= kSize+kSize; ++i)
 				{
-					for (int j = -kSize; j <= kSize; ++j)
+					for (int j = 0; j <= kSize+kSize; ++j)
 					{
-						final_colour += kernel[kSize+j] * kernel[kSize+i] *
-							getTextureColor(  textureID, vTexCoord + vec2(float(i), float(j)) / getTextureResolution(textureID)  ).rgb;
+						final_colour += kernel[j] * kernel[i] *
+							getTextureColor( textureID, (vTexCoord*texRes + vec2(float(i),float(j))) / texResSize ).rgb;
 					}
 				}
 				
