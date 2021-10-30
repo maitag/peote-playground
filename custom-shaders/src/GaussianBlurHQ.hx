@@ -17,8 +17,11 @@ class GaussianBlurHQ implements Element
 	@sizeX public var w:Int;
 	@sizeY public var h:Int;
 	
-	@texUnit("base") public var unit:Int;
+	// TODO:
+	//var DEFAULT_FRAGMENT_SHADER = "";	
+	//var DEFAULT_COLOR_FORMULA = "blur(base_ID)";
 	
+	//var DEFAULT_FORMULA_VARS = ["base"  => 0xff0000ff];
 	// --------------------------------------------------------------------------
 	
 	static public var buffer:Buffer<GaussianBlurHQ>;
@@ -67,7 +70,11 @@ class GaussianBlurHQ implements Element
 		// instead of using normal "base" identifier to get the texture-color
 		// the "Texture" postfix is to give access to use getTextureColor() manually 
 		// from inside of the injected blur() function to that texture-layer
-		program.setColorFormula( "blur(baseTexture)" );
+		
+		program.setColorFormula( "blur(base_ID)" );
+		
+		// this also works if has "base" inside DEFAULT_FORMULA_VARS
+		//program.setColorFormula( 'blur(${GaussianBlurHQ.TEXTURE_ID_base})' );
 		
 		display.addProgram(program);
 	}

@@ -59,7 +59,6 @@ class Main extends Application
 		
 			// blur
 			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(220, 20, 200, 150);
-			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(420, 20, 400, 300);
 		});
 		
 		
