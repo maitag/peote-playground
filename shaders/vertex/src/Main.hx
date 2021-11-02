@@ -31,9 +31,7 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
-	var electroBolt:ElectroBolts; 
 	var shaking:Shaking; 
-	var blur:GaussianBlurHQ; 
 	
 	public function startSample(window:Window)
 	{
@@ -41,12 +39,6 @@ class Main extends Application
 		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 
 		peoteView.addDisplay(display);
-
-		
-		// electric bolt like shader
-		ElectroBolts.init(display); electroBolt = new ElectroBolts(0, 300, 800, 200);
-		// from top to down
-		//ElectroBolts.init(display); electroBolt = new ElectroBolts(300, 0, 200, 800);
 		
 		Loader.image ("assets/test0.png", true, function (image:Image) 
 		{
@@ -54,11 +46,9 @@ class Main extends Application
 			//var texture = new Texture(image.width, image.height, 1, 4, true);
 			texture.setImage(image);
 			
-			// shaking
-			Shaking.init(display, texture); shaking = new Shaking(20, 20, 200, 150);
+			Shaking.init(display, texture);
+			shaking = new Shaking(20, 20, 200, 150);
 		
-			// blur
-			GaussianBlurHQ.init(display, texture); blur = new GaussianBlurHQ(220, 20, 200, 150);
 		});
 		
 		
@@ -82,25 +72,8 @@ class Main extends Application
 		
 	}
 	
-
-	var absoluteTime:Float = 0.0;
 	
-	override function onMouseMove (x:Float, y:Float):Void {
-		if (peoteView.isRun) {
-			
-			// electric bolt like shader
-			electroBolt.absoluteTime += (peoteView.time - electroBolt.actTime) * electroBolt.speed;
-			electroBolt.actTime = peoteView.time;			
-			electroBolt.speed = (x - 400) / 50;			
-			// TODO: make scaling about the middle !
-			// electroBolt.scale = Math.max(0.3, Math.abs(y - 300) / 300);			
-			electroBolt.h = Std.int( Math.max(40, Math.abs(y - 300)) );			
-			electroBolt.update();
-			
-			
-			
-		}
-	}	
+	// override function onMouseMove (x:Float, y:Float):Void {}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}

@@ -6,7 +6,7 @@ import peote.view.Program;
 import peote.view.Buffer;
 import peote.view.Color;
 
-class ElectroBolts implements Element
+class ElectroBolt implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int;
@@ -28,12 +28,12 @@ class ElectroBolts implements Element
 	
 	// --------------------------------------------------------------------------	
 	
-	static public var buffer:Buffer<ElectroBolts>;
+	static public var buffer:Buffer<ElectroBolt>;
 	static public var program:Program;	
 	
 	static public function init(display:Display)
 	{	
-		buffer = new Buffer<ElectroBolts>(1, 1, true);
+		buffer = new Buffer<ElectroBolt>(1, 1, true);
 		program = new Program(buffer);
 		
 		program.injectIntoFragmentShader(
