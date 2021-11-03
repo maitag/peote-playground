@@ -8,10 +8,6 @@ import lime.ui.Window;
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
-import lime.graphics.Image;
-
 
 class Main extends Application
 {
@@ -31,7 +27,7 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
-	var shaking:Shaking; 
+	var triangle:Triangle; 
 	
 	public function startSample(window:Window)
 	{
@@ -39,18 +35,9 @@ class Main extends Application
 		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 
 		peoteView.addDisplay(display);
-		
-		Loader.image ("assets/test0.png", true, function (image:Image) 
-		{
-			var texture = new Texture(image.width, image.height);
-			//var texture = new Texture(image.width, image.height, 1, 4, true);
-			texture.setImage(image);
-			
-			Shaking.init(display, texture);
-			shaking = new Shaking(20, 20, 200, 150);
-		
-		});
-		
+
+		Triangle.init(display); 
+		triangle = new Triangle(0, 0, 200, 200); // more params here to define the shape !
 		
 		peoteView.start();
 	}
@@ -63,14 +50,7 @@ class Main extends Application
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	
-	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void
-	{
-		// shaking
-		shaking.shake(peoteView.time);
-		
-	}
-	
-	
+	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// override function onMouseMove (x:Float, y:Float):Void {}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
