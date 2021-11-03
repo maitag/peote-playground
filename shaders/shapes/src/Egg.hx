@@ -4,6 +4,7 @@ import peote.view.Element;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Buffer;
+import peote.view.UniformFloat;
 
 class Egg implements Element
 {
@@ -20,7 +21,7 @@ class Egg implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(formula:String, display:Display)
+	static public function init(formula:String, uniforms:Array<UniformFloat>, display:Display)
 	{	
 		buffer = new Buffer<Egg>(1, 1, true);
 		program = new Program(buffer);
@@ -29,11 +30,9 @@ class Egg implements Element
 		'
 			float egg( )
 			{
-					float x = vTexCoord.x;
-					float y = vTexCoord.y;
+					float x = (vTexCoord.x-0.5)*2.0;
+					float y = (vTexCoord.y-0.5)*2.0;
 					float c;
-					
-					// if ( y > sin(x*2.0*3.14) ) {gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);}
 					
 					if ( $formula < 1.0 ) {
 						c = 1.0;
@@ -43,7 +42,9 @@ class Egg implements Element
 					}
 					return c;
 			}			
-		');
+		',
+		uniforms
+		);
 		
 		program.setColorFormula( 'vec4(1.0)*egg()' );
 		

@@ -1,6 +1,7 @@
 package;
 
 import haxe.CallStack;
+import peote.view.UniformFloat;
 
 import lime.app.Application;
 import lime.ui.Window;
@@ -27,6 +28,9 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
+	var mouseX:UniformFloat;
+	var mouseY:UniformFloat;
+	
 	var triangle:Triangle; 
 	var egg:Egg; 
 	
@@ -36,11 +40,14 @@ class Main extends Application
 		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 
 		peoteView.addDisplay(display);
-
-		Triangle.init(display); 
-		triangle = new Triangle(0, 0, 200, 200); // more params here to define the shape !
 		
-		Egg.init("pow(x,2.0)+pow(y,2.0)", display); // (x^2)+(y^2)
+		mouseX = new UniformFloat("mouseX", 0.0);
+		mouseY = new UniformFloat("mouseY", 0.0);
+
+		//Triangle.init(display); 
+		//triangle = new Triangle(0, 0, 200, 200); // more params here to define the shape !
+		
+		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX,mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
 		egg = new Egg(200, 0, 200, 200);
 		
 		peoteView.start();
@@ -54,8 +61,11 @@ class Main extends Application
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	
+	override function onMouseMove (x:Float, y:Float):Void {
+		mouseX.value = x / window.width;
+		mouseY.value = y / window.height;
+	}	
 	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
-	// override function onMouseMove (x:Float, y:Float):Void {}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
