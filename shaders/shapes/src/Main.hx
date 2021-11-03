@@ -28,6 +28,7 @@ class Main extends Application
 	var peoteView:PeoteView;
 	
 	var triangle:Triangle; 
+	var egg:Egg; 
 	
 	public function startSample(window:Window)
 	{
@@ -38,6 +39,9 @@ class Main extends Application
 
 		Triangle.init(display); 
 		triangle = new Triangle(0, 0, 200, 200); // more params here to define the shape !
+		
+		Egg.init("pow(x,2.0)+pow(y,2.0)", display); // (x^2)+(y^2)
+		egg = new Egg(200, 0, 200, 200);
 		
 		peoteView.start();
 	}
