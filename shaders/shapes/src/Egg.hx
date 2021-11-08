@@ -30,17 +30,17 @@ class Egg implements Element
 		'
 			float egg( )
 			{
-					float x = (vTexCoord.x-0.5)*2.0;
-					float y = (vTexCoord.y-0.5)*2.0;
-					float c;
-					
-					if ( $formula < 1.0 ) {
-						c = 1.0;
-					}
-					else {
-						c = 0.0;
-					}
-					return c;
+				float x = (vTexCoord.x-0.5)*2.0;
+				float y = (vTexCoord.y-0.5)*2.0;
+				float c;
+				
+				if ( $formula < 1.0 ) {
+					c = 1.0;
+				}
+				else {
+					c = 0.0;
+				}
+				return c;
 			}			
 		',
 		uniforms

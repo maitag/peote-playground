@@ -4,37 +4,59 @@ import peote.view.Element;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Buffer;
+import peote.view.UniformFloat;
 
 class Triangle implements Element
 {
-	@posX public var x:Int;
-	@posY public var y:Int;
+	@posX public var x:Float;
+	@posY public var y:Float;
 	
 	// size in pixel
-	@sizeX @varying public var w:Int;
-	@sizeY @varying public var h:Int;
-		
+	@sizeX public var w:Float;
+	@sizeY public var h:Float;
+	
+	//@custom @varying public var tip:Float = 0.2;
+	
+	// TODO: triangle shape depending on some extra @custom vars	
 
 	static public var buffer:Buffer<Triangle>;
 	static public var program:Program;
 
 	// -----------------------------------------------
 	
-	static public function init(display:Display)
+	static public function init(uniforms:Array<UniformFloat>, display:Display)
 	{	
 		buffer = new Buffer<Triangle>(1, 1, true);
 		program = new Program(buffer);
 		
 		program.injectIntoFragmentShader(
 		"
-			vec4 triangle( vec2 texCoord, vec2 size )
+			// float triangle( vec2 texCoord, float t )
+			float triangle( vec2 texCoord )
 			{
-				// TODO: triangle shape depending on some extra @custom vars
-				return vec4(0.0, 0.0, 1.0, 1.0);
+				
+				// float t = 0.5;
+				float t = mouseX;
+				
+				float x = vTexCoord.x;
+				float y = 1.0 - vTexCoord.y;
+				
+				float c;
+				
+				if (  x > y*t && 1.0 - x > y*(1.0-t)) {
+					c = 1.0;
+				}
+				else {
+					c = 0.0;
+				}
+				return c;
 			}			
-		");
-		
-		program.setColorFormula( 'triangle(vTexCoord, vSize)' );
+		",
+		uniforms
+		);
+
+		//program.setColorFormula( 'triangle(vTexCoord, tip)' );
+		program.setColorFormula( 'vec4(1.0)*triangle(vTexCoord)' );
 		
 		program.alphaEnabled = true;
 		program.discardAtAlpha(0.0);
