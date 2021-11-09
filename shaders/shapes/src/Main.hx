@@ -28,6 +28,8 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
+	var mx:UniformFloat;
+
 	var mouseX:UniformFloat;
 	var mouseY:UniformFloat;
 	
@@ -41,14 +43,18 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		mouseX = new UniformFloat("mouseX", 0.0);
-		mouseY = new UniformFloat("mouseY", 0.0);
 
-		// TODO: bug inside peote-view on HTML5 only if using "custom uniforms" across different programs
+		// TODO: bug inside peote-view on HTML5 (webglshit have different behavior and needs extra effort again -_-)
+		//                                  ->  appears if using "custom uniforms" across different shaderprograms
 		
-		Triangle.init( [mouseX], display); 
+		
+		mx = new UniformFloat("mouseX", 0.0);
+		Triangle.init( [mx], display); 
 		triangle = new Triangle(0, 0, 200, 200); // more params here to define the shape !
 		
+		
+		mouseX = new UniformFloat("mouseX", 0.0);
+		mouseY = new UniformFloat("mouseY", 0.0);
 		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX, mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
 		egg = new Egg(200, 0, 200, 200);
 		
@@ -64,6 +70,8 @@ class Main extends Application
 	// ----------------- MOUSE EVENTS ------------------------------
 	
 	override function onMouseMove (x:Float, y:Float):Void {
+		mx.value = x / window.width;
+		
 		mouseX.value = x / window.width;
 		mouseY.value = y / window.height;
 	}	
