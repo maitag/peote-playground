@@ -45,13 +45,17 @@ class Main extends Application
 		mouseX = new UniformFloat("mouseX", 0.0);
 		mouseY = new UniformFloat("mouseY", 0.0);
 		
-		
 		Triangle.init( [mouseX], display); 
 		triangle = new Triangle(0, 0, 200, 200); // TODO: coords for the three points here !
 		
+		TriVertex.init( [mouseX], display);
+		var triVertex = new TriVertex(200, 200, 200, 200);
+		
+
+		
 		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX, mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
 		egg = new Egg(200, 0, 200, 200);
-		
+
 		
 		peoteView.start();
 	}
