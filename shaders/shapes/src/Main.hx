@@ -30,10 +30,7 @@ class Main extends Application
 	
 	var mouseX:UniformFloat;
 	var mouseY:UniformFloat;
-	
-	var triangle:Triangle; 
-	var egg:Egg; 
-	
+		
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
@@ -46,19 +43,24 @@ class Main extends Application
 		mouseY = new UniformFloat("mouseY", 0.0);
 		
 		Triangle.init( [mouseX], display); 
-		triangle = new Triangle(0, 0, 200, 200);
+		var triangle = new Triangle(0, 0, 200, 200);
 		
 		TriVertex.init( [mouseX], display);
 		var triVertex = new TriVertex(200, 200, 200, 200);
 		
 		TriColored.init( [mouseX], display); 
 		var triColored = new TriColored(0, 400, 200, 200);
-		
+	
 
 		
 		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX, mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
-		egg = new Egg(200, 0, 200, 200);
-
+		var egg = new Egg(200, 0, 200, 200);
+	
+		
+		
+		Test.init( [mouseX, mouseY], display); 
+		var test = new Test();
+		
 		
 		peoteView.start();
 	}
@@ -76,6 +78,8 @@ class Main extends Application
 		
 		mouseX.value = x / window.width;
 		mouseY.value = y / window.height;
+		
+		trace(mouseX.value);
 	}	
 	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	

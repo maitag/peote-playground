@@ -1,5 +1,6 @@
 package;
 
+import peote.view.Color;
 import peote.view.Element;
 import peote.view.Display;
 import peote.view.Program;
@@ -8,9 +9,19 @@ import peote.view.UniformFloat;
 
 class TriVertex implements Element
 {
-	//@custom public var tip:Float = 0.5;
-	//@posX @formula("x - w*tip") public var x:Float;	
-	@posX @formula("x - w * mouseX") public var x:Float;
+	@color public var ca:Color = 0xff0000ff;
+	@color public var cb:Color = 0x00ff00ff;
+	@color public var cc:Color = 0x0000ffff;
+	
+	//@custom public var tip:Float = 0.5; // mouseX-uniform can be replaced by custom attribute later
+	
+	//@posX @formula("x + (aSize.x - w)*((mouseX-0.5)*2.0+mouseX)") public var x:Float;
+	//@posX @formula("x + (aSize.x - w)*((2.0*mouseX-1.0)*2.0+mouseX)") public var x:Float;
+	@posX @formula("x + (aSize.x - w)*((2.0*mouseX-1.0)* 1.0 +mouseX)") public var x:Float;
+	
+	//@posX @formula("x + (aSize.x - w)*(mouseX-1.0/3.0)*3.0") public var x:Float;
+	//@posX @formula("x + (aSize.x - w)*(mouseX-1.0/2.7)*4.0") public var x:Float;
+	
 	@posY public var y:Float;
 	
 	// size
@@ -28,7 +39,25 @@ class TriVertex implements Element
 		program = new Program(buffer);
 		
 		program.injectIntoVertexShader(uniforms);
+		
+		program.injectIntoFragmentShader(
+		"
+			vec4 triangleColor( vec2 texCoord )
+			{
+				//float y = 1.0 - vTexCoord.y;
+				//float w1 = 1.0 - vTexCoord.x;
+				//float w2 = 1.0 - y - w1;
+				
+				//return vColor0*y + vColor1*w1 + vColor2*w2;
+				
+				return vColor0*(1.0 - vTexCoord.y) + vColor1*(1.0 - vTexCoord.x) + vColor2*(vTexCoord.y - 1.0 + vTexCoord.x);
+			}			
+		");
 
+		program.setColorFormula( 'triangleColor(vTexCoord)' );
+
+		program.alphaEnabled = true;
+		program.discardAtAlpha(0.0);
 		
 		display.addProgram(program);
 	}
