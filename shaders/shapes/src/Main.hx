@@ -46,10 +46,13 @@ class Main extends Application
 		mouseY = new UniformFloat("mouseY", 0.0);
 		
 		Triangle.init( [mouseX], display); 
-		triangle = new Triangle(0, 0, 200, 200); // TODO: coords for the three points here !
+		triangle = new Triangle(0, 0, 200, 200);
 		
 		TriVertex.init( [mouseX], display);
 		var triVertex = new TriVertex(200, 200, 200, 200);
+		
+		TriColored.init( [mouseX], display); 
+		var triColored = new TriColored(0, 400, 200, 200);
 		
 
 		
