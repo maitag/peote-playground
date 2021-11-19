@@ -34,54 +34,63 @@ class Main extends Application
 	
 	var lineSegment:LineSegment;
 	var helper:LineSegment;
-	
+	var tri:Tri;
 	
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
 
-		buffer = new Buffer<LineSegment>(4, 4, true);
-		var display = new Display(0, 0, window.width, window.height, Color.GREEN);
-		var program = new Program(buffer);
-
+		var display = new Display(0, 0, window.width, window.height);
 		peoteView.addDisplay(display);
+
+		buffer = new Buffer<LineSegment>(4, 4, true);
+		var program = new Program(buffer);
 		display.addProgram(program);
 
 		
 		lineSegment = new LineSegment(
-			0, 300,
+			100, 300,
 			400, 300,
-			100, 100, Color.BLUE
+			250, 200, Color.BLUE
 		);
 		buffer.addElement(lineSegment);
 		
 		helper = new LineSegment(
-			0, 300,
-			400, 300,
-			100, 100, Color.YELLOW
+			100, 300,
+			250, 300,
+			300, 200, Color.YELLOW
 		);
 		buffer.addElement(helper);
 		
+		// ------------------------------
+		Tri.init(display);
+		
+		tri = new Tri(			
+			100, 300, Color.RED,
+			400, 300, Color.GREEN,
+			250, 200, Color.BLUE
+		);
+
 	}
 	
 	// ----------------- MOUSE EVENTS ------------------------------
 	
 	var isMouseDown = false;
-	var point:Int = 0;
+	var point:Int = 2;
 	
 	override function onMouseMove (x:Float, y:Float):Void {
 		if (isMouseDown) 
 		{
 			switch (point) {
 				case 0:
-					lineSegment.x0 = helper.x0 = x; 
-					lineSegment.y0 = helper.y0 = y;
+					lineSegment.x0 = helper.x0 = tri.x0 = x;
+					lineSegment.y0 = helper.y0 = tri.y0 = y;
 				case 1:
-					lineSegment.x1 = helper.x1 = x; 
-					lineSegment.y1 = helper.y1 = y;
+					lineSegment.x1 = helper.x1 = tri.x1 = x;
+					lineSegment.y1 = helper.y1 = tri.y1 = y;
 				case 2:
-					lineSegment.x2 = helper.x2 = x; 
-					lineSegment.y2 = helper.y2 = y;
+					lineSegment.x2 = helper.x2 = tri.x2 = x;
+					lineSegment.y2 = helper.y2 = tri.y2 = y;
 			}
 			
 			lineSegment.update();			
@@ -95,11 +104,15 @@ class Main extends Application
 			
 			a = lineSegment.x1 - lineSegment.x2;
 			b = lineSegment.y1 - lineSegment.y2;
-			if ( a*a + b*b > lineSegment.w * lineSegment.w + lineSegment.h * lineSegment.h) helper.w = -helper.w;
-		
-			//trace(helper.w / lineSegment.w);
 			
+			// Problem:
+			//if ( a*a + b*b > lineSegment.w * lineSegment.w + lineSegment.h * lineSegment.h) helper.w = -helper.w;
+		
 			buffer.updateElement(helper);
+			
+			// ------------------
+			tri.update();
+			
 		}
 	}
 	
