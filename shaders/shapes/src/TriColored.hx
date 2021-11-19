@@ -41,22 +41,28 @@ class TriColored implements Element
 			{
 				
 				//float t = 0.5;
-				float t = mouseX;
+				float t = mouseX; // using uniform here for better testing
 				
 				float x = vTexCoord.x;
 				float y = 1.0 - vTexCoord.y;
 				
 				vec4 c = vec4(0.0, 0.0, 0.0, 0.0);;
 				
-				// look here for barycentric interpolation https://codeplea.com/triangular-interpolation
+				// look here for barycentric interpolation https://codeplea.com/triangular-interpolation				
+				//float w0 = y;
+				//float w1 = -1.0*(x-1.0) + (t-1.0)*y;
+				//float w2 = 1.0 - w0 - w1;
+				//
+				//if (w0 >= 0.0 && w1 >= 0.0 && w2 >= 0.0) {
+					//c = vColor0*w0 + vColor1*w1 + vColor2*w2;
+				//}
 				
-				// TODO: optimizing ( maybe w into vector)
-				float w0 = y;
-				float w1 = -1.0*(x-1.0) + (t-1.0)*y;
-				float w2 = 1.0 - w0 - w1;
+				// optimized:
+				float w1 = 1.0 - x + (t-1.0)*y;
+				float w2 = 1.0 - y - w1;
 				
-				if (w0 >= 0.0 && w1 >= 0.0 && w2 >= 0.0) {
-					c = vColor0*w0 + vColor1*w1 + vColor2*w2;
+				if (w1 >= 0.0 && w2 >= 0.0) {
+					c = vColor0*y + vColor1*w1 + vColor2*w2;
 				}
 								
 				return c;
