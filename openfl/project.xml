@@ -9,6 +9,30 @@
 	<haxelib name="openfl" />
 	<haxelib name="peote-view" />
 	
+	<!-- force compiling for a special opengl-es version (only set one of them) -->
+	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
+	<!-- <haxedef name="peoteview_es3" if="html5" /> -->
+	<haxedef name="peoteview_es2" if="android" /> <!-- android autodetect es3 but did not work, so force to es2 -->
+	
+	<!-- use special gl-features for optimization (if supported by opengl-es version) -->
+	<haxedef name="peoteview_uniformbuffers" />
+	<haxedef name="peoteview_instancedrawing" />
+	<haxedef name="peoteview_vertexarrayobjects" />
+
+	<!--<haxedef name="peoteview_debug_macro" />-->
+	<!--<haxedef name="peoteview_debug_buffer" />-->
+	<!--<haxedef name="peoteview_debug_view" />-->
+	<!--<haxedef name="peoteview_debug_display" />-->
+	<!--<haxedef name="peoteview_debug_program" />-->
+	<!--<haxedef name="peoteview_debug_texture" />-->
+	<!--<haxedef name="peoteview_debug_shader" />-->
+
+	<haxeflag name="-dce" value="full" />
+	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
+	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
+	<!-- <haxedef name="dump=pretty output" /> -->
+
+	
 	<assets path="assets" rename="assets" />
 	
 </project>
