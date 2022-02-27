@@ -12,16 +12,13 @@ class SinWave implements Element
 	@posX @const public var x:Int = 0;
 	@posY @const public var y:Int = 0;
 	
-	// size in pixel
-	@custom("size") @varying public var size:Float;
-	
+	// texture w * h -> samplerate
+	@sizeX @varying public var w:Int;
+	@sizeY @varying public var h:Int;
+		
 	// frequence
 	@custom("freq") @varying public var freq:Float;
 
-	// texture is allways square
-	@sizeX @const @formula("size") public var w:Float;
-	@sizeY @const @formula("size") public var h:Float;
-	
 	
 	// --------------------------------------------------------------------------	
 	
@@ -39,27 +36,26 @@ class SinWave implements Element
 			
 			float getValue( float pos, float srate, float freq)
 			{
-				return sin( (pos * PI * 2.0 * freq) / srate);
+				return ( sin( (pos * PI * 2.0 * freq) / srate ) + 1.0) / 2.0;
 			}
 			
-			vec4 sinwave( vec2 texCoord, float size, float freq )
+			vec4 sinwave( vec2 texCoord, vec2 size, float freq )
 			{
 				
-				float pos = 4.0 * (texCoord.y * size * size + texCoord.x * size);
-				
-				float srate = size * size;
+				float pos = 4.0 * (texCoord.y * size.x * size.y + texCoord.x * size.x);
+				float srate = 4.0 * size.x * size.y;
 				
 				float r = getValue(pos,   srate, freq );
-				float g = getValue(pos+1, srate, freq );
-				float b = getValue(pos+2, srate, freq );
-				float a = getValue(pos+3, srate, freq );
+				float g = getValue(pos+1.0, srate, freq );
+				float b = getValue(pos+2.0, srate, freq );
+				float a = getValue(pos+3.0, srate, freq );
 
 				return vec4( r, g, b, a );
 			}			
 		"
 		);
 		
-		program.setColorFormula( 'sinwave(vTexCoord, size, freq)' );
+		program.setColorFormula( 'sinwave(vTexCoord, vSize, freq)' );
 		//program.alphaEnabled = true;
 		//program.discardAtAlpha(0.0);
 		display.addProgram(program);
@@ -67,10 +63,11 @@ class SinWave implements Element
 	
 	
 	
-	public function new(freq:Int, srate:Int)
+	public function new(freq:Int, w:Int, h:Int)
 	{
 		this.freq = freq;
-		size = Math.sqrt(srate);
+		this.w = w;
+		this.h = h;
 		buffer.addElement(this);
 	}
 	

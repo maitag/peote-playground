@@ -6,6 +6,7 @@ import lime.app.Application;
 import lime.ui.Window;
 import lime.media.openal.AL;
 import lime.media.openal.ALC;
+import lime.utils.UInt8Array;
 import lime.utils.Int16Array;
 
 import peote.view.PeoteView;
@@ -14,7 +15,7 @@ import peote.view.Color;
 import peote.view.Texture;
 
 
-
+@:access(peote.view.Texture)
 class Main extends Application
 {
 	override function onWindowCreate():Void
@@ -42,17 +43,29 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
-		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
+		var display = new Display(0, 0, 256, 43, Color.BLACK);
 
 		peoteView.addDisplay(display);
 		
 		// generate the soundwave by GPU
 		SinWave.init(display);
-		sinwave = new SinWave(freq, srate);
+		sinwave = new SinWave(freq, 256, 43);
 		
-		// TODO: render it into a texture to use for bufferdata !
+		// render it into a texture to use for bufferdata !
+		var texture = new Texture(256, 43);
+		display.setFramebuffer(texture);
+		peoteView.renderToTexture(display);
 		
-		
+		var dataGPU = new UInt8Array(256 * 43 * 4);	 // 1024*43 * 4-> srate	
+		var gl = peoteView.gl;
+		// read pixels
+		gl.bindFramebuffer(gl.FRAMEBUFFER, texture.framebuffer);
+		if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE) {
+			gl.readPixels(0, 0, 256, 43, gl.RGBA, gl.UNSIGNED_BYTE, dataGPU);
+		}
+		else throw("Error: opengl-Picking - Framebuffer not complete!");
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+				
 		
 		// ----- play the soundwave by OpenAL --------
 		
@@ -61,21 +74,26 @@ class Main extends Application
 		ALC.makeContextCurrent(context);
 		ALC.processContext(context);
 		
-		var buffer = AL.createBuffer();
-		
-		var data = new Int16Array(srate);
+		var buffer = AL.createBuffer();		
+/*		
+		var data = new UInt8Array(srate);
+		//var data = new Int16Array(srate);
 		
 		// generate the soundwave by CPU
 		for (i in 0...srate) 
 		{
-			var value:Int = Std.int( Math.sin( (i * Math.PI * 2  * freq) / srate) * 0x7FFF );
+			var value:Int = Std.int( (Math.sin( (i * Math.PI * 2  * freq) / srate) + 1.0) * 0x7F );
+			//var value:Int = Std.int( Math.sin( (i * Math.PI * 2  * freq) / srate) * 0x7FFF );
 			data[i] = value; 
 		}
-
-		AL.bufferData(buffer, AL.FORMAT_MONO16, data, data.byteLength, srate);
+		AL.bufferData(buffer, AL.FORMAT_MONO8, data, data.byteLength, srate);
+		//AL.bufferData(buffer, AL.FORMAT_MONO16, data, data.byteLength, srate);
+*/
+		// sound data from GPU:
+		AL.bufferData(buffer, AL.FORMAT_MONO8, dataGPU, dataGPU.byteLength, 256 * 43 * 4);
+		
 		
 		var source = AL.createSource();
-		
 		//AL.sourcei  (source, AL.LOOPING, AL.TRUE);
 		AL.sourcef  (source, AL.PITCH, 1.0);
 		AL.sourcef  (source, AL.GAIN, 1.0);
