@@ -10,7 +10,7 @@ import peote.io.Int32;
 import peote.io.Double;
 
 
-class Server implements Remote 
+class Server //implements Remote 
 {
 	var peoteServer:PeoteServer;
 
@@ -33,7 +33,10 @@ class Server implements Remote
 			{
 				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
 				
-				server.setRemote(userNr, this, 0); // --> Client's onRemote on will be called with remoteId 0
+				var serverFunctions = new ServerFunctions();
+				serverFunctions.hello = hello.bind(userNr);
+					
+				server.setRemote(userNr, serverFunctions, 0); // --> Client's onRemote on will be called with remoteId 0
 				
 			},
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
@@ -66,11 +69,16 @@ class Server implements Remote
 	
 	
 	
-	// ----- functions that run on Server and called by Client
 	
-	@:remote public function hello():Void {
-		trace("Hello at Serverside");
+	// ----- functions that run on Server and called by Client (bind to userNr)
+	public function hello(userNr:Int):Void {
+		trace("Hello at Serverside ", userNr);
 	}
 	
 
+}
+
+class ServerFunctions implements Remote {
+	// ----- functions that run on Server and called by Client
+	@:remote public var hello:Void->Void;
 }

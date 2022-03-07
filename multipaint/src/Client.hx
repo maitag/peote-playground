@@ -47,7 +47,7 @@ class Client implements Remote
 			{
 				trace('Client onRemote: jointNr:${client.jointNr}, remoteId:$remoteId');
 				
-				var server = Server.getRemoteClient(client, remoteId);
+				var server = Server.ServerFunctions.getRemoteClient(client, remoteId);
 				
 				// call ServerFunctions
 				server.hello();
