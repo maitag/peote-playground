@@ -6,6 +6,7 @@ import peote.net.PeoteClient;
 class Client {
 	
 	var peoteClient:PeoteClient;
+	
 	var clientRemote:ClientRemote;
 	
 	public function new(window:lime.ui.Window, host:String, port:Int, channelName:String) 

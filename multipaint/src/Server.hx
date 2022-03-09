@@ -3,11 +3,14 @@ package;
 import haxe.ds.IntMap;
 import peote.net.PeoteServer;
 
-class Server
-{
+class Server {
+	
 	var peoteServer:PeoteServer;
-	var serverRemote = new IntMap<ServerRemote>();
+	
+	public var serverRemoteMap(default, null) = new IntMap<ServerRemote>();
+	public var serverRemoteArray(default, null) = new Array<ServerRemote>();
 
+	
 	public function new(host:String, port:Int, channelName:String, offline:Bool = false) 
 	{
 		peoteServer = new PeoteServer(
@@ -25,21 +28,30 @@ class Server
 			{
 				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
 				
-				// store a new ServerRemote for each user into Map
-				var _serverRemote = new ServerRemote(this, userNr);
-				serverRemote.set(userNr, _serverRemote);
+				// store a new ServerRemote for each user into serverRemoteMap
+				var serverRemote = new ServerRemote(this, userNr);
+				serverRemoteMap.set(userNr, serverRemote);
 				
-				server.setRemote(userNr, _serverRemote, 0); // --> Client's onRemote on will be called with remoteId 0				
+				// push into serverRemoteArray for faster access to all remotes
+				serverRemoteArray.push(serverRemote);
+				
+				server.setRemote(userNr, serverRemote, 0); // --> Client's onRemote on will be called with remoteId 0				
 			},
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
 			{
 				trace('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
-				serverRemote.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
+				serverRemoteMap.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
 			},
 			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
 				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
-				//serverRemote.get(userNr) = null;
+				
+				var serverRemote = serverRemoteMap.get(userNr);
+				
+				// remove from serverRemoteArray
+				serverRemoteArray.remove(serverRemote);
+				serverRemoteMap.remove(userNr);
+				serverRemote = null;
 			},
 			onError: function(server:PeoteServer, userNr:Int, reason:Int)
 			{

@@ -32,7 +32,7 @@ class Main extends Application
 
 		#if (server || (!client))
 		
-			trace("trying to create server ...");
+			trace('Server try to create channel "$channelName" at host:$host and port:$port');
 			var server = new Server( host, port, channelName
 				#if ((!server) && (!client))
 					,true // emulate network (to test locally without peote-server)
@@ -45,7 +45,7 @@ class Main extends Application
 		
 		#if (client || (!server))
 			
-			trace("trying to enter server ...");
+			trace('Client try to enter servers channel "$channelName" at host:$host and port:$port');
 			var client = new Client(window, host, port, channelName);
 		
 		#end
