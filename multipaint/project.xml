@@ -21,7 +21,7 @@
 	<haxelib name="peote-net" />
 	
 	<!-- <haxedef name="server" /> -->
-	<!-- <haxedef name="server" /> -->
+	<!-- <haxedef name="client" /> -->
 	
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
