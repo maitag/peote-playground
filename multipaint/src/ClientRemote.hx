@@ -24,11 +24,13 @@ class ClientRemote implements Remote {
 	
 	var client:Client;
 	
-	
 	var peoteView:PeoteView;
 	var display:Display;
-	var buffer:Buffer<Sprite>;
+	var buffer:Buffer<Pen>;
 	var program:Program;
+	
+	var penMap = new IntMap<Pen>();
+
 	
 	//public var server:ServerRemoteRemoteClient = null; // <- problem with Remote macro (type can not be ready generated)!
 	@:isVar var server(get, set) = null;
@@ -48,11 +50,9 @@ class ClientRemote implements Remote {
 		//window.onKeyDown.add(keyUpActive);		
 		
 		// initialize peote-view
-		
-		// TODO
 		peoteView = new PeoteView(window);
 
-		buffer = new Buffer<Sprite>(4, 4, true);
+		buffer = new Buffer<Pen>(4, 4, true);
 		display = new Display(0, 0, window.width, window.height, Color.GREEN);
 		program = new Program(buffer);
 
@@ -64,7 +64,6 @@ class ClientRemote implements Remote {
 	public function serverRemoteIsReady( server ) {
 		// trace(Type.typeof(server));
 		this.server = server;
-		//server.hello();
 	}
 	
 	
@@ -74,7 +73,8 @@ class ClientRemote implements Remote {
 
 	var mouseQueue = new Array<UInt16>();
 	var mouseQueueTime:Float = 0;
-		
+	
+	// TODO: transfer only the relative movements into Bytes!
 	inline function mouseMove(x:Float, y:Float) {
 		//trace("mouseMove", x, y);
 		if (haxe.Timer.stamp() < mouseQueueTime) {
@@ -107,32 +107,15 @@ class ClientRemote implements Remote {
 	// ------------------------------------------------------------
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
-	
-/*	@:remote public function hello():Void {
-		trace('Hello from server');
-		
-		if (server != null) server.message("good morning server");
-	}
-
-	@:remote public function message(msg:String):Void {
-		trace('Message from server: $msg');
-	}
-*/	
-	
-	var penMap = new IntMap<Sprite>();
-
 	@:remote public function addPen(userNr:UInt16):Void {
-		trace('Client: addPen - userNr:$userNr');
-		
-		var sprite = new Sprite();
-		buffer.addElement(sprite);
-		
+		trace('Client: addPen - userNr:$userNr');		
+		var sprite = new Pen();
+		buffer.addElement(sprite);		
 		penMap.set(userNr, sprite);
 	}
 	
 	@:remote public function removePen(userNr:UInt16):Void {
-		trace('Client: removePen - userNr:$userNr');
-		
+		trace('Client: removePen - userNr:$userNr');		
 		var sprite = penMap.get(userNr);
 		if (sprite != null) {
 			buffer.removeElement(sprite);
@@ -140,7 +123,7 @@ class ClientRemote implements Remote {
 		}
 	}
 	
-/*	@:remote public function changePen(userNr:UInt16, penParam:Int):Void {
+/*	@:remote public function changePen(userNr:UInt16, penParam:PenParam):Void {
 		trace('Client: changePen - userNr:$userNr, penNr:$penNr');
 		penMap.set(userNr, availPen.get(penNr));
 	}

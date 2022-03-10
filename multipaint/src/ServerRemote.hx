@@ -41,7 +41,7 @@ class ServerRemote implements Remote {
 	// ------------------------------------------------------------
 	
 	@:remote public function penMove(mouseQueue:Array<UInt16>):Void {
-		trace('Server: penMove - userNr:$userNr');
+		// trace('Server: penMove - userNr:$userNr');
 		
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {

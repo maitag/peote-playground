@@ -3,7 +3,7 @@ package;
 import peote.view.Element;
 import peote.view.Color;
 
-class Sprite implements Element
+class Pen implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int=0;
