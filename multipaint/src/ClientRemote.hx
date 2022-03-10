@@ -109,16 +109,16 @@ class ClientRemote implements Remote {
 	// ------------------------------------------------------------
 	@:remote public function addPen(userNr:UInt16):Void {
 		trace('Client: addPen - userNr:$userNr');		
-		var sprite = new Pen();
-		buffer.addElement(sprite);		
-		penMap.set(userNr, sprite);
+		var pen = new Pen();
+		buffer.addElement(pen);		
+		penMap.set(userNr, pen);
 	}
 	
 	@:remote public function removePen(userNr:UInt16):Void {
 		trace('Client: removePen - userNr:$userNr');		
-		var sprite = penMap.get(userNr);
-		if (sprite != null) {
-			buffer.removeElement(sprite);
+		var pen = penMap.get(userNr);
+		if (pen != null) {
+			buffer.removeElement(pen);
 			penMap.remove(userNr);
 		}
 	}
@@ -137,11 +137,11 @@ class ClientRemote implements Remote {
 		}
 */		
 		// at now only fetching the last value into mouseQueue
-		var sprite = penMap.get(userNr);
-		if (sprite != null) {
-			sprite.y = mouseQueue.pop();
-			sprite.x = mouseQueue.pop();
-			buffer.updateElement(sprite);
+		var pen = penMap.get(userNr);
+		if (pen != null) {
+			pen.y = mouseQueue.pop();
+			pen.x = mouseQueue.pop();
+			buffer.updateElement(pen);
 		}
 	}
 
