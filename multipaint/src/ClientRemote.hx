@@ -17,6 +17,7 @@ import peote.view.PeoteView;
 import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
+import peote.view.Texture;
 import peote.view.Color;
 
 
@@ -24,12 +25,25 @@ class ClientRemote implements Remote {
 	
 	var client:Client;
 	
-	var peoteView:PeoteView;
-	var display:Display;
-	var buffer:Buffer<Pen>;
-	var program:Program;
+	var width:Int;
+	var height:Int;
 	
-	var penMap = new IntMap<Pen>();
+	var peoteView:PeoteView;
+	var textureCanvas:Texture; // texture to draw into
+
+	var displayCanvas:Display;
+	var bufferCanvas:Buffer<ElemCanvas>;
+	var programCanvas:Program;
+	
+	var displayDraw:Display;
+	var bufferDraw:Buffer<ElemPen>;
+	var programDraw:Program;
+	
+	var displayPen:Display;
+	var bufferPen:Buffer<ElemPen>;
+	var programPen:Program;
+	
+	var penMap = new IntMap<ElemPen>();
 
 	
 	//public var server:ServerRemoteRemoteClient = null; // <- problem with Remote macro (type can not be ready generated)!
@@ -37,11 +51,14 @@ class ClientRemote implements Remote {
 	inline function get_server() return (server:ServerRemoteRemoteClient);
 	inline function set_server(s) return server = (s:ServerRemoteRemoteClient);
 	
-	public function new( window:Window, client:Client ) {
+	public function new( window:Window, width:Int=800, height:Int=600, client:Client ) {
 		
+		this.width = width;
+		this.height = height;
 		this.client = client;
 		
-		// delegate Lime mouse and keyboard events		
+		// ------ delegate Lime mouse and keyboard events ------
+		
 		window.onMouseMove.add(mouseMove);
 		window.onMouseUp.add(mouseUp);
 		window.onMouseDown.add(mouseDown);
@@ -49,16 +66,61 @@ class ClientRemote implements Remote {
 		//window.onKeyDown.add(keyDownActive);
 		//window.onKeyDown.add(keyUpActive);		
 		
-		// initialize peote-view
+		
+		
+		// ------ initialize peote-view --------
+		
 		peoteView = new PeoteView(window);
 
-		buffer = new Buffer<Pen>(4, 4, true);
-		display = new Display(0, 0, window.width, window.height, Color.GREEN);
-		program = new Program(buffer);
+		// --- texture to render into ---		
+		textureCanvas = new Texture(width, height);
+		// do not clear the texture before rendering into (only color, depth and stencil is cleaned)
+		textureCanvas.clearOnRenderInto = false;
+		
 
-		peoteView.addDisplay(display);
-		display.addProgram(program);
+		// --- display that holds elements with the texture what is drawed into ---
+		displayCanvas = new Display(0, 0, width, height, Color.BLUE);
+		peoteView.addDisplay(displayCanvas);
+		
+		bufferCanvas  = new Buffer<ElemCanvas>(2);
+		
+		programCanvas = new Program(bufferCanvas);		
+		programCanvas.setTexture(textureCanvas, "renderFrom");
+		//programCanvas.setColorFormula('renderFrom');
+		programCanvas.alphaEnabled = true;
+		programCanvas.discardAtAlpha(null);
+		
+		displayCanvas.addProgram(programCanvas);
+		
+		var elemCanvas = new ElemCanvas(width, height);
+		bufferCanvas.addElement(elemCanvas);
+		
+		
+		// --- display to render into the texture for canvas ---		
+		displayDraw = new Display(0, 0, width, height);
+		//peoteView.addDisplay(displayDraw);
+		
+		//peoteView.addFramebufferDisplay(displayDraw); // add also to the hidden RenderList for updating the Framebuffer Textures
+		//displayDraw.renderFramebufferSkipFrames = 2; // at 1/3 framerate (after render a frame skip 2)
+		//displayDraw.renderFramebufferEnabled = false;
+		
+		bufferDraw  = new Buffer<ElemPen>(1024, 512);
+		programDraw = new Program(bufferDraw);
+		
+		displayDraw.addProgram(programDraw);
+		displayDraw.setFramebuffer(textureCanvas, peoteView); // texture to render into
+		
+		
+		// --- display to render the pens only ---		
+		displayPen = new Display(0, 0, width, height);
+		peoteView.addDisplay(displayPen);
+		
+		bufferPen  = new Buffer<ElemPen>(16, 8);
+		programPen = new Program(bufferPen);
+		
+		displayPen.addProgram(programPen);
 
+		//peoteView.start();
 	}
 	
 	public function serverRemoteIsReady( server ) {
@@ -66,40 +128,68 @@ class ClientRemote implements Remote {
 		this.server = server;
 	}
 	
+	var moveTime:Float = 0;
 	
-	// ------------------------------------------------------------
-	// ------------ Delegated LIME EVENTS -------------------------
-	// ------------------------------------------------------------	
-
-	var mouseQueue = new Array<UInt16>();
-	var mouseQueueTime:Float = 0;
-	
-	// TODO: transfer only the relative movements into Bytes!
-	inline function mouseMove(x:Float, y:Float) {
-		//trace("mouseMove", x, y);
-		if (haxe.Timer.stamp() < mouseQueueTime) {
+	inline function move(x:Int, y:Int) {
+		//trace("move", x, y);
+		if (haxe.Timer.stamp() < moveTime) {
 			//trace("queue");
-			mouseQueue.push(Std.int(x));
-			mouseQueue.push(Std.int(y));
+
 		}
 		else {
-			mouseQueueTime = haxe.Timer.stamp() + 0.02;			
-			if (mouseQueue.length != 0 && server != null) {
+			moveTime = haxe.Timer.stamp() + 0.02;			
+			if (server != null) {
 				//trace("send");
-				server.penMove(mouseQueue);
-				mouseQueue.resize(0);
+				server.penMove(x, y);
 			}
 		}
 		
 	}
+	
+	var drawQueue = new Array<UInt16>();
+	var drawQueueTime:Float = 0;
+	
+	inline function draw(x:Int, y:Int) {
+		//trace("draw", x, y);
+		if (haxe.Timer.stamp() < drawQueueTime) {
+			//trace("queue");
+			drawQueue.push(Std.int(x));
+			drawQueue.push(Std.int(y));
+		}
+		else {
+			drawQueueTime = haxe.Timer.stamp() + 0.02;			
+			if (drawQueue.length != 0 && server != null) {
+				//trace("send");
+				server.penDraw(drawQueue);
+				drawQueue.resize(0);
+			}
+		}
+		
+	}
+	
+	// ------------------------------------------------------------
+	// ------------ Delegated LIME EVENTS -------------------------
+	// ------------------------------------------------------------	
+	var isDraw = false;
+	
+	// TODO: transfer only the relative movements into Bytes!
+	inline function mouseMove(x:Float, y:Float) {
+		//trace("mouseMove", x, y);
+		var _x:Int = (x < 0) ? 0 : Std.int(x);
+		var _y:Int = (y < 0) ? 0 : Std.int(y);
+		if (isDraw) draw(_x, _y) else move(_x, _y);
+		
+	}
 	inline function mouseDown(x:Float, y:Float, button:MouseButton) {
-		trace("mouseDown", x, y, button);
+		//trace("mouseDown", x, y, button);
+		isDraw = true;
 	}
 	inline function mouseUp(x:Float, y:Float, button:MouseButton) {
-		trace("mouseUp", x, y, button);
+		//trace("mouseUp", x, y, button);
+		isDraw = false;
 	}
 	inline function mouseWheel(dx:Float, dy:Float, mode:MouseWheelMode) {
-		trace("mouseUp",dx, dy, mode);
+		//trace("mouseWheel",dx, dy, mode);
 	}
 			
 	
@@ -107,10 +197,11 @@ class ClientRemote implements Remote {
 	// ------------------------------------------------------------
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
+	
 	@:remote public function addPen(userNr:UInt16):Void {
 		trace('Client: addPen - userNr:$userNr');		
-		var pen = new Pen();
-		buffer.addElement(pen);		
+		var pen = new ElemPen();
+		bufferPen.addElement(pen);		
 		penMap.set(userNr, pen);
 	}
 	
@@ -118,7 +209,7 @@ class ClientRemote implements Remote {
 		trace('Client: removePen - userNr:$userNr');		
 		var pen = penMap.get(userNr);
 		if (pen != null) {
-			buffer.removeElement(pen);
+			bufferPen.removeElement(pen);
 			penMap.remove(userNr);
 		}
 	}
@@ -128,21 +219,46 @@ class ClientRemote implements Remote {
 		penMap.set(userNr, availPen.get(penNr));
 	}
 */	
-	@:remote public function penMove(userNr:UInt16, mouseQueue:Array<UInt16>):Void {
+	
+	
+	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16):Void {
 		//trace('Client: penMove - userNr:$userNr');
-		
-		// TODO: better into onRender
-/*		for (i in 0...mouseQueue.length()) {
-			
-		}
-*/		
-		// at now only fetching the last value into mouseQueue
 		var pen = penMap.get(userNr);
 		if (pen != null) {
-			pen.y = mouseQueue.pop();
-			pen.x = mouseQueue.pop();
-			buffer.updateElement(pen);
+			pen.x = x;
+			pen.y = y;
+			bufferPen.updateElement(pen);
 		}
+	}
+
+	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>):Void {
+		//trace('Client: penDraw - userNr:$userNr');
+		
+		for ( i in 0...Std.int(drawQueue.length / 2) ) {
+			bufferDraw.addElement(new ElemPen(drawQueue[i * 2], drawQueue[i * 2 + 1] ));
+			if (i > 0)  {
+				var dx:Float = drawQueue[(i) * 2] - drawQueue[(i - 1) * 2];
+				var dy:Float = drawQueue[(i) * 2 + 1] - drawQueue[(i - 1) * 2 + 1];
+				var distance = Math.min(dx, dy);
+				dx = dx / distance;
+				dy = dy / distance;
+				for ( j in 1...Std.int(distance) )
+					bufferDraw.addElement(new ElemPen(Std.int(drawQueue[i * 2]+dx*j), Std.int(drawQueue[i * 2 + 1]+dy*j)));
+			}
+		}
+/*		for (i in 0...drawQueue.length) {
+			bufferDraw.addElement(new ElemPen(drawQueue.pop(), drawQueue.pop() ));
+		}
+*/		
+		peoteView.renderToTexture(displayDraw);
+		
+		// clear
+		for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
+		// TODO: need to upgrade peote-view:
+		// bufferDraw.removeAllElements();
+		// bufferDraw._maxElements = 0;
+		
+		penMove(userNr, drawQueue[drawQueue.length-2], drawQueue[drawQueue.length-1]);
 	}
 
 }
@@ -154,7 +270,8 @@ class ClientRemote implements Remote {
 class ClientRemote implements Remote {
 	@:remote public function addPen(userNr:UInt16):Void {}
 	@:remote public function removePen(userNr:UInt16) {}
-	@:remote public function penMove(userNr:UInt16, mouseQueue:Array<UInt16>) {}
+	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16) {}
+	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {}
 }
 
 #end

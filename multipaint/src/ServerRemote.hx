@@ -40,14 +40,21 @@ class ServerRemote implements Remote {
 	// ----- Functions that run on Server and called by Client ----
 	// ------------------------------------------------------------
 	
-	@:remote public function penMove(mouseQueue:Array<UInt16>):Void {
+	@:remote public function penMove(x:UInt16, y:UInt16):Void {
 		// trace('Server: penMove - userNr:$userNr');
 		
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {
-			
-			//if (serverRemote.client != null) serverRemote.client.penMove(userNr & 0xFF, mouseQueue);
-			if (serverRemote.client != null) serverRemote.client.penMove(userNr, mouseQueue);
+			if (serverRemote.client != null) serverRemote.client.penMove(userNr, x, y);
+		}
+	}
+
+	@:remote public function penDraw(mouseQueue:Array<UInt16>):Void {
+		// trace('Server: penDraw - userNr:$userNr');
+		
+		// send to all clients
+		for (serverRemote in server.serverRemoteArray) {
+			if (serverRemote.client != null) serverRemote.client.penDraw(userNr, mouseQueue);
 		}
 	}
 
