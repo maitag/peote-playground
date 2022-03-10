@@ -14,9 +14,9 @@ class DedicatedServer
 	
 	static function main()
 	{
-		var peoteNetTest = new MultiPaintServer();
+		var multiPaintServer = new MultiPaintServer();
 		
-		Cli.process(Sys.args(), peoteNetTest).handle(
+		Cli.process(Sys.args(), multiPaintServer).handle(
 			function(result:Outcome<Noise, Error>) {
 				switch result
 				{
@@ -25,7 +25,7 @@ class DedicatedServer
 						var message = "\nError while parsing commandline parameters: " + e.message;
 						if(e.data != null) message += ', ${e.data}';
 						Sys.println(message);
-						peoteNetTest.doc(); 
+						multiPaintServer.doc(); 
 						Sys.exit(e.code);
 				}
 			}

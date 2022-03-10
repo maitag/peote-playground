@@ -10,7 +10,12 @@
 	<window width="800" height="600" fps="61" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<app main="Main" path="bin" file="Main" />
+	<!-- <haxedef name="server" /> -->
+	<!-- <haxedef name="client" /> -->
+	
+	<app main="Main" path="bin" file="ServerClient" />
+	<!-- <app main="Main" path="bin" file="Server"/> -->
+	<!-- <app main="Main" path="bin" file="Client"/> -->
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
@@ -18,10 +23,7 @@
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />
 	<haxelib name="peote-socket" />
-	<haxelib name="peote-net" />
-	
-	<!-- <haxedef name="server" /> -->
-	<!-- <haxedef name="client" /> -->
+	<haxelib name="peote-net" />	
 	
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->

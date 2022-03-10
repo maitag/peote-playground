@@ -1,12 +1,8 @@
 -cp src
+-cp ../src
 -main DedicatedServer
 -lib peote-net tink_cli
 -dce full
 
---each
-
 -neko build/neko/multipaintServer.n
 
---next
-
--cpp build/cpp

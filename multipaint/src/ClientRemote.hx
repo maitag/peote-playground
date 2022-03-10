@@ -1,5 +1,13 @@
 package ;
 
+import peote.net.Remote;
+import ServerRemote;
+
+import peote.io.Byte;
+import peote.io.UInt16;
+
+#if lime
+import haxe.ds.IntMap;
 import haxe.ds.Vector;
 import lime.ui.Window;
 import lime.ui.MouseButton;
@@ -11,10 +19,6 @@ import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
 
-import peote.net.Remote;
-import ServerRemote;
-
-import peote.io.UInt16;
 
 class ClientRemote implements Remote {
 	
@@ -25,7 +29,6 @@ class ClientRemote implements Remote {
 	var display:Display;
 	var buffer:Buffer<Sprite>;
 	var program:Program;
-	var sprite:Sprite;
 	
 	//public var server:ServerRemoteRemoteClient = null; // <- problem with Remote macro (type can not be ready generated)!
 	@:isVar var server(get, set) = null;
@@ -56,15 +59,12 @@ class ClientRemote implements Remote {
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
-		sprite = new Sprite();
-		buffer.addElement(sprite);
-				
 	}
 	
 	public function serverRemoteIsReady( server ) {
 		// trace(Type.typeof(server));
 		this.server = server;
-		server.hello();
+		//server.hello();
 	}
 	
 	
@@ -108,7 +108,7 @@ class ClientRemote implements Remote {
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
-	@:remote public function hello():Void {
+/*	@:remote public function hello():Void {
 		trace('Hello from server');
 		
 		if (server != null) server.message("good morning server");
@@ -117,9 +117,36 @@ class ClientRemote implements Remote {
 	@:remote public function message(msg:String):Void {
 		trace('Message from server: $msg');
 	}
+*/	
 	
-	@:remote public function penMove(mouseQueue:Array<UInt16>):Void {
-		//trace('penMove $x $y');
+	var penMap = new IntMap<Sprite>();
+
+	@:remote public function addPen(userNr:UInt16):Void {
+		trace('Client: addPen - userNr:$userNr');
+		
+		var sprite = new Sprite();
+		buffer.addElement(sprite);
+		
+		penMap.set(userNr, sprite);
+	}
+	
+	@:remote public function removePen(userNr:UInt16):Void {
+		trace('Client: removePen - userNr:$userNr');
+		
+		var sprite = penMap.get(userNr);
+		if (sprite != null) {
+			buffer.removeElement(sprite);
+			penMap.remove(userNr);
+		}
+	}
+	
+/*	@:remote public function changePen(userNr:UInt16, penParam:Int):Void {
+		trace('Client: changePen - userNr:$userNr, penNr:$penNr');
+		penMap.set(userNr, availPen.get(penNr));
+	}
+*/	
+	@:remote public function penMove(userNr:UInt16, mouseQueue:Array<UInt16>):Void {
+		//trace('Client: penMove - userNr:$userNr');
 		
 		// TODO: better into onRender
 /*		for (i in 0...mouseQueue.length()) {
@@ -127,9 +154,24 @@ class ClientRemote implements Remote {
 		}
 */		
 		// at now only fetching the last value into mouseQueue
-		sprite.y = mouseQueue.pop();
-		sprite.x = mouseQueue.pop();
-		buffer.updateElement(sprite);
+		var sprite = penMap.get(userNr);
+		if (sprite != null) {
+			sprite.y = mouseQueue.pop();
+			sprite.x = mouseQueue.pop();
+			buffer.updateElement(sprite);
+		}
 	}
 
 }
+
+
+#else
+
+// need for dedicated server to build without lime
+class ClientRemote implements Remote {
+	@:remote public function addPen(userNr:UInt16):Void {}
+	@:remote public function removePen(userNr:UInt16) {}
+	@:remote public function penMove(userNr:UInt16, mouseQueue:Array<UInt16>) {}
+}
+
+#end

@@ -52,6 +52,11 @@ class Server {
 				serverRemoteArray.remove(serverRemote);
 				serverRemoteMap.remove(userNr);
 				serverRemote = null;
+				
+				// send to all clients
+				for (serverRemote in serverRemoteArray) {
+					if (serverRemote.client != null) serverRemote.client.removePen(userNr);
+				}
 			},
 			onError: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
