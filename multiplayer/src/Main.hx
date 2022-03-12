@@ -24,7 +24,7 @@ class Main extends Application
 	var host:String = "localhost";
 	var port:Int = 7680;
 
-	var channelName:String = "multipaint";
+	var channelName:String = "multiplayer";
 	
 	
 	public function startSample(window:Window)

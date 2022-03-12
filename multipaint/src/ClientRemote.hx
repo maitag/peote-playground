@@ -47,10 +47,8 @@ class ClientRemote implements Remote {
 
 	
 	//public var server:ServerRemoteRemoteClient = null; // <- problem with Remote macro (type can not be ready generated)!
-	@:isVar var server(get, set) = null;
-	inline function get_server() return (server:ServerRemoteRemoteClient);
-	inline function set_server(s) return server = (s:ServerRemoteRemoteClient);
-	
+	public var server = (null : ServerRemoteRemoteClient);
+
 	public function new( window:Window, width:Int=800, height:Int=600, client:Client ) {
 		
 		this.width = width;
