@@ -158,14 +158,14 @@ class ClientRemote implements Remote {
 			drawQueueTime = haxe.Timer.stamp() + timeDelay;
 			if (drawQueue.length != 0 && server != null) 
 			{
-				var lastX = drawQueue[drawQueue.length - 2];
-				var lastY = drawQueue[drawQueue.length - 1];
+				var lastQueuedX = drawQueue[drawQueue.length - 2];
+				var lastQueuedY = drawQueue[drawQueue.length - 1];
 				
 				server.penDraw(drawQueue);
 				
 				drawQueue.resize(2);
-				drawQueue[0] = lastX;
-				drawQueue[1] = lastY;				
+				drawQueue[0] = lastQueuedX;
+				drawQueue[1] = lastQueuedY;				
 			}
 		}
 		
@@ -250,14 +250,21 @@ class ClientRemote implements Remote {
 	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>):Void {
 		//trace('Client: penDraw - userNr:$userNr');		
 		for ( i in 0...Std.int(drawQueue.length/2) ) {
-			bufferDraw.addElement(new ElemPen(drawQueue[i*2], drawQueue[i*2 + 1] ));
+			bufferDraw.addElement(new ElemPen(
+				drawQueue[i * 2],
+				drawQueue[i * 2 + 1]
+			));
 			if (i > 0)  {
-				// interpolate to create straight lines between the points
+				// interpolate to create straight lines between the points (TODO: find a way for fast curve-interpolation)
 				var dx:Float = -drawQueue[i*2] + drawQueue[(i - 1)*2];
 				var dy:Float = -drawQueue[i*2 + 1] + drawQueue[(i - 1)*2 + 1];
 				var distance = Math.max(Math.abs(dx), Math.abs(dy));
-				for ( j in 1...Std.int(distance) )
-					bufferDraw.addElement(new ElemPen(Std.int(drawQueue[i*2]+dx*j/distance), Std.int(drawQueue[i*2 + 1]+dy*j/distance)));
+				for ( j in 1...Std.int(distance) ) {
+					bufferDraw.addElement(new ElemPen(
+						Std.int(drawQueue[i * 2] + dx * j / distance),
+						Std.int(drawQueue[i * 2 + 1] + dy * j / distance)
+					));
+				}
 			}
 		}
 		
@@ -265,7 +272,7 @@ class ClientRemote implements Remote {
 		
 		// clear the buffer
 		for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
-		// TODO: need to upgrade peote-view adn using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
+		// TODO: need to upgrade peote-view for using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
 	}
 
 }
