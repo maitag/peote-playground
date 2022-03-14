@@ -43,6 +43,7 @@ class ServerRemote implements Remote {
 		
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {
+			// TODO: for more haptic the clients own pen have to move locally and not throught server
 			if (serverRemote.client != null) serverRemote.client.penMove(userNr, x, y);
 		}
 	}

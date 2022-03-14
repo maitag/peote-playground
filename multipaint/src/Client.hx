@@ -38,7 +38,7 @@ class Client {
 		// enter server
 		peoteClient.enter(host, port, channelName);
 	}
-
+	
 }
 
 

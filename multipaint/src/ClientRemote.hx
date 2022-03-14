@@ -126,45 +126,46 @@ class ClientRemote implements Remote {
 		this.server = server;
 	}
 	
-	var moveTime:Float = 0;
+	
+	// ------ mouse eventhandling -----
+	
 	static inline var timeDelay:Float = 0.02;
+	var isDraw = false;	
+	var moveTime:Float = 0;
+	var drawQueue = new Array<UInt16>();
+	var drawQueueTime:Float = 0;
+	
 	
 	inline function move(x:Int, y:Int) {
 		//trace("move", x, y);
 		if (haxe.Timer.stamp() < moveTime) {
-			//trace("queue");
-
+			// TODO: for more haptic the clients pen have to move here and not throught server
 		}
 		else {
 			moveTime = haxe.Timer.stamp() + timeDelay;			
-			if (server != null) {
-				//trace("send");
-				server.penMove(x, y);
-			}
+			if (server != null) server.penMove(x, y);
 		}
 		
 	}
 	
-	var drawQueue = new Array<UInt16>();
-	var drawQueueTime:Float = 0;
-	
 	inline function draw(x:Int, y:Int) {
 		//trace("draw", x, y);
 		if (haxe.Timer.stamp() < drawQueueTime) {
-			//trace("queue");
 			drawQueue.push(Std.int(x));
 			drawQueue.push(Std.int(y));
 		}
 		else {
 			drawQueueTime = haxe.Timer.stamp() + timeDelay;
-			if (drawQueue.length != 0 && server != null) {
-				//trace("send");
+			if (drawQueue.length != 0 && server != null) 
+			{
 				var lastX = drawQueue[drawQueue.length - 2];
 				var lastY = drawQueue[drawQueue.length - 1];
+				
 				server.penDraw(drawQueue);
+				
 				drawQueue.resize(2);
 				drawQueue[0] = lastX;
-				drawQueue[1] = lastY;
+				drawQueue[1] = lastY;				
 			}
 		}
 		
@@ -173,34 +174,36 @@ class ClientRemote implements Remote {
 	// ------------------------------------------------------------
 	// ------------ Delegated LIME EVENTS -------------------------
 	// ------------------------------------------------------------	
-	var isDraw = false;
-	
-	// TODO: transfer only the relative movements into Bytes!
+
+	// for optimization: transfer only the relative movements into Bytes!
 	inline function mouseMove(x:Float, y:Float) {
 		//trace("mouseMove", x, y);
 		var _x:Int = (x < 0) ? 0 : Std.int(x);
 		var _y:Int = (y < 0) ? 0 : Std.int(y);
-		if (isDraw) draw(_x, _y) else move(_x, _y);
-		
+		if (isDraw) draw(_x, _y) else move(_x, _y);		
 	}
+	
 	inline function mouseDown(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseDown", x, y, button);
 		isDraw = true;
-		drawQueue.push(Std.int(x));
-		drawQueue.push(Std.int(y));
+		var _x:Int = (x < 0) ? 0 : Std.int(x);
+		var _y:Int = (y < 0) ? 0 : Std.int(y);
+		drawQueue.push(_x);
+		drawQueue.push(_y);
 		drawQueueTime = haxe.Timer.stamp() + timeDelay;
+		if (server != null) server.penMove(_x, _y);
 	}
+	
 	inline function mouseUp(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseUp", x, y, button);
-		isDraw = false;
-		
+		isDraw = false;		
 		if (drawQueue.length != 0 && server != null) {
 			//trace("send");
 			server.penDraw(drawQueue);
 			drawQueue.resize(0);
 		}
-		
 	}
+	
 	inline function mouseWheel(dx:Float, dy:Float, mode:MouseWheelMode) {
 		//trace("mouseWheel",dx, dy, mode);
 	}
@@ -245,11 +248,11 @@ class ClientRemote implements Remote {
 	}
 
 	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>):Void {
-		//trace('Client: penDraw - userNr:$userNr');
-		
+		//trace('Client: penDraw - userNr:$userNr');		
 		for ( i in 0...Std.int(drawQueue.length/2) ) {
 			bufferDraw.addElement(new ElemPen(drawQueue[i*2], drawQueue[i*2 + 1] ));
 			if (i > 0)  {
+				// interpolate to create straight lines between the points
 				var dx:Float = -drawQueue[i*2] + drawQueue[(i - 1)*2];
 				var dy:Float = -drawQueue[i*2 + 1] + drawQueue[(i - 1)*2 + 1];
 				var distance = Math.max(Math.abs(dx), Math.abs(dy));
@@ -260,13 +263,9 @@ class ClientRemote implements Remote {
 		
 		peoteView.renderToTexture(displayDraw);
 		
-		// clear
+		// clear the buffer
 		for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
-		// TODO: need to upgrade peote-view:
-		// bufferDraw.removeAllElements();
-		// bufferDraw._maxElements = 0;
-		
-		penMove(userNr, drawQueue[drawQueue.length-2], drawQueue[drawQueue.length-1]);
+		// TODO: need to upgrade peote-view adn using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
 	}
 
 }
