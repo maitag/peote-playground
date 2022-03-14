@@ -16,7 +16,7 @@ class Server {
 		{
 			// bandwith simmulation if there is local testing
 			offline : offline, // emulate network (to test locally without peote-server)
-			netLag  : 10, // results in 20 ms per chunk
+			netLag  : 10, // 10 results in 20 ms per chunk
 			netSpeed: 1024 * 1024 * 512, //[512KB] per second
 			
 			onCreate: function(server:PeoteServer)

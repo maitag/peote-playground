@@ -21,7 +21,7 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// ------------- Create Server &! Client ----------------------
 	// ------------------------------------------------------------	
-	var host:String = "maitag.de";
+	var host:String = "localhost";
 	var port:Int = 7680;
 
 	var channelName:String = "multipaint";
