@@ -191,16 +191,20 @@ class ClientRemote implements Remote {
 	// ------------ Delegated LIME EVENTS -------------------------
 	// ------------------------------------------------------------	
 
+	var lastX:Int = 0;
+	var lastY:Int = 0;
+	
 	// for optimization: transfer only the relative movements into Bytes!
 	inline function mouseMove(x:Float, y:Float) {
 		//trace("mouseMove", x, y);
-		var _x:Int = (x < 0) ? 0 : Std.int(x);
-		var _y:Int = (y < 0) ? 0 : Std.int(y);
+		var _x:Int = lastX = (x < 0) ? 0 : Std.int(x);
+		var _y:Int = lastY = (y < 0) ? 0 : Std.int(y);
 		if (isDraw) draw(_x, _y) else move(_x, _y);		
 	}
 	
 	inline function mouseDown(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseDown", x, y, button);
+		if (isDraw) return;
 		var _x:Int = (x < 0) ? 0 : Std.int(x);
 		var _y:Int = (y < 0) ? 0 : Std.int(y);
 		drawQueue.push(0); // to start the drawing queue
@@ -213,6 +217,7 @@ class ClientRemote implements Remote {
 	
 	inline function mouseUp(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseUp", x, y, button);
+		if (!isDraw) return;
 		isDraw = false;		
 		if (server != null)
 		{
@@ -231,16 +236,15 @@ class ClientRemote implements Remote {
 
 	inline function mouseWheel(dx:Float, dy:Float, mode:MouseWheelMode) {
 		//trace("mouseWheel", dx, dy, mode);
-		if (isDraw) return; // TODO: error without this so better putting all into a queue
-		
 		var delta:Int = (dy > 0) ? changeSpeed : -changeSpeed;
 		
 		if (penchange.ANY) 
 		{
 			// change pen parameters
-			if (penchange.WIDTH ) penWidth  = _restrict( penWidth  + Std.int(delta / 10), 1, 100 );
-			if (penchange.HEIGHT) penHeight = _restrict( penHeight + Std.int(delta / 10), 1, 100 );
-			
+			if (!isDraw) {
+				if (penchange.WIDTH ) penWidth  = _restrict( penWidth  + Std.int(delta / 10), 1, 100 );
+				if (penchange.HEIGHT) penHeight = _restrict( penHeight + Std.int(delta / 10), 1, 100 );
+			}
 			if (penchange.RED  ) penRed   += delta;
 			if (penchange.GREEN) penGreen += delta;
 			if (penchange.BLUE ) penBlue  += delta;
@@ -298,7 +302,29 @@ class ClientRemote implements Remote {
 			case KeyCode.V: penchange.RED = penchange.GREEN = penchange.BLUE = false;
 			
 			case KeyCode.P: // TODO: disable colorpicking
-
+			
+			case KeyCode.SPACE:
+				if (!isDraw) mouseDown(lastX, lastY, MouseButton.LEFT);
+				else mouseUp(lastX, lastY, MouseButton.LEFT);
+/*				isDraw = !isDraw;
+				if (isDraw) {
+					drawQueue.push(0); // to start the drawing queue
+					drawQueue.push(lastX);
+					drawQueue.push(lastY);
+					drawQueueTime = haxe.Timer.stamp() + timeDelay;
+					if (server != null) server.hidePen();				
+				} else {
+					if (server != null)
+					{
+						if (drawQueue.length != 0 && server != null) {
+							//trace("send");
+							server.penDraw(drawQueue);
+							drawQueue.resize(0);
+						}
+						server.showPen(lastX, lastY);
+					}
+				}
+*/
 			case KeyCode.LEFT_SHIFT | KeyCode.LEFT_CTRL: changeSpeed = 10;
 			default:
 		}
@@ -313,6 +339,7 @@ class ClientRemote implements Remote {
 	@:remote public function addPen(userNr:UInt16) {
 		trace('Client: addPen - userNr:$userNr');		
 		var pen = new ElemPen(0, 0);
+		pen.isShown = true;
 		bufferPen.addElement(pen);		
 		penMap.set(userNr, pen);
 	}
@@ -331,7 +358,10 @@ class ClientRemote implements Remote {
 	@:remote public function hidePen(userNr:UInt16) {
 		//trace('Client: hidePen - userNr:$userNr');
 		var pen = penMap.get(userNr);
-		if (pen != null) bufferPen.removeElement(pen);	
+		if (pen != null) {
+			pen.isShown = false;
+			bufferPen.removeElement(pen);	
+		}
 	}
 	
 	@:remote public function showPen(userNr:UInt16, x:UInt16, y:UInt16) {
@@ -341,6 +371,7 @@ class ClientRemote implements Remote {
 			pen.x = x;
 			pen.y = y;
 			bufferPen.addElement(pen);
+			pen.isShown = true;
 		}
 	}
 	
@@ -356,7 +387,7 @@ class ClientRemote implements Remote {
 			pen.c.green = g;
 			pen.c.blue = b;
 			pen.c.alpha = a;
-			bufferPen.updateElement(pen);
+			if (pen.isShown) bufferPen.updateElement(pen);
 		}
 	}
 	

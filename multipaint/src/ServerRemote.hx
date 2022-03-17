@@ -23,16 +23,20 @@ class ServerRemote implements Remote {
 		// trace(Type.typeof(client));
 		this.client = client;
 		
+		// TODO: from imageQueue
+		// if (serverRemote.userNr != userNr) server.imageQueue.sendToClient(this);
+			
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {
 			// add other pens to new clients
 			if (serverRemote.userNr != userNr) client.addPen(serverRemote.userNr);
 			
 			// add new user per to other clients
-			serverRemote.client.addPen(userNr);
+			serverRemote.client.addPen(userNr);			
 		}
+		// TODO: queue for new users and betweem image-capturing
+		//server.imageQueue.addPen(userNr);
 	}
-	
 	
 	// ------------------------------------------------------------
 	// ----- Functions that run on Server and called by Client ----
@@ -63,6 +67,9 @@ class ServerRemote implements Remote {
 			// TODO: for more haptic the clients own pen have to change locally and not throught server
 			if (serverRemote.client != null) serverRemote.client.penChange(userNr, w, h, r, g, b, a);
 		}
+		
+		// TODO: queue for new users and betweem image-capturing
+		//server.imageQueue.penChange(userNr, w, h, r, g, b, a);
 	}
 
 	@:remote public function penMove(x:UInt16, y:UInt16):Void {
@@ -74,12 +81,15 @@ class ServerRemote implements Remote {
 		}
 	}
 
-	@:remote public function penDraw(mouseQueue:Array<UInt16>):Void {
+	@:remote public function penDraw(drawQueue:Array<UInt16>):Void {
 		// trace('Server: penDraw - userNr:$userNr');		
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {
-			if (serverRemote.client != null) serverRemote.client.penDraw(userNr, mouseQueue);
+			if (serverRemote.client != null) serverRemote.client.penDraw(userNr, drawQueue);
 		}
+		
+		// TODO: queue for new users and betweem image-capturing
+		//server.imageQueue.penDraw(userNr, drawQueue);
 	}
 
 }

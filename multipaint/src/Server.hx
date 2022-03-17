@@ -9,6 +9,8 @@ class Server {
 	
 	public var serverRemoteMap(default, null) = new IntMap<ServerRemote>();
 	public var serverRemoteArray(default, null) = new Array<ServerRemote>();
+	
+	public var imageQueue = new ImageQueue();
 
 	public function new(host:String, port:Int, channelName:String, offline:Bool = false) 
 	{
@@ -70,7 +72,11 @@ class Server {
 				// remove that pen from all clients
 				for (serverRemote in serverRemoteArray) {
 					if (serverRemote.client != null) serverRemote.client.removePen(userNr);
-				}					
+				}
+				
+				// TODO: queue for new users and betweem image-capturing
+				//server.imageQueue.removePen(userNr);
+				
 			}
 	}
 	

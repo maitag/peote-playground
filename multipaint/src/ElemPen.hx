@@ -23,6 +23,8 @@ class ElemPen implements Element
 	// z-index
 	@zIndex public var z:Int = 0;	// take care, if this is enabled and render into texture
 	
+	public var isShown:Bool = false;
+	
 	public inline function new(x:Int=0, y:Int=0, z:Int=0, ?pen:ElemPen) {
 		this.x = x;
 		this.y = y;
