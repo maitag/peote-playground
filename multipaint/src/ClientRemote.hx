@@ -463,13 +463,13 @@ class ClientRemote implements Remote {
 
 // need for dedicated server to build without lime
 class ClientRemote implements Remote {
-	@:remote public function addPen(userNr:UInt16) {}
+	@:remote public function addPen   (userNr:UInt16) {}
 	@:remote public function removePen(userNr:UInt16) {}
-	@:remote public function hidePen(userNr:UInt16) {}
-	@:remote public function showPen(userNr:UInt16, x:UInt16, y:UInt16) {}
-	@:remote public function penChange(userNr:UInt16, userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {}
-	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16) {}
-	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {}
+	@:remote public function hidePen  (userNr:UInt16) {}
+	@:remote public function showPen  (userNr:UInt16, x:UInt16, y:UInt16) {}
+	@:remote public function penChange(userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {}
+	@:remote public function penMove  (userNr:UInt16, x:UInt16, y:UInt16) {}
+	@:remote public function penDraw  (userNr:UInt16, drawQueue:Array<UInt16>) {}
 }
 
 #end
