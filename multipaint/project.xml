@@ -25,6 +25,8 @@
 	<haxelib name="peote-socket" />
 	<haxelib name="peote-net" />	
 	
+	<!-- datatypes from peote.io will restrict math operations to not go out of MIN and MAX values -->
+	<haxedef name="restrictPeoteIO" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->

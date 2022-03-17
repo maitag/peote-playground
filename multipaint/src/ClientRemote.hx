@@ -9,6 +9,9 @@ import peote.io.UInt16;
 #if lime
 import haxe.ds.IntMap;
 import haxe.ds.Vector;
+
+import lime.ui.KeyCode;
+import lime.ui.KeyModifier;
 import lime.ui.Window;
 import lime.ui.MouseButton;
 import lime.ui.MouseWheelMode;
@@ -43,6 +46,15 @@ class ClientRemote implements Remote {
 	var bufferPen:Buffer<ElemPen>;
 	var programPen:Program;
 	
+	var penRed  :Byte = 0xff;
+	var penGreen:Byte = 0x00;
+	var penBlue :Byte = 0x00;
+	var penAlpha:Byte = 0xff;
+	
+	var penWidth:Byte = 10;
+	var penHeight:Byte = 10;
+	//var penRotation:Byte = 0x00;
+	
 	var penMap = new IntMap<ElemPen>();
 
 	
@@ -61,8 +73,8 @@ class ClientRemote implements Remote {
 		window.onMouseUp.add(mouseUp);
 		window.onMouseDown.add(mouseDown);
 		window.onMouseWheel.add(mouseWheel);
-		//window.onKeyDown.add(keyDownActive);
-		//window.onKeyDown.add(keyUpActive);		
+		window.onKeyDown.add(keyDown);
+		window.onKeyUp.add(keyUp);		
 		
 		
 		
@@ -104,6 +116,8 @@ class ClientRemote implements Remote {
 		
 		bufferDraw  = new Buffer<ElemPen>(1024, 512);
 		programDraw = new Program(bufferDraw);
+		programDraw.alphaEnabled = true;
+		programDraw.discardAtAlpha(null);
 		
 		displayDraw.addProgram(programDraw);
 		displayDraw.setFramebuffer(textureCanvas, peoteView); // texture to render into
@@ -115,6 +129,7 @@ class ClientRemote implements Remote {
 		
 		bufferPen  = new Buffer<ElemPen>(16, 8);
 		programPen = new Program(bufferPen);
+		programPen.alphaEnabled = true;
 		
 		displayPen.addProgram(programPen);
 
@@ -204,8 +219,77 @@ class ClientRemote implements Remote {
 		}
 	}
 	
+	// stores pressed keys to change the pen by mousewheel or cursor up/down
+	var penchange:PenchangeMode = 0;
+	var changeSpeed:Int = 8;
+
 	inline function mouseWheel(dx:Float, dy:Float, mode:MouseWheelMode) {
-		//trace("mouseWheel",dx, dy, mode);
+		//trace("mouseWheel", dx, dy, mode);
+		var delta:Int = (dy > 0) ? changeSpeed : -changeSpeed;
+		
+		if (penchange.ANY) 
+		{
+			// change pen parameters
+			if (penchange.WIDTH ) penWidth  += delta;
+			if (penchange.HEIGHT) penHeight += delta;
+			
+			if (penchange.RED  ) penRed   += delta;
+			if (penchange.GREEN) penGreen += delta;
+			if (penchange.BLUE ) penBlue  += delta;
+			if (penchange.ALPHA) penAlpha += delta;
+			
+			trace("new pen settings:", penWidth, penHeight, penRed, penGreen, penBlue, penAlpha);
+			if (server != null) server.penChange( penWidth, penHeight, penRed, penGreen, penBlue, penAlpha );
+		}
+		else 
+		{
+			// TODO: Zoom View
+		}
+	}
+	
+	
+	inline function keyDown(key:KeyCode, modifier:KeyModifier) {
+		//trace("keyDown", key, modifier);
+		switch (key) {			
+			case KeyCode.W: penchange.WIDTH_ON();
+			case KeyCode.H: penchange.HEIGHT_ON();
+			case KeyCode.S: penchange.WIDTH = penchange.HEIGHT = true;
+			
+			case KeyCode.R: penchange.RED_ON();
+			case KeyCode.G: penchange.GREEN_ON();
+			case KeyCode.B: penchange.BLUE_ON();
+			case KeyCode.A: penchange.ALPHA_ON();			
+			case KeyCode.V: penchange.RED = penchange.GREEN = penchange.BLUE = true;
+						
+			case KeyCode.P: // TODO: enable colorpicking
+			
+			case KeyCode.LEFT_CTRL: changeSpeed = 16;
+			case KeyCode.LEFT_SHIFT: changeSpeed = 1;
+			
+			case KeyCode.UP  : mouseWheel(0,  1, null);
+			case KeyCode.DOWN: mouseWheel(0, -1, null);
+			default:
+		}
+	}
+			
+	inline function keyUp(key:KeyCode, modifier:KeyModifier) {
+		//trace("keyUp",key, modifier);
+		switch (key) {			
+			case KeyCode.W: penchange.WIDTH_OFF();
+			case KeyCode.H: penchange.HEIGHT_OFF();
+			case KeyCode.S: penchange.WIDTH = penchange.HEIGHT = false;
+			
+			case KeyCode.R: penchange.RED_OFF();
+			case KeyCode.G: penchange.GREEN_OFF();
+			case KeyCode.B: penchange.BLUE_OFF();
+			case KeyCode.A: penchange.ALPHA_OFF();
+			case KeyCode.V: penchange.RED = penchange.GREEN = penchange.BLUE = false;
+			
+			case KeyCode.P: // TODO: disable colorpicking
+
+			case KeyCode.LEFT_SHIFT | KeyCode.LEFT_CTRL: changeSpeed = 8;
+			default:
+		}
 	}
 			
 	
@@ -214,14 +298,14 @@ class ClientRemote implements Remote {
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
-	@:remote public function addPen(userNr:UInt16):Void {
+	@:remote public function addPen(userNr:UInt16) {
 		trace('Client: addPen - userNr:$userNr');		
-		var pen = new ElemPen();
+		var pen = new ElemPen(0, 0);
 		bufferPen.addElement(pen);		
 		penMap.set(userNr, pen);
 	}
 	
-	@:remote public function removePen(userNr:UInt16):Void {
+	@:remote public function removePen(userNr:UInt16) {
 		trace('Client: removePen - userNr:$userNr');		
 		var pen = penMap.get(userNr);
 		if (pen != null) {
@@ -230,14 +314,21 @@ class ClientRemote implements Remote {
 		}
 	}
 	
-/*	@:remote public function changePen(userNr:UInt16, penParam:PenParam):Void {
-		trace('Client: changePen - userNr:$userNr, penNr:$penNr');
-		penMap.set(userNr, availPen.get(penNr));
+	@:remote public function penChange(userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {
+		trace('Client: changePen - userNr:$userNr', r);
+		var pen = penMap.get(userNr);
+		if (pen != null) {
+			pen.w = 1 + (w >> 1);
+			pen.h = 1 + (h >> 1);
+			pen.c.red = r;
+			pen.c.green = g;
+			pen.c.blue = b;
+			pen.c.alpha = a;
+			bufferPen.updateElement(pen);
+		}
 	}
-*/	
 	
-	
-	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16):Void {
+	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16) {
 		//trace('Client: penMove - userNr:$userNr');
 		var pen = penMap.get(userNr);
 		if (pen != null) {
@@ -247,32 +338,41 @@ class ClientRemote implements Remote {
 		}
 	}
 
-	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>):Void {
-		//trace('Client: penDraw - userNr:$userNr');		
-		for ( i in 0...Std.int(drawQueue.length/2) ) {
-			bufferDraw.addElement(new ElemPen(
-				drawQueue[i * 2],
-				drawQueue[i * 2 + 1]
-			));
-			if (i > 0)  {
-				// interpolate to create straight lines between the points (TODO: find a way for fast curve-interpolation)
-				var dx:Float = -drawQueue[i*2] + drawQueue[(i - 1)*2];
-				var dy:Float = -drawQueue[i*2 + 1] + drawQueue[(i - 1)*2 + 1];
-				var distance = Math.max(Math.abs(dx), Math.abs(dy));
-				for ( j in 1...Std.int(distance) ) {
-					bufferDraw.addElement(new ElemPen(
-						Std.int(drawQueue[i * 2] + dx * j / distance),
-						Std.int(drawQueue[i * 2 + 1] + dy * j / distance)
-					));
+	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {
+		var z:Int = ElemPen.MAX_ZINDEX;
+		//trace('Client: penDraw - userNr:$userNr');
+		var pen = penMap.get(userNr);
+		if (pen != null) 
+		{
+			for ( i in 0...Std.int(drawQueue.length/2) ) {
+				bufferDraw.addElement(new ElemPen(
+					drawQueue[i * 2],
+					drawQueue[i * 2 + 1],
+					z--,
+					pen
+				));
+				if (i > 0)  {
+					// interpolate to create straight lines between the points (TODO: find a way for fast curve-interpolation)
+					var dx:Float = -drawQueue[i*2] + drawQueue[(i - 1)*2];
+					var dy:Float = -drawQueue[i*2 + 1] + drawQueue[(i - 1)*2 + 1];
+					var distance = Math.max(Math.abs(dx), Math.abs(dy));
+					for ( j in 1...Std.int(distance) ) {
+						bufferDraw.addElement(new ElemPen(
+							Std.int(drawQueue[i * 2] + dx * j / distance),
+							Std.int(drawQueue[i * 2 + 1] + dy * j / distance),
+							z--,
+							pen
+						));
+					}
 				}
 			}
+		
+			peoteView.renderToTexture(displayDraw);
+			
+			// clear the buffer
+			for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
+			// TODO: need to upgrade peote-view for using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
 		}
-		
-		peoteView.renderToTexture(displayDraw);
-		
-		// clear the buffer
-		for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
-		// TODO: need to upgrade peote-view for using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
 	}
 
 }
@@ -284,6 +384,7 @@ class ClientRemote implements Remote {
 class ClientRemote implements Remote {
 	@:remote public function addPen(userNr:UInt16) {}
 	@:remote public function removePen(userNr:UInt16) {}
+	@:remote public function penChange(userNr:UInt16, userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {}
 	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16) {}
 	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {}
 }
