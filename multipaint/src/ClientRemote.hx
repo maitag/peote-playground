@@ -97,7 +97,7 @@ class ClientRemote implements Remote {
 		programCanvas = new Program(bufferCanvas);		
 		programCanvas.setTexture(textureCanvas, "renderFrom");
 		//programCanvas.setColorFormula('renderFrom');
-		programCanvas.alphaEnabled = true;
+		programCanvas.alphaEnabled = false; // TODO: to use this here it maybe have to fill with 0xffffff00 !
 		programCanvas.discardAtAlpha(null);
 		
 		displayCanvas.addProgram(programCanvas);
@@ -130,6 +130,7 @@ class ClientRemote implements Remote {
 		bufferPen  = new Buffer<ElemPen>(16, 8);
 		programPen = new Program(bufferPen);
 		programPen.alphaEnabled = true;
+		programCanvas.discardAtAlpha(null);
 		
 		displayPen.addProgram(programPen);
 
@@ -200,45 +201,52 @@ class ClientRemote implements Remote {
 	
 	inline function mouseDown(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseDown", x, y, button);
-		isDraw = true;
 		var _x:Int = (x < 0) ? 0 : Std.int(x);
 		var _y:Int = (y < 0) ? 0 : Std.int(y);
+		drawQueue.push(0); // to start the drawing queue
 		drawQueue.push(_x);
 		drawQueue.push(_y);
 		drawQueueTime = haxe.Timer.stamp() + timeDelay;
-		if (server != null) server.penMove(_x, _y);
+		if (server != null) server.hidePen();
+		isDraw = true;
 	}
 	
 	inline function mouseUp(x:Float, y:Float, button:MouseButton) {
 		//trace("mouseUp", x, y, button);
 		isDraw = false;		
-		if (drawQueue.length != 0 && server != null) {
-			//trace("send");
-			server.penDraw(drawQueue);
-			drawQueue.resize(0);
+		if (server != null)
+		{
+			if (drawQueue.length != 0 && server != null) {
+				//trace("send");
+				server.penDraw(drawQueue);
+				drawQueue.resize(0);
+			}
+			server.showPen( (x < 0) ? 0 : Std.int(x), (y < 0) ? 0 : Std.int(y) );
 		}
 	}
 	
 	// stores pressed keys to change the pen by mousewheel or cursor up/down
 	var penchange:PenchangeMode = 0;
-	var changeSpeed:Int = 8;
+	var changeSpeed:Int = 10;
 
 	inline function mouseWheel(dx:Float, dy:Float, mode:MouseWheelMode) {
 		//trace("mouseWheel", dx, dy, mode);
+		if (isDraw) return; // TODO: error without this so better putting all into a queue
+		
 		var delta:Int = (dy > 0) ? changeSpeed : -changeSpeed;
 		
 		if (penchange.ANY) 
 		{
 			// change pen parameters
-			if (penchange.WIDTH ) penWidth  += delta;
-			if (penchange.HEIGHT) penHeight += delta;
+			if (penchange.WIDTH ) penWidth  = _restrict( penWidth  + Std.int(delta / 10), 1, 100 );
+			if (penchange.HEIGHT) penHeight = _restrict( penHeight + Std.int(delta / 10), 1, 100 );
 			
 			if (penchange.RED  ) penRed   += delta;
 			if (penchange.GREEN) penGreen += delta;
 			if (penchange.BLUE ) penBlue  += delta;
-			if (penchange.ALPHA) penAlpha += delta;
+			if (penchange.ALPHA) penAlpha = _restrict( penAlpha + delta, 5, 0xff);
 			
-			trace("new pen settings:", penWidth, penHeight, penRed, penGreen, penBlue, penAlpha);
+			//trace("new pen settings:", penWidth, penHeight, penRed, penGreen, penBlue, penAlpha);
 			if (server != null) server.penChange( penWidth, penHeight, penRed, penGreen, penBlue, penAlpha );
 		}
 		else 
@@ -247,6 +255,10 @@ class ClientRemote implements Remote {
 		}
 	}
 	
+	inline function _restrict(value:Int, min:Int, max:Int):Int
+	{
+		return if (value < min) min else if (value > max) max else value;
+	}
 	
 	inline function keyDown(key:KeyCode, modifier:KeyModifier) {
 		//trace("keyDown", key, modifier);
@@ -263,7 +275,7 @@ class ClientRemote implements Remote {
 						
 			case KeyCode.P: // TODO: enable colorpicking
 			
-			case KeyCode.LEFT_CTRL: changeSpeed = 16;
+			case KeyCode.LEFT_CTRL: changeSpeed = 20;
 			case KeyCode.LEFT_SHIFT: changeSpeed = 1;
 			
 			case KeyCode.UP  : mouseWheel(0,  1, null);
@@ -287,7 +299,7 @@ class ClientRemote implements Remote {
 			
 			case KeyCode.P: // TODO: disable colorpicking
 
-			case KeyCode.LEFT_SHIFT | KeyCode.LEFT_CTRL: changeSpeed = 8;
+			case KeyCode.LEFT_SHIFT | KeyCode.LEFT_CTRL: changeSpeed = 10;
 			default:
 		}
 	}
@@ -314,12 +326,32 @@ class ClientRemote implements Remote {
 		}
 	}
 	
-	@:remote public function penChange(userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {
-		trace('Client: changePen - userNr:$userNr', r);
+	// ------------------------------------------
+	
+	@:remote public function hidePen(userNr:UInt16) {
+		//trace('Client: hidePen - userNr:$userNr');
+		var pen = penMap.get(userNr);
+		if (pen != null) bufferPen.removeElement(pen);	
+	}
+	
+	@:remote public function showPen(userNr:UInt16, x:UInt16, y:UInt16) {
+		//trace('Client: showPen - userNr:$userNr');
 		var pen = penMap.get(userNr);
 		if (pen != null) {
-			pen.w = 1 + (w >> 1);
-			pen.h = 1 + (h >> 1);
+			pen.x = x;
+			pen.y = y;
+			bufferPen.addElement(pen);
+		}
+	}
+	
+	// ------------------------------------------
+	
+	@:remote public function penChange(userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {
+		//trace('Client: changePen - userNr:$userNr', r);
+		var pen = penMap.get(userNr);
+		if (pen != null) {
+			pen.w = w;
+			pen.h = h;
 			pen.c.red = r;
 			pen.c.green = g;
 			pen.c.blue = b;
@@ -339,18 +371,36 @@ class ClientRemote implements Remote {
 	}
 
 	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {
-		var z:Int = ElemPen.MAX_ZINDEX;
 		//trace('Client: penDraw - userNr:$userNr');
 		var pen = penMap.get(userNr);
 		if (pen != null) 
 		{
-			for ( i in 0...Std.int(drawQueue.length/2) ) {
-				bufferDraw.addElement(new ElemPen(
-					drawQueue[i * 2],
-					drawQueue[i * 2 + 1],
-					z--,
-					pen
-				));
+			var z:Int = ElemPen.MAX_ZINDEX;
+			
+			// check if it is start drawing into looking at the array length
+			var notAtStart = true;
+			if (drawQueue.length % 2 != 0) {
+				notAtStart = false;
+				drawQueue.shift();
+			}
+			
+			for ( i in 0...Std.int(drawQueue.length / 2) )
+			{				
+				if (notAtStart && i == 0) {
+					// between the stroke-chunks this mask out the first one (need only if there is transparency)
+					var firstElem = new ElemPen(drawQueue[0], drawQueue[1], z--, pen);
+					firstElem.c = 0xffffff00;
+					bufferDraw.addElement(firstElem);
+				} 
+				else {
+					bufferDraw.addElement(new ElemPen(
+						drawQueue[i * 2],
+						drawQueue[i * 2 + 1],
+						z--,
+						pen
+					));
+				}
+				
 				if (i > 0)  {
 					// interpolate to create straight lines between the points (TODO: find a way for fast curve-interpolation)
 					var dx:Float = -drawQueue[i*2] + drawQueue[(i - 1)*2];
@@ -368,7 +418,7 @@ class ClientRemote implements Remote {
 			}
 		
 			peoteView.renderToTexture(displayDraw);
-			
+						
 			// clear the buffer
 			for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
 			// TODO: need to upgrade peote-view for using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
@@ -384,6 +434,8 @@ class ClientRemote implements Remote {
 class ClientRemote implements Remote {
 	@:remote public function addPen(userNr:UInt16) {}
 	@:remote public function removePen(userNr:UInt16) {}
+	@:remote public function hidePen(userNr:UInt16) {}
+	@:remote public function showPen(userNr:UInt16, x:UInt16, y:UInt16) {}
 	@:remote public function penChange(userNr:UInt16, userNr:UInt16, w:Byte, h:Byte, r:Byte, g:Byte, b:Byte, a:Byte) {}
 	@:remote public function penMove(userNr:UInt16, x:UInt16, y:UInt16) {}
 	@:remote public function penDraw(userNr:UInt16, drawQueue:Array<UInt16>) {}
