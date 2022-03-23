@@ -65,7 +65,9 @@ class Main extends Application
 				y: 100,
 				rotation: 45,
 				rotational_velocity:15,
-				elasticity: 0.5,
+				material: {
+					elasticity: 0.5
+				},
 				shape: {
 					type: RECT,
 					width: 100,
@@ -80,7 +82,9 @@ class Main extends Application
 				x: 250,
 				y: 300,
 				rotation: 0,
-				elasticity: 0.5,
+				material: {
+					elasticity: 0.5
+				},
 				shape: {
 					type: RECT,
 					width: 500,
