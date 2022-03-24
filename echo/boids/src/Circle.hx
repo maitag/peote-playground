@@ -13,12 +13,15 @@ class Circle implements Element
 	@posX @set("Position") public var x:Float = 0.0;
 	@posY @set("Position") public var y:Float = 0.0;
 	
-	// size in pixel
-	@sizeX public var width:Float;
-	@sizeY public var height:Float;
+	@custom public var radius:Float = 50.0;
 	
-	//@pivotX @const @formula("x/2.0") var px:Float;
-	//@pivotY @const @formula("y/2.0") var py:Float;
+	// size calculation by radius
+	@sizeX @const @formula("radius * 2.0") var w:Float;
+	@sizeY @const @formula("radius * 2.0") var h:Float;
+	
+	// pivot calculation by radius
+	@pivotX @const @formula("radius") var px:Float;
+	@pivotY @const @formula("radius") var py:Float;
 	
 	// color (RGBA)
 	@color public var color:Color = 0x000000ff;
@@ -51,8 +54,7 @@ class Circle implements Element
 	{
 		this.color = color;
 		
-		width = options.shape.width;
-		height = options.shape.height;
+		radius = options.shape.radius;
 		
 		x = options.x;
 		y = options.y;

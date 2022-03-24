@@ -64,15 +64,14 @@ class Main extends Application
 		var red = new Circle(buffer, Color.RED, world,
 			{
 				//mass: 4,
-				x: 10,
-				y: 10,
+				x: 80,
+				y: 60,
 				material: {
 					elasticity: 0.5
 				},
 				shape: {
 					type: CIRCLE,
-					width: 100,
-					height: 100
+					radius: 50
 				}
 			}
 		);
@@ -80,15 +79,14 @@ class Main extends Application
 		var blue = new Circle(buffer, Color.BLUE, world,
 			{
 				mass: 0, // static
-				x: 10,
-				y: 120,
+				x: 60,
+				y: 170,
 				material: {
 					elasticity: 0.5
 				},
 				shape: {
 					type: CIRCLE,
-					width: 100,
-					height: 100
+					radius: 50
 				}
 			}
 		);
