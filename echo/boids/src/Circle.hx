@@ -64,6 +64,9 @@ class Circle implements Element
 		body.on_move = onMove.bind(buffer, _);
 		
 		buffer.addElement(this);
+		
+		// connect to echos body
+		body.sprite = this;
 	}
 	
 	public function onMove(buffer: Buffer<Circle>, x:Float, y:Float)

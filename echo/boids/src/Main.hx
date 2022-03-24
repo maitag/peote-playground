@@ -33,6 +33,8 @@ class Main extends Application
 	
 	var world:World;
 	
+	var red:Circle;
+	
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
@@ -54,21 +56,21 @@ class Main extends Application
 		world = Echo.start({
 			width: 64, // Affects the bounds for collision checks.
 			height: 64, // Affects the bounds for collision checks.
-			gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
+			//gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
 			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
 		});
 		
 		
 		// create echo bodies
 				
-		var red = new Circle(buffer, Color.RED, world,
+		red = new Circle(buffer, Color.GREY4, world,
 			{
-				//mass: 4,
+				mass: 1,
 				x: 80,
 				y: 60,
-				material: {
-					elasticity: 0.5
-				},
+				//material: {
+					//elasticity: 0.5
+				//},
 				shape: {
 					type: CIRCLE,
 					radius: 50
@@ -76,14 +78,14 @@ class Main extends Application
 			}
 		);
 		
-		var blue = new Circle(buffer, Color.BLUE, world,
+		var blue = new Circle(buffer, Color.GREY4, world,
 			{
-				mass: 0, // static
+				mass: 1,
 				x: 60,
 				y: 170,
-				material: {
-					elasticity: 0.5
-				},
+				//material: {
+					//elasticity: 0.5
+				//},
 				shape: {
 					type: CIRCLE,
 					radius: 50
@@ -95,10 +97,18 @@ class Main extends Application
 		// let them collide
 		
 		world.listen(red.body, blue.body, {
-			separate: true, // red and blue collides
-			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
-			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
-			exit: (a, b) -> trace("Collision Exited"), // at collision ends
+			separate: false, // red and blue collides
+			enter: function (a, b, c) {
+				//trace("Collision Entered"); // at first frame that a collision starts
+				a.sprite.color = Color.RED;
+				b.sprite.color = Color.RED;
+			},
+			//stay: (a, b, c) -> trace("Collision Stayed", c[0].overlap), // at frames when the two Bodies are continuing to collide
+			exit: function (a, b) {
+				//trace("Collision Exited"); // at first frame that a collision starts
+				a.sprite.color = Color.GREY4;
+				b.sprite.color = Color.GREY4;
+			}
 		});
 
 		
@@ -119,7 +129,10 @@ class Main extends Application
 	// public override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");	
 
 	// ----------------- MOUSE EVENTS ------------------------------
-	// public override function onMouseMove (x:Float, y:Float):Void {}
+	public override function onMouseMove (x:Float, y:Float):Void {
+		red.body.x = x;
+		red.body.y = y;
+	}
 	// public override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// public override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// public override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
