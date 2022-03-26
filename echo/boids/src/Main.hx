@@ -1,5 +1,8 @@
 package;
 
+import echo.Body;
+import echo.data.Types.ForceType;
+import echo.math.Vector2;
 import haxe.CallStack;
 
 import lime.app.Application;
@@ -34,6 +37,7 @@ class Main extends Application
 	var world:World;
 	
 	var red:Circle;
+	var blue:Circle;
 	
 	public function startSample(window:Window)
 	{
@@ -65,7 +69,7 @@ class Main extends Application
 				
 		red = new Circle(buffer, Color.GREY4, world,
 			{
-				mass: 1,
+				mass: Math.PI*100*100,
 				x: 80,
 				y: 60,
 				//material: {
@@ -73,14 +77,14 @@ class Main extends Application
 				//},
 				shape: {
 					type: CIRCLE,
-					radius: 50
+					radius: 100
 				}
 			}
 		);
 		
-		var blue = new Circle(buffer, Color.GREY4, world,
+		blue = new Circle(buffer, Color.GREY4, world,
 			{
-				mass: 1,
+				mass: Math.PI*50*50,
 				x: 60,
 				y: 170,
 				//material: {
@@ -94,6 +98,7 @@ class Main extends Application
 		);
 		
 		
+		
 		// let them collide
 		
 		world.listen(red.body, blue.body, {
@@ -103,7 +108,19 @@ class Main extends Application
 				a.sprite.color = Color.RED;
 				b.sprite.color = Color.RED;
 			},
-			//stay: (a, b, c) -> trace("Collision Stayed", c[0].overlap), // at frames when the two Bodies are continuing to collide
+			//stay: (a, b, c) -> trace("Collision Stayed", c[0].overlap/(a.sprite.radius + b.sprite.radius)), // at frames when the two Bodies are continuing to collide
+			stay: function (a:Body, b:Body, c) {
+				var distance:Float = Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+				//trace(distance);
+				//b.push((a.x-b.x)*0.01,(a.y-b.y)*0.01, false, ForceType.VELOCITY);
+				var direction:Vector2 =  new Vector2(a.x - b.x, a.y - b.y);
+				direction.normalize();
+				//direction *= Math.min(1000, 1000/(distance*distance));
+				direction *= Math.min( 5000, Math.pow((a.sprite.radius + b.sprite.radius - distance)*2, 2) );
+				//trace(direction.x);
+				a.push(-direction.x / a.mass , -direction.y / a.mass, false, ForceType.VELOCITY);
+				b.push(direction.x / b.mass, direction.y / b.mass, false, ForceType.VELOCITY);
+			},
 			exit: function (a, b) {
 				//trace("Collision Exited"); // at first frame that a collision starts
 				a.sprite.color = Color.GREY4;
@@ -111,8 +128,7 @@ class Main extends Application
 			}
 		});
 
-		
-		
+		//blue.body.push(10,0,false,ForceType.VELOCITY);
 	}
 	
 	// ------------------------------------------------------------
