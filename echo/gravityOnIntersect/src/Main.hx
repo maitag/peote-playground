@@ -34,101 +34,139 @@ class Main extends Application
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
 	
-	var world:World;
+	var world:World;	
+	var cursor:Body;
 	
-	var red:Circle;
-	var blue:Circle;
+	static var MAX_RADIUS:Float = 100;
 	
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-
-		var buffer = new Buffer<Circle>(1024, 1024, true);
-		var display = new Display(0, 0, window.width, window.height, Color.GREEN);
-		
-		var program = new Program(buffer);
-		program.injectIntoFragmentShader( Circle.fShader );
-		program.discardAtAlpha(0.0);
-
+		var display = new Display(0, 0, 800, 600, Color.GREEN);		
 		peoteView.addDisplay(display);
-		display.addProgram(program);
-
-
+		Circle.init(display);
+		
 		
 		// ---- ECHO PHYSICS ----------------
 		
 		world = Echo.start({
-			width: 64, // Affects the bounds for collision checks.
-			height: 64, // Affects the bounds for collision checks.
-			//gravity_y: 20, // Force of Gravity on the Y axis. Also available for the X axis.
-			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
+			x:-MAX_RADIUS*3,
+			y:-MAX_RADIUS*3,
+			width:  800 + MAX_RADIUS*3,
+			height: 600 + MAX_RADIUS*3,
+			iterations: 1 // number of Physics iterations each time the World steps
 		});
 		
 		
-		// create echo bodies
-				
-		red = new Circle(buffer, Color.GREY4, world,
-			{
-				mass: Math.PI*100*100,
-				x: 80,
-				y: 60,
-				//material: {
-					//elasticity: 0.5
-				//},
-				shape: {
-					type: CIRCLE,
-					radius: 100
-				}
-			}
-		);
+		// create echo bodies				
+		var bodies = [];	
+		for (i in 0...10) bodies.push( addBody( 10 + Math.random()*10 ) );
+		for (i in 0...15) bodies.push( addBody( 20 + Math.random()*20 ) );
+		for (i in 0...40) bodies.push( addBody( 30 + Math.random()*25 ) );
+		for (i in 0...15) bodies.push( addBody( 40 + Math.random()*20 ) );
+		for (i in 0...10) bodies.push( addBody( 50 + Math.random()*10 ) );		
 		
-		blue = new Circle(buffer, Color.GREY4, world,
-			{
-				mass: Math.PI*50*50,
-				x: 60,
-				y: 170,
-				//material: {
-					//elasticity: 0.5
-				//},
-				shape: {
-					type: CIRCLE,
-					radius: 50
-				}
-			}
-		);
+		cursor = addBody( 150 );
+		bodies.push(cursor);
 		
-		
-		
-		// let them collide
-		
-		world.listen(red.body, blue.body, {
+		// listen for collision
+		world.listen( bodies, {
 			separate: false, // red and blue collides
 			enter: function (a, b, c) {
 				//trace("Collision Entered"); // at first frame that a collision starts
-				a.sprite.color = Color.RED;
-				b.sprite.color = Color.RED;
+				a.entity.intersected++;
+				b.entity.intersected++;
+				a.entity.color = Color.RED;
+				b.entity.color = Color.RED;
 			},
-			//stay: (a, b, c) -> trace("Collision Stayed", c[0].overlap/(a.sprite.radius + b.sprite.radius)), // at frames when the two Bodies are continuing to collide
-			stay: function (a:Body, b:Body, c) {
+			stay: function (a:Body, b:Body, c) {				
+				// let them move to its center of gravity
 				var distance:Float = Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-				//trace(distance);
-				//b.push((a.x-b.x)*0.01,(a.y-b.y)*0.01, false, ForceType.VELOCITY);
 				var direction:Vector2 =  new Vector2(a.x - b.x, a.y - b.y);
 				direction.normalize();
-				//direction *= Math.min(1000, 1000/(distance*distance));
-				direction *= Math.min( 5000, Math.pow((a.sprite.radius + b.sprite.radius - distance)*2, 2) );
-				//trace(direction.x);
+				direction *= Math.pow((a.entity.radius + b.entity.radius - distance), 2) ;				
 				a.push(-direction.x / a.mass , -direction.y / a.mass, false, ForceType.VELOCITY);
 				b.push(direction.x / b.mass, direction.y / b.mass, false, ForceType.VELOCITY);
 			},
 			exit: function (a, b) {
 				//trace("Collision Exited"); // at first frame that a collision starts
-				a.sprite.color = Color.GREY4;
-				b.sprite.color = Color.GREY4;
+				a.entity.intersected--;
+				b.entity.intersected--;
+				if (a.entity.intersected == 0) a.entity.color = Color.GREY4;
+				if (b.entity.intersected == 0) b.entity.color = Color.GREY4;
 			}
 		});
 
-		//blue.body.push(10,0,false,ForceType.VELOCITY);
+	}
+	
+	public function addBody(radius:Float):Body
+	{
+		var body:Body = world.make({
+				mass: Math.PI * radius * radius,
+				kinematic:true,
+				max_velocity_length:2000,
+				shape: {
+					type: CIRCLE,
+					radius: radius
+				}
+		});
+		
+		setInitialMovement(body);
+		
+		// connect peote-view graphic element to echos body
+		body.entity = new Circle(body.x, body.y, radius, Color.GREY4);
+		body.on_move = onMove.bind(body, _);
+		
+		return body;
+	}
+	
+	public function setInitialMovement(body:Body) {
+		
+		var x:Float = Math.random() * 800;
+		var y:Float = Math.random() * 600;
+		var dx:Float = 1 + Math.random() * 10;
+		var dy:Float = 1 + Math.random() * 10;
+		
+		if (Math.random() > 0.5) {
+			if (Math.random() > 0.5) {
+				x = -MAX_RADIUS * 3 + 1;
+				dx = dx * 5;
+			}
+			else {
+				x = 800 + MAX_RADIUS * 3 - 1;
+				dx = -dx * 5;
+			}
+		}
+		else {
+			if (Math.random() > 0.5) {
+				y = -MAX_RADIUS * 3 + 1;
+				dy = dy * 5;
+			}
+			else {
+				y = 600 + MAX_RADIUS * 3 - 1;
+				dy = -dy * 5;
+			}
+		}
+		
+		body.velocity.set(dx, dy);
+
+		body.x = x;
+		body.y = y;
+		
+	}
+	
+	public function onMove(body:Body, x:Float, y:Float)
+	{
+		body.entity.update(x, y);
+		
+		if ( (x < -MAX_RADIUS * 3 && body.velocity.x < 0)
+			|| (y < -MAX_RADIUS * 3 && body.velocity.y < 0)
+			|| (x > 800 + MAX_RADIUS * 3 && body.velocity.x > 0)
+			|| (y > 600 + MAX_RADIUS * 3 && body.velocity.y > 0)
+		)
+		{
+			setInitialMovement(body);
+		}
 	}
 	
 	// ------------------------------------------------------------
@@ -146,8 +184,9 @@ class Main extends Application
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	public override function onMouseMove (x:Float, y:Float):Void {
-		red.body.x = x;
-		red.body.y = y;
+		cursor.velocity.set(0,0);
+		cursor.x = x;
+		cursor.y = y;
 	}
 	// public override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// public override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}

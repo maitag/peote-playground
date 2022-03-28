@@ -18,7 +18,11 @@
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />
 	<haxelib name="echo" />	
-	<haxelib name="hxmath" />	
+	<haxelib name="hxmath" />
+	
+	<!-- echo body bindings for the peote-view element -->
+	<haxeflag name="--macro" value="echo.Macros.add_data('entity','Entity')"/>
+	
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->

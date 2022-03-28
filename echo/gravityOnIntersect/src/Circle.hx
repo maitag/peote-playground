@@ -1,15 +1,12 @@
 package;
 
-import echo.data.Types.ForceType;
 import peote.view.Buffer;
+import peote.view.Display;
 import peote.view.Element;
 import peote.view.Color;
+import peote.view.Program;
 
-import echo.World;
-import echo.Body;
-import echo.data.Options.BodyOptions;
-
-class Circle implements Element
+class Circle implements Element implements Entity
 {
 	@posX @set("Position") public var x:Float = 0.0;
 	@posY @set("Position") public var y:Float = 0.0;
@@ -30,7 +27,7 @@ class Circle implements Element
 	var DEFAULT_COLOR_FORMULA = "color*circle(radius)";
 	var OPTIONS = { alpha:true };
 
-	public static var fShader =
+	static var fShader =
 	'
 		float circle(float radius)
 		{
@@ -48,37 +45,35 @@ class Circle implements Element
 			return c;
 		}
 	';
+	
+	static var buffer:Buffer<Circle>;
+	static var program:Program;
+	
+	public static function init(display:Display)
+	{
+		buffer = new Buffer<Circle>(1024, 1024, true);
+		program = new Program(buffer);
+		program.injectIntoFragmentShader( fShader );
+		program.discardAtAlpha(0.0);
+		display.addProgram(program);
+	}
 
 	
-	public var body:Body;
-	
-	public function new(buffer:Buffer<Circle>, color:Color, world:World, options:BodyOptions)
+	public var intersected:Int = 0;
+		
+	public function new(x:Float, y:Float, radius:Float, color:Color)
 	{
-		this.color = color;
-		
-		radius = options.shape.radius;
-		
-		x = options.x;
-		y = options.y;
-		
-		body = world.make(options);
-		
-		body.on_move = onMove.bind(buffer, _);
-		
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.color = color;		
 		buffer.addElement(this);
-		
-		// connect to echos body
-		body.sprite = this;
 	}
 	
-	public function onMove(buffer: Buffer<Circle>, x:Float, y:Float)
+	public function update(x:Float, y:Float):Void
 	{
 		setPosition(x, y);
-		if (x > 900) body.x = -100;
-		else if (x < -100) body.x = 900; 
-		if (y > 700) body.y = -100;
-		else if (y < -100) body.y = 700; 
-		buffer.updateElement(this);
+		buffer.updateElement(this);		
 	}
 	
 	
