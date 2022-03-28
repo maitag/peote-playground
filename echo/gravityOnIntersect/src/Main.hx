@@ -42,7 +42,7 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-		var display = new Display(0, 0, 800, 600, Color.GREEN);		
+		var display = new Display(0, 0, 800, 600, Color.BLUE);		
 		peoteView.addDisplay(display);
 		Circle.init(display);
 		
@@ -76,8 +76,10 @@ class Main extends Application
 				//trace("Collision Entered"); // at first frame that a collision starts
 				a.entity.intersected++;
 				b.entity.intersected++;
-				a.entity.color = Color.RED;
-				b.entity.color = Color.RED;
+				a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
+				b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));
+				//a.entity.color = Color.WHITE;
+				//b.entity.color = Color.WHITE;
 			},
 			stay: function (a:Body, b:Body, c) {				
 				// let them move to its center of gravity
@@ -91,9 +93,11 @@ class Main extends Application
 			exit: function (a, b) {
 				//trace("Collision Exited"); // at first frame that a collision starts
 				a.entity.intersected--;
-				b.entity.intersected--;
-				if (a.entity.intersected == 0) a.entity.color = Color.GREY4;
-				if (b.entity.intersected == 0) b.entity.color = Color.GREY4;
+				b.entity.intersected--;				
+				a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
+				b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));				
+				//if (a.entity.intersected == 0) a.entity.color = Color.GREY4;
+				//if (b.entity.intersected == 0) b.entity.color = Color.GREY4;
 			}
 		});
 
@@ -120,53 +124,53 @@ class Main extends Application
 		return body;
 	}
 	
-	public function setInitialMovement(body:Body) {
-		
-		var x:Float = Math.random() * 800;
-		var y:Float = Math.random() * 600;
-		var dx:Float = 1 + Math.random() * 10;
-		var dy:Float = 1 + Math.random() * 10;
-		
-		if (Math.random() > 0.5) {
-			if (Math.random() > 0.5) {
-				x = -MAX_RADIUS * 3 + 1;
-				dx = dx * 5;
-			}
-			else {
-				x = 800 + MAX_RADIUS * 3 - 1;
-				dx = -dx * 5;
-			}
-		}
-		else {
-			if (Math.random() > 0.5) {
-				y = -MAX_RADIUS * 3 + 1;
-				dy = dy * 5;
-			}
-			else {
-				y = 600 + MAX_RADIUS * 3 - 1;
-				dy = -dy * 5;
-			}
-		}
-		
-		body.velocity.set(dx, dy);
-
-		body.x = x;
-		body.y = y;
-		
-	}
-	
 	public function onMove(body:Body, x:Float, y:Float)
 	{
-		body.entity.update(x, y);
-		
 		if ( (x < -MAX_RADIUS * 3 && body.velocity.x < 0)
 			|| (y < -MAX_RADIUS * 3 && body.velocity.y < 0)
 			|| (x > 800 + MAX_RADIUS * 3 && body.velocity.x > 0)
 			|| (y > 600 + MAX_RADIUS * 3 && body.velocity.y > 0)
 		)
 		{
+			body.velocity.set(0,0);
 			setInitialMovement(body);
 		}
+		else body.entity.update(x, y);
+		
+	}
+	
+	public function setInitialMovement(body:Body) {
+		
+		var x:Float = Math.random() * 800;
+		var y:Float = Math.random() * 600;
+		var dx:Float = 2.5 - Math.random() * 5;
+		var dy:Float = 2.5 - Math.random() * 5;
+		
+		if (Math.random() > 0.5) {
+			if (Math.random() > 0.5) {
+				x = -MAX_RADIUS * 3 + 1;
+				dx = 10 + Math.random() * 20;
+			}
+			else {
+				x = 800 + MAX_RADIUS * 3 - 1;
+				dx = -(10 + Math.random() * 20);
+			}
+		}
+		else {
+			if (Math.random() > 0.5) {
+				y = -MAX_RADIUS * 3 + 1;
+				dy = 10 + Math.random() * 20;
+			}
+			else {
+				y = 600 + MAX_RADIUS * 3 - 1;
+				dy = -(10 + Math.random() * 20);
+			}
+		}
+		
+		body.x = x;
+		body.y = y;
+
+		body.velocity.set(dx, dy);		
 	}
 	
 	// ------------------------------------------------------------
