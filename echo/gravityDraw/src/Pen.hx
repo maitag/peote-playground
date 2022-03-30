@@ -14,8 +14,8 @@ class Pen implements Element implements Entity
 	@custom @varying public var radius:Float = 50.0;
 	
 	// size calculation by radius
-	@sizeX @const @formula("radius * 2.0") var w:Float;
-	@sizeY @const @formula("radius * 2.0") var h:Float;
+	@sizeX @const @formula("radius * 2.0 / 30.0") var w:Float;
+	@sizeY @const @formula("radius * 2.0 / 30.0") var h:Float;
 	
 	// pivot calculation by radius
 	@pivotX @const @formula("radius") var px:Float;
@@ -36,7 +36,8 @@ class Pen implements Element implements Entity
 			float r = sqrt(x * x + y * y);
 			float c;
 			
-			if ( r < 1.0 ) {
+			if ( r < 1.0 && r > 1.0 - 2.0/radius ) {
+			//if ( r < 1.0 ) {
 				c = 1.0;
 			}
 			else {
@@ -54,6 +55,7 @@ class Pen implements Element implements Entity
 		buffer = new Buffer<Pen>(1024, 1024, true);
 		program = new Program(buffer);
 		program.injectIntoFragmentShader( fShader );
+		program.alphaEnabled = true;
 		program.discardAtAlpha(0.0);
 		display.addProgram(program);
 	}
@@ -65,7 +67,8 @@ class Pen implements Element implements Entity
 	{
 		this.x = x;
 		this.y = y;
-		this.radius = Math.min(10, Math.max(2, radius/6));
+		this.radius = radius;
+		//this.radius = Math.min(10, Math.max(2, radius/6));
 		this.color = color;		
 		buffer.addElement(this);
 	}

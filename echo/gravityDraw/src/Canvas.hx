@@ -12,7 +12,7 @@ class Canvas implements Element
 	@sizeX public var w:Float;	
 	@sizeY public var h:Float;
 	
-	//var OPTIONS = { alpha:false };
+	var OPTIONS = { alpha:true };
 
 	static var buffer:Buffer<Canvas>;
 	static var program:Program;
@@ -28,7 +28,7 @@ class Canvas implements Element
 		texture.clearOnRenderInto = false; // to not clear the texture before rendering into
 
 		program.setTexture(texture, "renderFrom");
-		program.discardAtAlpha(null);
+		//program.discardAtAlpha(null);
 		
 		display.addProgram(program);	
 	}

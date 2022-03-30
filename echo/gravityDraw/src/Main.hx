@@ -47,20 +47,22 @@ class Main extends Application
 		var peoteView = new PeoteView(window);		
 		
 		// display that shows the texture where is drawed into
-		var displayCanvas = new Display(0, 0, 800, 600, Color.BLACK);
-		peoteView.addDisplay(displayCanvas);
-
+		var displayCanvas = new Display(0, 0, 800, 600);
 		Canvas.init(displayCanvas);
+		peoteView.addDisplay(displayCanvas);
 		canvas = new Canvas(800, 600);
 
-		
-		var display = new Display(0, 0, 800, 600, Color.BLUE);		
+		// display draws the pens into the Canvas texture
+		var display = new Display(0, 0, 800, 600); // do not give an opaque backgrund-color there!		
 		peoteView.addDisplay(display);
+		peoteView.addFramebufferDisplay(display); // add also to the hidden RenderList for updating the Framebuffer Textures
+		display.renderFramebufferEnabled = true;		
+		display.setFramebuffer(Canvas.texture); // texture to render into
 		
 		Pen.init(display);
-		Circle.init(display);
+		//Circle.init(display);
 		
-		
+		peoteView.start();
 		
 		
 		// ---- ECHO PHYSICS ----------------
@@ -77,9 +79,9 @@ class Main extends Application
 		// create echo bodies				
 		var bodies = [];	
 		for (i in 0...10) bodies.push( addBody( 10 + Math.random()*10 ) );
-		for (i in 0...15) bodies.push( addBody( 20 + Math.random()*20 ) );
-		for (i in 0...40) bodies.push( addBody( 30 + Math.random()*25 ) );
-		for (i in 0...15) bodies.push( addBody( 40 + Math.random()*20 ) );
+		for (i in 0...15) bodies.push( addBody( 20 + Math.random()*15 ) );
+		for (i in 0...30) bodies.push( addBody( 30 + Math.random()*20 ) );
+		for (i in 0...15) bodies.push( addBody( 40 + Math.random()*15 ) );
 		for (i in 0...10) bodies.push( addBody( 50 + Math.random()*10 ) );		
 		for (i in 0...5 ) bodies.push( addBody( 60 + Math.random()*20 ) );		
 		
@@ -93,8 +95,8 @@ class Main extends Application
 				//trace("Collision Entered"); // at first frame that a collision starts
 				a.entity.intersected++;
 				b.entity.intersected++;
-				a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
-				b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));
+				//a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
+				//b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));
 				//a.entity.color = Color.WHITE;
 				//b.entity.color = Color.WHITE;
 			},
@@ -111,8 +113,8 @@ class Main extends Application
 				//trace("Collision Exited"); // at first frame that a collision starts
 				a.entity.intersected--;
 				b.entity.intersected--;				
-				a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
-				b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));				
+				//a.entity.color.red = a.entity.color.green = a.entity.color.blue = Std.int(Math.min(0xff, 96 + a.entity.intersected * 16));
+				//b.entity.color.red = b.entity.color.green = b.entity.color.blue = Std.int(Math.min(0xff, 96 + b.entity.intersected * 16));				
 				//if (a.entity.intersected == 0) a.entity.color = Color.GREY4;
 				//if (b.entity.intersected == 0) b.entity.color = Color.GREY4;
 			}
@@ -125,7 +127,7 @@ class Main extends Application
 		var body:Body = world.make({
 				mass: Math.PI * radius * radius,
 				kinematic:true,
-				max_velocity_length:2000,
+				max_velocity_length:3000,
 				shape: {
 					type: CIRCLE,
 					radius: radius
@@ -135,7 +137,7 @@ class Main extends Application
 		setInitialMovement(body);
 		
 		// connect peote-view graphic element to echos body
-		body.entity = new Pen(body.x, body.y, radius, Color.GREY4);
+		body.entity = new Pen(body.x, body.y, radius, Color.random() | 1);
 		body.on_move = onMove.bind(body, _);
 		
 		return body;
