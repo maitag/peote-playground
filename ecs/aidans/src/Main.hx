@@ -12,9 +12,8 @@ import peote.view.Program;
 import peote.view.Color;
 
 import ecs.Universe;
-import systems.RenderSystem;
-import components.Sprite;
-import resources.SpriteLayer;
+import RenderSystem;
+import Sprite;
 
 
 class Main extends Application
@@ -65,10 +64,10 @@ class Main extends Application
 			]
 		});
 
-		universe.setComponents(universe.createEntity(), Sprite, new SpriteLayer(buffer) );
+		universe.setComponents(universe.createEntity(), Sprite );
 		
-		// TODO:
-		//universe.setResources( SpriteLayer );
+		universe.setResources( buffer );
+		//haxe.Timer.delay(()->universe.setResources( buffer ), 1000);
 	}
 	
 	// ------------------------------------------------------------
