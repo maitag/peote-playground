@@ -19,10 +19,9 @@ class ReactionDiffusion implements Element
 	
 	// --------------------------------------------------------------------------
 	
-	static public function createDisplay(w:Int, h:Int, texture:Texture):Display
+	static public function createDisplay(w:Int, h:Int, buffer:Buffer<ReactionDiffusion>, texture:Texture):Display
 	{	
 		var display = new Display(0, 0, w, h);
-		var buffer = new Buffer<ReactionDiffusion>(1);
 		var program = new Program(buffer);
 		
 		// create a texture-layer named "base"
@@ -60,16 +59,13 @@ class ReactionDiffusion implements Element
 		//program.setColorFormula( 'reactionDiffusion(${GaussianBlurHQ.TEXTURE_ID_base})' );
 		
 		display.addProgram(program);
-		
-		// create only one peote-view Element
-		buffer.addElement( new ReactionDiffusion(w, h) );
-		
+				
 		return display;
 	}
 	
 	
 	
-	function new(w:Int, h:Int)
+	public function new(w:Int, h:Int)
 	{
 		this.w = w;
 		this.h = h;

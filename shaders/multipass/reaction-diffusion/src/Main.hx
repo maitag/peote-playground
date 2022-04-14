@@ -7,6 +7,7 @@ import lime.ui.Window;
 
 import peote.view.PeoteView;
 import peote.view.Display;
+import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
 
@@ -51,18 +52,23 @@ class Main extends Application
 		
 		// hidden displays that only renders into textures
 		
-		var displayA = ReactionDiffusion.createDisplay(w, h, textureB);
+		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
+
+		var displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB);
 		peoteView.addFramebufferDisplay(displayA);
 		displayA.setFramebuffer(textureA); // render into -> textureA
 		
 		
-		var displayB = ReactionDiffusion.createDisplay(w, h, textureA);
+		var displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA);
 		peoteView.addFramebufferDisplay(displayB);
 		displayB.setFramebuffer(textureB); // render into -> textureB
 			
+		// create peote-view Element into Buffer
+		buffer.addElement( new ReactionDiffusion(w, h) );
 		
 		
-		// TODO: add element into main-display what is showing the actual state over time
+		// TODO: add progam, buffer and one element into 
+		// main-display to show the actual state over time !
 
 		
 	}
