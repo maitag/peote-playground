@@ -4,6 +4,7 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
+import lime.graphics.Image;
 
 import peote.view.PeoteView;
 import peote.view.Display;
@@ -36,30 +37,26 @@ class Main extends Application
 		var h:Int = 600;
 		
 
-		// Main Display
 		peoteView = new PeoteView(window);
-		var display = new Display(0, 0, w, h);
-		peoteView.addDisplay(display);
 		
 		
-		
-		// textures to render into
-		
+		// textures to render into		
 		var textureA = new Texture(w, h);
-		var textureB = new Texture(w, h);		
-		// TODO: initialize something into textureB (and let paint into later!)
+		var textureB = new Texture(w, h);
+		
+		// initialize some random cells into textureB (TODO: let paint into later!)
+		textureB.setImage( genRandomCellImage(w, h) );
 		
 		
-		// hidden displays that only renders into textures
-		
+		// hidden displays that only renders into textures		
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
 
-		var displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB);
+		var displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB); // using textureB as source
 		peoteView.addFramebufferDisplay(displayA);
 		displayA.setFramebuffer(textureA); // render into -> textureA
 		
 		
-		var displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA);
+		var displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA); // using textureA as source
 		peoteView.addFramebufferDisplay(displayB);
 		displayB.setFramebuffer(textureB); // render into -> textureB
 			
@@ -67,13 +64,29 @@ class Main extends Application
 		buffer.addElement( new ReactionDiffusion(w, h) );
 		
 		
-		// TODO: add progam, buffer and one element into 
-		// main-display to show the actual state over time !
-
+		// adding visible display, progam, buffer and one element into to show the actual state over time !
+		peoteView.addDisplay(displayB); //<-- for testing only!
+		//var display = new Display(0, 0, w, h);
+		//peoteView.addDisplay(display);
+		// add element what show color gradianted
 		
 	}
 	
-	
+	public static function genRandomCellImage(w:Int, h:Int):Image {
+		var image = new Image(null, 0, 0, w, h, Color.RED);
+		for (x in 0...w)
+			for (y in 0...h)
+				if (Math.random() < 0.3)
+					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
+					image.setPixel32(x, y, Color.random() );
+					
+				//red:   0.5 + Math.random() * 0.02 - 0.01;
+				//green: 0.25 + Math.random() * 0.02 - 0.01;
+					
+					
+		return image;
+	}
+
 	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------

@@ -29,23 +29,30 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
+			const float F = 0.0545, K = 0.062, a = 0.2, b = 0.1;
+
+			const float TIMESTEP = 1.2;
+			
 			vec4 reactionDiffusion( int textureID )
 			{
+				vec2 texRes = getTextureResolution(textureID);
+
+				vec2 val = getTextureColor(textureID, vTexCoord).xy;
 				
-				vec3 final_colour = vec3(0.0);
+				vec2 laplacian = 
+					  getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).xy
+					+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).xy
+					+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).xy
+					+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).xy
+					- 4.0 * val;
+
+				vec2 delta = vec2(
+					a * laplacian.x - val.x * val.y * val.y + F * (1.0 - val.x),
+					b * laplacian.y + val.x * val.y * val.y - (K + F) * val.y
+				);
+
 				
-				//vec2 texRes = getTextureResolution(textureID);
-				//for (int i = -kSize; i <= kSize; ++i)
-				//{
-					//for (int j = -kSize; j <= kSize; ++j)
-					//{
-						//final_colour += kernel[kSize+j] * kernel[kSize+i] *
-							//getTextureColor( textureID, vTexCoord + vec2(float(i), float(j)) / texRes ).rgb;
-					//}
-				//}
-				
-				
-				return vec4(final_colour, 1.0);
+				return vec4(val + delta * TIMESTEP, 0, 1.0);
 			}			
 		");
 		
@@ -58,6 +65,7 @@ class ReactionDiffusion implements Element
 		// this also works if has "base" inside DEFAULT_FORMULA_VARS
 		//program.setColorFormula( 'reactionDiffusion(${GaussianBlurHQ.TEXTURE_ID_base})' );
 		
+		program.alphaEnabled = false;
 		display.addProgram(program);
 				
 		return display;
