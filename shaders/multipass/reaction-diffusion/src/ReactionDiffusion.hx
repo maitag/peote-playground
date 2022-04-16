@@ -29,21 +29,21 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
-			const float F = 0.0545, K = 0.062, a = 0.2, b = 0.1;
+			const float F = 0.0545, K = 0.059, a = 0.2, b = 0.1;
 
-			const float TIMESTEP = 1.2;
+			const float TIMESTEP = 1.0;
 			
 			vec4 reactionDiffusion( int textureID )
 			{
 				vec2 texRes = getTextureResolution(textureID);
 
-				vec2 val = getTextureColor(textureID, vTexCoord).xy;
+				vec2 val = getTextureColor(textureID, vTexCoord).rg;
 				
 				vec2 laplacian = 
-					  getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).xy
-					+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).xy
-					+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).xy
-					+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).xy
+					  getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).rg
+					+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).rg
+					+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).rg
+					+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).rg
 					- 4.0 * val;
 
 				vec2 delta = vec2(
