@@ -29,30 +29,36 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
-			const float F = 0.0545, K = 0.059, a = 0.2, b = 0.1;
-
+			const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
+			//const float F = 0.0305, K = 0.062, a = 0.2, b = 0.1; // cellgrow
+			//const float F = 0.0305, K = 0.06, a = 0.2, b = 0.1; // mix of both
+			//const float F = 0.02, K = 0.055, a = 0.2, b = 0.1; // fluctuation
+			//const float F = 0.015, K = 0.055, a = 0.2, b = 0.1; // burnAndDie1
+			//const float F = 0.015, K = 0.05, a = 0.2, b = 0.1; // burnAndDie2
+			//const float F = 0.009, K = 0.044, a = 0.2, b = 0.1; // turbulence
+			
 			const float TIMESTEP = 1.0;
 			
 			vec4 reactionDiffusion( int textureID )
 			{
 				vec2 texRes = getTextureResolution(textureID);
 
-				vec2 val = getTextureColor(textureID, vTexCoord).rg;
+				vec2 c = getTextureColor(textureID, vTexCoord).rg;
 				
 				vec2 laplacian = 
 					  getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).rg
 					+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).rg
 					+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).rg
 					+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).rg
-					- 4.0 * val;
+					- 4.0 * c;
 
 				vec2 delta = vec2(
-					a * laplacian.x - val.x * val.y * val.y + F * (1.0 - val.x),
-					b * laplacian.y + val.x * val.y * val.y - (K + F) * val.y
+					a * laplacian.r - c.r * c.g * c.g + F * (1.0 - c.r),
+					b * laplacian.g + c.r * c.g * c.g - (K + F) * c.g
 				);
 
 				
-				return vec4(val + delta * TIMESTEP, 0, 1.0);
+				return vec4(c + delta * TIMESTEP, 0.0, 1.0);
 			}			
 		");
 		

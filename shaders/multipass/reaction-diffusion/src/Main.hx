@@ -1,6 +1,7 @@
 package;
 
 import haxe.CallStack;
+import lime.graphics.RenderContext;
 
 import lime.app.Application;
 import lime.ui.Window;
@@ -31,6 +32,9 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
+	var displayA:Display;
+	var displayB:Display;
+	
 	public function startSample(window:Window)
 	{
 		var w:Int = 800;
@@ -41,24 +45,23 @@ class Main extends Application
 		
 		
 		// textures to render into		
-		var textureA = new Texture(w, h);
-		var textureB = new Texture(w, h);
+		var textureA = new Texture(w, h, 1, 4, false, 0, 0, true );
+		var textureB = new Texture(w, h, 1, 4, false, 0, 0, true );
 		
 		// initialize some random cells into textureB (TODO: let paint into later!)
 		textureB.setImage( genRandomCellImage(w, h) );
 		
-		
 		// hidden displays that only renders into textures		
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
 
-		var displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB); // using textureB as source
+		displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB); // using textureB as source
 		peoteView.addFramebufferDisplay(displayA);
-		displayA.setFramebuffer(textureA); // render into -> textureA
+		peoteView.setFramebuffer(displayA, textureA); // render into -> textureA
 		
 		
-		var displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA); // using textureA as source
+		displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA); // using textureA as source
 		peoteView.addFramebufferDisplay(displayB);
-		displayB.setFramebuffer(textureB); // render into -> textureB
+		peoteView.setFramebuffer(displayB, textureB); // render into -> textureB
 			
 		// create peote-view Element into Buffer
 		buffer.addElement( new ReactionDiffusion(w, h) );
@@ -70,19 +73,22 @@ class Main extends Application
 		//peoteView.addDisplay(display);
 		// add element what show color gradianted
 		
+		//window.onRender.add(onRender);
+		//ready = true;
 	}
 	
 	public static function genRandomCellImage(w:Int, h:Int):Image {
 		var image = new Image(null, 0, 0, w, h, Color.RED);
 		for (x in 0...100)
 			for (y in 0...100) 
-				if (Math.random() < 0.005)
+				if (Math.random() < 0.1)
 				{
-					image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
+					// TODO
 					var c = Color.BLACK;
-					c.r = Std.int((0.5 + Math.random() * 0.02 - 0.01)*255);
-					c.g = Std.int((0.25 + Math.random() * 0.02 - 0.01)*255);
-					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), c );
+					c.r = Std.int((0.25 + Math.random() * 0.06 - 0.03) * 255);
+					c.g = Std.int((0.5  + Math.random() * 0.06 - 0.03) * 255);
+					image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), c );
+					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
 				}
 					
 					
@@ -90,10 +96,24 @@ class Main extends Application
 		return image;
 	}
 
-	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
+/*	function onRender(c:RenderContext):Void
+	{
+		// render substeps
+		for (i in 0...30) {
+			peoteView.renderToTexture(displayA);
+			peoteView.renderToTexture(displayB);
+		}
+	}
+*/	
+/*	var ready = false;
+	override function update(deltaTime:Int):Void 
+	{	trace(deltaTime);
+		if (ready) {}
+	}
+*/	
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	
