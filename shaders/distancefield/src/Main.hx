@@ -48,7 +48,7 @@ class Main extends Application
 			texture.setImage(image);
 					
 			Msdf.init(display, texture);
-			msdf = new Msdf(10, 10, 200, 200);
+			msdf = new Msdf(0, 0, 800, 800);
 			
 		});
 		

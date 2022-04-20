@@ -6,6 +6,7 @@ import peote.view.Program;
 import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
+import peote.view.utils.Util;
 
 class Msdf implements Element
 {
@@ -17,8 +18,8 @@ class Msdf implements Element
 	@color public var bgColor:Color = 0x000000ff;
 	
 	// size in pixel
-	@sizeX @varying public var w:Int;
-	@sizeY @varying public var h:Int;
+	@sizeX public var w:Int;
+	@sizeY public var h:Int;
 	
 	// --------------------------------------------------------------------------
 	
@@ -34,23 +35,24 @@ class Msdf implements Element
 		program.setTexture(texture, "base", true);
 
 		program.injectIntoFragmentShader(
-		"				
-			
-			float median(float r, float g, float b) {
+		"	
+		
+			float median(float r, float g, float b)
+			{
 				return max(min(r, g), min(max(r, g), b));
 			}
 		
-			float screenPxRange( vec2 texCoord, vec2 size ) {
-				//vec2 unitRange = vec2(2.0)/size;
-				vec2 unitRange = vec2(2.0)/vec2(textureSize(uTexture0, 0));
+			float screenPxRange( vec2 texCoord, vec2 texSize )
+			{
+				vec2 unitRange = vec2(2.0)/texSize;				
 				vec2 screenTexSize = vec2(1.0)/fwidth(texCoord);
 				return max(0.5*dot(unitRange, screenTexSize), 1.0);
 			}
 			
-			float msdf( vec4 tex, vec2 texCoord, vec2 size )
+			float msdf( vec4 tex, vec2 texCoord, vec2 texSize )
 			{				
 				float sd = median(tex.r, tex.g, tex.b);
-				float screenPxDistance = screenPxRange(texCoord, size)*(sd - 0.5);
+				float screenPxDistance = screenPxRange(texCoord, texSize)*(sd - 0.5);
 				
 				return clamp(screenPxDistance + 0.5, 0.0, 1.0);
 			}			
@@ -58,10 +60,10 @@ class Msdf implements Element
 		
 		// instead of using normal "base" identifier to get the texture-color
 		// the "Texture" postfix is to give access to use getTextureColor() manually 
-		// from inside of the injected blur() function to that texture-layer
 		
 		//program.setColorFormula( "msdf(base_ID)" );
-		program.setColorFormula("mix(bgColor, color, msdf(base, vTexCoord, vSize))");
+		program.setColorFormula('mix(bgColor, color, msdf(base, vTexCoord, vec2(${Util.toFloatString(texture.width)}, ${Util.toFloatString(texture.height)}) ) )');
+		//program.setColorFormula("mix(bgColor, color, msdf( base, vTexCoord, textureSize(uTexture0, 0) ) )");
 		program.alphaEnabled = false;
 		//program.discardAtAlpha(0.0);
 				
