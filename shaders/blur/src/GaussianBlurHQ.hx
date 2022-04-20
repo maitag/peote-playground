@@ -81,8 +81,8 @@ class GaussianBlurHQ implements Element
 		");
 		
 		// instead of using normal "base" identifier to get the texture-color
-		// the "Texture" postfix is to give access to use getTextureColor() manually 
-		// from inside of the injected blur() function to that texture-layer
+		// the "_ID" postfix is to give access to use getTextureColor() manually 
+		// from inside of the glsl blur() function to that texture-layer
 		
 		program.setColorFormula( "blur(base_ID)" );
 		

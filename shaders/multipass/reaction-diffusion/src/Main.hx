@@ -37,8 +37,8 @@ class Main extends Application
 	
 	public function startSample(window:Window)
 	{
-		var w:Int = 800;
-		var h:Int = 600;
+		var w:Int = window.width;
+		var h:Int = window.height;
 		
 
 		peoteView = new PeoteView(window);
@@ -55,12 +55,12 @@ class Main extends Application
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
 
 		displayA = ReactionDiffusion.createDisplay(w, h, buffer, textureB); // using textureB as source
-		peoteView.addFramebufferDisplay(displayA);
+		//peoteView.addFramebufferDisplay(displayA);
 		peoteView.setFramebuffer(displayA, textureA); // render into -> textureA
 		
 		
 		displayB = ReactionDiffusion.createDisplay(w, h, buffer, textureA); // using textureA as source
-		peoteView.addFramebufferDisplay(displayB);
+		//peoteView.addFramebufferDisplay(displayB);
 		peoteView.setFramebuffer(displayB, textureB); // render into -> textureB
 			
 		// create peote-view Element into Buffer
@@ -68,13 +68,18 @@ class Main extends Application
 		
 		
 		// adding visible display, progam, buffer and one element into to show the actual state over time !
-		peoteView.addDisplay(displayB); //<-- for testing only!
-		//var display = new Display(0, 0, w, h);
-		//peoteView.addDisplay(display);
-		// add element what show color gradianted
+		//peoteView.addDisplay(displayB); //<-- for testing only!
 		
-		//window.onRender.add(onRender);
-		//ready = true;
+		var display = new Display(0, 0, w, h);
+		peoteView.addDisplay(display);
+		Colored.init(display, textureB, 
+			[ Color.BLACK, 0x112236ff, 0x192940ff, 0x216689ff, 0x219aaaff, 0xfffff0ff ],
+			[ 0.0,         0.001,      0.01,       0.1,        0.5,        1.0        ]
+		);
+		// add element what show color gradiand
+		var coloredOut = new Colored(w, h);
+		
+		window.onRender.add(onRender);
 	}
 	
 	public static function genRandomCellImage(w:Int, h:Int):Image {
@@ -99,7 +104,7 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
-/*	function onRender(c:RenderContext):Void
+	function onRender(c:RenderContext):Void
 	{
 		// render substeps
 		for (i in 0...30) {
@@ -107,13 +112,7 @@ class Main extends Application
 			peoteView.renderToTexture(displayB);
 		}
 	}
-*/	
-/*	var ready = false;
-	override function update(deltaTime:Int):Void 
-	{	trace(deltaTime);
-		if (ready) {}
-	}
-*/	
+	
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	

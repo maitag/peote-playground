@@ -35,7 +35,7 @@ class ReactionDiffusion implements Element
 			//const float F = 0.02, K = 0.055, a = 0.2, b = 0.1; // fluctuation
 			//const float F = 0.015, K = 0.055, a = 0.2, b = 0.1; // burnAndDie1
 			//const float F = 0.015, K = 0.05, a = 0.2, b = 0.1; // burnAndDie2
-			//const float F = 0.009, K = 0.044, a = 0.2, b = 0.1; // turbulence
+			//const float F = 0.0087, K = 0.044, a = 0.2, b = 0.1; // turbulence
 			
 			const float TIMESTEP = 1.0;
 			
@@ -45,9 +45,17 @@ class ReactionDiffusion implements Element
 
 				vec2 c = getTextureColor(textureID, vTexCoord).rg;
 				
+				//vec2 laplacian = 
+					  //getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).rg
+					//+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).rg
+					//+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).rg
+					//+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).rg
+					//- 4.0 * c;
+					
+				// fixing at right and bottom border	
 				vec2 laplacian = 
-					  getTextureColor(textureID, vTexCoord + vec2( 0.0,  1.0) / texRes).rg
-					+ getTextureColor(textureID, vTexCoord + vec2( 1.0,  0.0) / texRes).rg
+					  getTextureColor(textureID, vec2( vTexCoord.x, min(1.0-1.0/texRes.y, vTexCoord.y + 1.0/texRes.y)) ).rg
+					+ getTextureColor(textureID, vec2( min(1.0-1.0/texRes.x, vTexCoord.x + 1.0/texRes.x), vTexCoord.y) ).rg
 					+ getTextureColor(textureID, vTexCoord + vec2( 0.0, -1.0) / texRes).rg
 					+ getTextureColor(textureID, vTexCoord + vec2(-1.0,  0.0) / texRes).rg
 					- 4.0 * c;

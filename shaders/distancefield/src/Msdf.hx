@@ -59,7 +59,7 @@ class Msdf implements Element
 		");
 		
 		// instead of using normal "base" identifier to get the texture-color
-		// the "Texture" postfix is to give access to use getTextureColor() manually 
+		// the "_ID" postfix is to give access to use getTextureColor() manually 
 		
 		//program.setColorFormula( "msdf(base_ID)" );
 		program.setColorFormula('mix(bgColor, color, msdf(base, vTexCoord, vec2(${Util.toFloatString(texture.width)}, ${Util.toFloatString(texture.height)}) ) )');
