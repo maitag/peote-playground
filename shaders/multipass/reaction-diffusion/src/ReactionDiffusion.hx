@@ -29,13 +29,16 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
-			const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
+			//const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
 			//const float F = 0.0305, K = 0.062, a = 0.2, b = 0.1; // cellgrow
 			//const float F = 0.0305, K = 0.06, a = 0.2, b = 0.1; // mix of both
 			//const float F = 0.02, K = 0.055, a = 0.2, b = 0.1; // fluctuation
 			//const float F = 0.015, K = 0.055, a = 0.2, b = 0.1; // burnAndDie1
 			//const float F = 0.015, K = 0.05, a = 0.2, b = 0.1; // burnAndDie2
 			//const float F = 0.0087, K = 0.044, a = 0.2, b = 0.1; // turbulence
+			//const float F = 0.005, K = 0.03, a = 0.2, b = 0.1; // black hole
+			//const float F = 0.012, K = 0.04, a = 0.2, b = 0.1; // tvscreen
+			const float F = 0.0085, K = 0.047, a = 0.2, b = 0.1; // balance (for !billy@fromDiscoChat)
 			
 			const float TIMESTEP = 1.0;
 			
@@ -71,7 +74,7 @@ class ReactionDiffusion implements Element
 		");
 		
 		// instead of using normal "base" identifier to get the texture-color
-		// the "Texture" postfix is to give access to use getTextureColor() manually 
+		// the "_ID" postfix is to give access to use getTextureColor() manually 
 		// from inside of the injected reactionDiffusion() function to that texture-layer
 		
 		program.setColorFormula( "reactionDiffusion(base_ID)" );

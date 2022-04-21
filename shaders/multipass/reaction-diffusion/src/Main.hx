@@ -107,7 +107,7 @@ class Main extends Application
 	function onRender(c:RenderContext):Void
 	{
 		// render substeps
-		for (i in 0...30) {
+		for (i in 0...3) {
 			peoteView.renderToTexture(displayA);
 			peoteView.renderToTexture(displayB);
 		}
