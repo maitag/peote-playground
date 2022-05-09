@@ -36,18 +36,19 @@ class Main extends Application
 		var colorbandDisplay = new ColorbandDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(colorbandDisplay);
 		
-/*		
+		
 		var colorband:Colorband = [
-			{ color:Color.BLACK, size:130, interpolate:{start:0.8} }, // start will be 80% smooth and end is 0.0 (linear)
-			{ color:Color.GREY4, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 0.0 (linear)
+			{ color:Color.BLACK, size:130, interpolate:{start:0.8} }, // start will be 80% smooth and end is 1.0 (full smooth)
+			{ color:Color.GREY4, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 1.0 (full smooth)
 			{ color:Color.RED  , size:140, interpolate:{start:0.8, end:0.7} }, // start and end is smooth interpolation
-			{ color:Color.YELLOW,size:120, interpolate:Interpolate.LINEAR }, // this is default and sets start and end to 0.0 (linear)
-			{ color:Color.GREEN, size:125 ,interpolate:Interpolate.SMOOTH }, // sets start and end to 1.0 (full smooth)
+			{ color:Color.YELLOW,size:120, interpolate:Interpolate.SMOOTH }, // this is default and sets start and end to 1.0 (full smooth)
+			{ color:Color.GREEN, size:125 ,interpolate:Interpolate.LINEAR }, // sets start and end to 0.0 (linear)
 			{ color:Color.BLUE , size:142, interpolate:0.5 }, // sets start and end to 0.5 (half smooth)
 			{ color:Color.WHITE }
 		];
-*/				
-
+		colorbandDisplay.create(colorband, 0, 100);
+			
+/*
 		var colorband:Colorband = [
 			{ color:Color.BLACK },
 			{ color:Color.GREY4 },
@@ -62,7 +63,7 @@ class Main extends Application
 		
 		colorbandDisplay.create(colorband, 0, 100, 120, Interpolate.SMOOTH);
 		colorbandDisplay.create(colorband, 101, 100, 120, Interpolate.LINEAR);
-		
+*/		
 		
 	}
 	
