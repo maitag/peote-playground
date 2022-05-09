@@ -2,8 +2,8 @@ package;
 
 @:structInit 
 class InterpolateImpl {
-	public var start:Float = 0.0;
-	public var end:Float = 0.0;
+	public var start:Null<Float> = null;
+	public var end:Null<Float> = null;
 }
 
 @:forward
