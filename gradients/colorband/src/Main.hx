@@ -36,17 +36,33 @@ class Main extends Application
 		var colorbandDisplay = new ColorbandDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(colorbandDisplay);
 		
+/*		
 		var colorband:Colorband = [
-			{ color:Color.BLACK, size:30, smoothNext:0.8 },
-			{ color:Color.RED  , size:40, smoothPrev:0.2, smoothNext:0.2 }, 
-			{ color:Color.GREEN, size:20 }, 
-			{ color:Color.BLUE , size:50, smoothPrev:1.0 }, 
+			{ color:Color.BLACK, size:130, interpolate:{start:0.8} }, // start will be 80% smooth and end is 0.0 (linear)
+			{ color:Color.GREY4, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 0.0 (linear)
+			{ color:Color.RED  , size:140, interpolate:{start:0.8, end:0.7} }, // start and end is smooth interpolation
+			{ color:Color.YELLOW,size:120, interpolate:Interpolate.LINEAR }, // this is default and sets start and end to 0.0 (linear)
+			{ color:Color.GREEN, size:125 ,interpolate:Interpolate.SMOOTH }, // sets start and end to 1.0 (full smooth)
+			{ color:Color.BLUE , size:142, interpolate:0.5 }, // sets start and end to 0.5 (half smooth)
+			{ color:Color.WHITE }
+		];
+*/				
+
+		var colorband:Colorband = [
+			{ color:Color.BLACK },
+			{ color:Color.GREY4 },
+			{ color:Color.RED   },
+			{ color:Color.YELLOW},
+			{ color:Color.GREEN },
+			{ color:Color.BLUE  },
 			{ color:Color.WHITE }
 		];
 		
-		trace(colorband);
+		// testing smooth VERSUS linear interpolation
 		
-		colorbandDisplay.create(colorband);
+		colorbandDisplay.create(colorband, 0, 100, 120, Interpolate.SMOOTH);
+		colorbandDisplay.create(colorband, 101, 100, 120, Interpolate.LINEAR);
+		
 		
 	}
 	

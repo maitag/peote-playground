@@ -18,8 +18,8 @@ class HGradient implements Element
 	@color public var colorEnd  :Color = 0xffffffff;
 	
 	// interpolations from 0.0 (smooth) to 1.0 (linear)
-	@custom @varying public var smoothStart:Float = 0.0;
-	@custom @varying public var smoothEnd  :Float = 0.0;
+	@custom @varying public var interpolateStart:Float = 0.0;
+	@custom @varying public var interpolateEnd  :Float = 0.0;
 	
 	// this is injected by program of ColorbandDisplay
 	public static var fShader =
@@ -39,9 +39,19 @@ class HGradient implements Element
 		}			
 	";
 
-	var DEFAULT_COLOR_FORMULA = "gradient(colorStart, colorEnd, smoothStart, smoothEnd)";
+	var DEFAULT_COLOR_FORMULA = "gradient(colorStart, colorEnd, interpolateStart, interpolateEnd)";
 	
 	//var OPTIONS = { alpha:true };
 
-	public function new() {}
+	// interpolation here into API is from 0.0 (linear) to 1.0 (smooth)
+	public function new(x:Int, y:Int, w:Int, h:Int, colorStart:Color, colorEnd:Color, interpolateStart:Float, interpolateEnd:Float) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
+		this.colorStart = colorStart;
+		this.colorEnd = colorEnd;
+		this.interpolateStart = 1.0 - Math.max(0.0, Math.min(1.0, interpolateStart));
+		this.interpolateEnd = 1.0 - Math.max(0.0, Math.min(1.0, interpolateEnd));
+	}
 }

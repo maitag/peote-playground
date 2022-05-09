@@ -7,8 +7,8 @@ typedef Colorband = Array<ColorbandItem>;
 @:structInit 
 class ColorbandItem
 {
-	public var color:Color = null;
+	public var color:Color;
 	public var size:Null<Int> = null;
-	public var smoothPrev:Float = 0.0;
-	public var smoothNext:Float = 0.0;
+	public var interpolate:Interpolate = null;
 }
+
