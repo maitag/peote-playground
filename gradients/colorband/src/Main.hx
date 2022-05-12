@@ -24,6 +24,8 @@ class Main extends Application
 			default: throw("Sorry, only works with OpenGL.");
 		}
 	}
+
+	
 	
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
@@ -36,36 +38,69 @@ class Main extends Application
 		var colorbandDisplay = new ColorbandDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(colorbandDisplay);
 		
+		var y = 0;
 		
 		var colorband:Colorband = [
 			{ color:Color.BLACK, size:130, interpolate:{start:0.8} }, // start will be 80% smooth and end is 1.0 (full smooth)
-			{ color:Color.GREY4, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 1.0 (full smooth)
+			{ color:Color.BLUE , size:142, interpolate:0.5 }, // sets start and end to 0.5 (half smooth)
+			{ color:Color.CYAN, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 1.0 (full smooth)
+			{ color:Color.GREEN, size:125, interpolate:Interpolate.LINEAR }, // sets start and end to 0.0 (linear)
 			{ color:Color.RED  , size:140, interpolate:{start:0.8, end:0.7} }, // start and end is smooth interpolation
 			{ color:Color.YELLOW,size:120, interpolate:Interpolate.SMOOTH }, // this is default and sets start and end to 1.0 (full smooth)
-			{ color:Color.GREEN, size:125 ,interpolate:Interpolate.LINEAR }, // sets start and end to 0.0 (linear)
-			{ color:Color.BLUE , size:142, interpolate:0.5 }, // sets start and end to 0.5 (half smooth)
-			{ color:Color.WHITE }
+			{ color:Color.WHITE , size:33}
 		];
-		colorbandDisplay.create(colorband, 0, 100);
+		colorbandDisplay.create(colorband, y, 100);
 			
-/*
-		var colorband:Colorband = [
+
+		// ------- testing smooth VERSUS linear interpolation ----------
+
+		var colorband1:Colorband = [
 			{ color:Color.BLACK },
-			{ color:Color.GREY4 },
+			{ color:Color.BLUE  },
+			{ color:Color.CYAN },
+			{ color:Color.GREEN },
 			{ color:Color.RED   },
 			{ color:Color.YELLOW},
-			{ color:Color.GREEN },
-			{ color:Color.BLUE  },
 			{ color:Color.WHITE }
+		];		
+		
+		colorbandDisplay.create(colorband1, y+=102, 100, 133, Interpolate.SMOOTH);
+		colorbandDisplay.create(colorband1, y+=102, 100, 133, Interpolate.LINEAR);
+
+		
+		
+		// ----------------------------------------------------------
+		// ---------- shaderanimated Display for Colorband ----------
+		// ----------------------------------------------------------
+		
+		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, y+=102, 800, 600-y);
+		peoteView.addDisplay(colorbandAnimDisplay);
+		
+		var colorband2:Colorband = [
+			{ color:Color.WHITE },
+			{ color:Color.YELLOW},
+			{ color:Color.RED   },
+			{ color:Color.GREEN },
+			{ color:Color.CYAN },
+			{ color:Color.BLUE  },
+			{ color:Color.BLACK },
 		];
 		
-		// testing smooth VERSUS linear interpolation
+		y = 0;
 		
-		colorbandDisplay.create(colorband, 0, 100, 120, Interpolate.SMOOTH);
-		colorbandDisplay.create(colorband, 101, 100, 120, Interpolate.LINEAR);
-*/		
-		
+		// animation 
+		colorbandAnimDisplay.create(
+			colorband1, colorband2,
+			0.0, 5.0, // time start and duration
+			y, 100, 133, Interpolate.SMOOTH);
+
+		peoteView.start();
 	}
+
+	
+	
+		
+	
 	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
