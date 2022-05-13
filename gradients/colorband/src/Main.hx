@@ -73,7 +73,7 @@ class Main extends Application
 		// ---------- shaderanimated Display for Colorband ----------
 		// ----------------------------------------------------------
 		
-		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, 0, 800, 600-y);
+		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(colorbandAnimDisplay);
 		
 		var colorband2:Colorband = [
@@ -103,7 +103,11 @@ class Main extends Application
 
 		
 		// ...
-		
+		// and now -> FULLY ^^
+		for (yy in 0...90) {
+			var colorbandX:Colorband = [for (i in 0...23) { color:Color.random() } ];		
+			colorbandDisplay.create(colorbandX, y+=yy, 100, 133);
+		}
 		
 		// ----------------------------------------------------------
 		
