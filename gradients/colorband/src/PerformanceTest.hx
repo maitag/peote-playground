@@ -42,16 +42,11 @@ class PerformanceTest extends Application
 		var rows:Int = 300;
 		var w:Int = Std.int(colorbandAnimDisplay.width / (cols-1));
 		var h:Int = Std.int(colorbandAnimDisplay.height / rows);
-
-		var colorbands:Array<Colorband> = [for (i in 0...10000) [for (i in 0...cols+1) { color:Color.random(), size:((i<cols-1)?w:0) } ] ];
-		
 		
 		for (i in 0...rows) {
-			var colorband0:Colorband = colorbands[Std.int(Math.random()*10000)];
-			var colorband1:Colorband = colorbands[Std.int(Math.random()*10000)];
 			colorbandAnimDisplay.create(
-				colorbands[Std.int(Math.random() * 10000)],
-				colorbands[Std.int(Math.random() * 10000)],
+				[for (i in 0...cols+1) { color:Color.random(), size:((i<cols)?w:0) } ],
+				[for (i in 0...cols+1) { color:Color.random(), size:((i<cols)?w:0) } ],
 				0.0, 1.5,
 				i*h, h, w);
 		}

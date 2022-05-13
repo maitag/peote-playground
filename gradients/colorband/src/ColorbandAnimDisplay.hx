@@ -81,7 +81,7 @@ class ColorbandAnimDisplay extends Display
 	{
 		super(x, y, width, height, bgColor);
 		
-		buffer = new Buffer<HGradientAnim>(0xffff, 4096, true);
+		buffer = new Buffer<HGradientAnim>(0xffff, 8192, true);
 		
 		program = new Program(buffer);
 		program.injectIntoFragmentShader(HGradientAnim.fShader);
