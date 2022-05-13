@@ -12,7 +12,7 @@ import peote.view.Element;
 class HGradientAnim implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@posX @anim() public var x:Int=0;
+	@posX @anim("pingpong") public var x:Int=0;
 	@posY public var y:Int=0;
 	
 	// size in pixel
@@ -64,8 +64,8 @@ class HGradientAnim implements Element
 		this.interpolateStartEnd = 1.0 - Math.max(0.0, Math.min(1.0, interpolateStart1));
 		this.interpolateEndStart = 1.0 - Math.max(0.0, Math.min(1.0, interpolateEnd0));
 		this.interpolateEndEnd = 1.0 - Math.max(0.0, Math.min(1.0, interpolateEnd1));
-		this.timeStart = 0.0;
-		this.timeDuration = 3.0;
+		this.timeStart = timeStart;
+		this.timeDuration = timeDuration;
 	}
 }
 
@@ -77,11 +77,11 @@ class ColorbandAnimDisplay extends Display
 	var program:Program;
 	var buffer:Buffer<HGradientAnim>;
 	
-	public function new(x:Int, y:Int, width:Int, height:Int) 
+	public function new(x:Int, y:Int, width:Int, height:Int, bgColor:Color = 0) 
 	{
-		super(x, y, width, height);
+		super(x, y, width, height, bgColor);
 		
-		buffer = new Buffer<HGradientAnim>(8, 8, true);
+		buffer = new Buffer<HGradientAnim>(0xffff, 4096, true);
 		
 		program = new Program(buffer);
 		program.injectIntoFragmentShader(HGradientAnim.fShader);

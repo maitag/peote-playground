@@ -12,7 +12,7 @@ import peote.view.Program;
 import peote.view.Color;
 
 
-class Main extends Application
+class PerformanceTest extends Application
 {
 	override function onWindowCreate():Void
 	{
@@ -35,78 +35,25 @@ class Main extends Application
 	{
 		var peoteView = new PeoteView(window);
 
-		var colorbandDisplay = new ColorbandDisplay(0, 0, 800, 600);
-		peoteView.addDisplay(colorbandDisplay);
-		
-		var y = 0;
-		
-		var colorband:Colorband = [
-			{ color:Color.BLACK, size:130, interpolate:{start:0.8} }, // start will be 80% smooth and end is 1.0 (full smooth)
-			{ color:Color.BLUE , size:142, interpolate:0.5 }, // sets start and end to 0.5 (half smooth)
-			{ color:Color.CYAN, size:110, interpolate:{end  :0.5} }, // end will be half smooth and start is 1.0 (full smooth)
-			{ color:Color.GREEN, size:125, interpolate:Interpolate.LINEAR }, // sets start and end to 0.0 (linear)
-			{ color:Color.RED  , size:140, interpolate:{start:0.8, end:0.7} }, // start and end is smooth interpolation
-			{ color:Color.YELLOW,size:120, interpolate:Interpolate.SMOOTH }, // this is default and sets start and end to 1.0 (full smooth)
-			{ color:Color.WHITE , size:33}
-		];
-		colorbandDisplay.create(colorband, y, 100);
-			
-
-		// ------- testing smooth VERSUS linear interpolation ----------
-
-		var colorband1:Colorband = [
-			{ color:Color.BLACK },
-			{ color:Color.BLUE  },
-			{ color:Color.CYAN },
-			{ color:Color.GREEN },
-			{ color:Color.RED   },
-			{ color:Color.YELLOW},
-			{ color:Color.WHITE }
-		];		
-		
-		colorbandDisplay.create(colorband1, y+=102, 100, 133, Interpolate.SMOOTH);
-		colorbandDisplay.create(colorband1, y+=102, 100, 133, Interpolate.LINEAR);
-
-		
-		
-		// ----------------------------------------------------------
-		// ---------- shaderanimated Display for Colorband ----------
-		// ----------------------------------------------------------
-		
 		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(colorbandAnimDisplay);
 		
-		var colorband2:Colorband = [
-			{ color:Color.WHITE },
-			{ color:Color.YELLOW},
-			{ color:Color.RED   },
-			{ color:Color.GREEN },
-			{ color:Color.CYAN },
-			{ color:Color.BLUE  },
-			{ color:Color.BLACK },
-		];
-				
-		// little animation 
-		colorbandAnimDisplay.create(
-			colorband1, colorband2,
-			0.0, 5.0, // time start and duration
-			y += 102, 100, 133
-		);
+		var cols:Int = 400;
+		var rows:Int = 300;
+		var w:Int = Std.int(colorbandAnimDisplay.width / (cols-1));
+		var h:Int = Std.int(colorbandAnimDisplay.height / rows);
 
-			
-		// ----------------------------------------------------------
-		// -------------------- only for Spitko  --------------------
-		// ----------------------------------------------------------
-
-		var colorbandX:Colorband = [for (i in 0...23) { color:Color.random() } ];		
-		colorbandDisplay.create(colorbandX, y+=102, 100, 133);
-
+		var colorbands:Array<Colorband> = [for (i in 0...10000) [for (i in 0...cols+1) { color:Color.random(), size:((i<cols-1)?w:0) } ] ];
 		
-		// ...
-		// and now -> FULLY ^^
-		for (yy in 0...20) {
-			var colorbandX:Colorband = [for (i in 0...23) { color:Color.random() } ];		
-			colorbandDisplay.create(colorbandX, y+=10, 10, 133);
+		
+		for (i in 0...rows) {
+			var colorband0:Colorband = colorbands[Std.int(Math.random()*10000)];
+			var colorband1:Colorband = colorbands[Std.int(Math.random()*10000)];
+			colorbandAnimDisplay.create(
+				colorbands[Std.int(Math.random() * 10000)],
+				colorbands[Std.int(Math.random() * 10000)],
+				0.0, 1.5,
+				i*h, h, w);
 		}
 		
 		// ----------------------------------------------------------
