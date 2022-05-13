@@ -73,7 +73,7 @@ class Main extends Application
 		// ---------- shaderanimated Display for Colorband ----------
 		// ----------------------------------------------------------
 		
-		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, y+=102, 800, 600-y);
+		var colorbandAnimDisplay = new ColorbandAnimDisplay(0, 0, 800, 600-y);
 		peoteView.addDisplay(colorbandAnimDisplay);
 		
 		var colorband2:Colorband = [
@@ -85,15 +85,28 @@ class Main extends Application
 			{ color:Color.BLUE  },
 			{ color:Color.BLACK },
 		];
-		
-		y = 0;
-		
-		// animation 
+				
+		// little animation 
 		colorbandAnimDisplay.create(
 			colorband1, colorband2,
 			0.0, 5.0, // time start and duration
-			y, 100, 133, Interpolate.SMOOTH);
+			y += 102, 100, 133
+		);
 
+			
+		// ----------------------------------------------------------
+		// -------------------- only for Spitko  --------------------
+		// ----------------------------------------------------------
+
+		var colorbandX:Colorband = [for (i in 0...23) { color:Color.random() } ];		
+		colorbandDisplay.create(colorbandX, y+=102, 100, 133);
+
+		
+		// ...
+		
+		
+		// ----------------------------------------------------------
+		
 		peoteView.start();
 	}
 
