@@ -39,6 +39,10 @@ class Colored implements Element
 			var to = Util.toFloatString(steps[i]);
 			formula = 'mix($formula, $col, smoothstep($from, $to, 1.0 - base.r ))';
 		}
+		
+		// testing the original texturecolors without color gradiant
+		// formula = 'base';
+		
 		program.setColorFormula( formula );
 		
 		program.alphaEnabled = false;

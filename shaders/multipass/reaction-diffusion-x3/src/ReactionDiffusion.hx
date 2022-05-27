@@ -43,9 +43,12 @@ class ReactionDiffusion implements Element
 			//const float F = 0.005, K = 0.03, a = 0.2, b = 0.1; // black hole
 			//const float F = 0.012, K = 0.04, a = 0.2, b = 0.1; // tvscreen
 			//const float F = 0.0085, K = 0.047, a = 0.2, b = 0.1; // balance (for !billy@fromDiscoChat)
-			const float dr=0.00001, dg=0.00001, db=0.000035, s=1., c=2., w=1., f=0.63, q=0.4;
-
-			const float TIMESTEP = 1.0;
+			
+			//const float dr=0.00001, dg=0.00001, db=0.000035, s=1., c=2., w=1., f=0.63, q=0.4;
+			const float dr=0.002, dg=0.003, db=0.004, s=0.1, c=0.2, w=0.1, f=0.5, q=0.1;
+			
+			//const float TIMESTEP = 1.0;
+			const float TIMESTEP = 0.1;
 			
 			vec4 reactionDiffusion( int textureID )
 			{
@@ -71,9 +74,9 @@ class ReactionDiffusion implements Element
 
 
 				vec3 delta = vec3(
-					dr * laplacian.r + s * (col.g - col.r * col.g + col.r * (1 - col.b / c) - q * col.r * col.r),
-					dg * laplacian.g + 1./s * (-col.g - col.r * col.g + f*col.b),
-					db * laplacian.b + w * (col.r * (1 - col.b / c) - col.b)
+					dr * laplacian.r + s * (col.g - col.r * col.g + col.r * (1.0 - col.b / c) - q * col.r * col.r),
+					dg * laplacian.g + 1.0/s * (-col.g - col.r * col.g + f*col.b),
+					db * laplacian.b + w * (col.r * (1.0 - col.b / c) - col.b)
 				);
 
 				

@@ -92,7 +92,7 @@ class Main extends Application
 					var c = Color.BLACK;
 					c.r = Std.int((0.25 + Math.random() * 0.06 - 0.03) * 255);
 					c.g = Std.int((0.5  + Math.random() * 0.06 - 0.03) * 255);
-					c.b = Std.int((0.5  + Math.random() * 0.06 - 0.03) * 255);
+					c.b = Std.int((0.25  + Math.random() * 0.06 - 0.03) * 255);
 					image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), c );
 					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
 				}
@@ -108,10 +108,10 @@ class Main extends Application
 	function onRender(c:RenderContext):Void
 	{
 		// render substeps
-		for (i in 0...3) {
+		//for (i in 0...3) {
 			peoteView.renderToTexture(displayA);
 			peoteView.renderToTexture(displayB);
-		}
+		//}
 	}
 	
 
