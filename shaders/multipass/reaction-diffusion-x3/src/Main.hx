@@ -83,18 +83,14 @@ class Main extends Application
 	}
 	
 	public static function genRandomCellImage(w:Int, h:Int):Image {
-		var image = new Image(null, 0, 0, w, h, Color.RED);
-		for (x in 0...100)
-			for (y in 0...100) 
-				if (Math.random() < 0.1)
+		var image = new Image(null, 0, 0, w, h, 0x022112FF);
+		//for (x in 0...100)
+		for (x in 0...w)
+			//for (y in 0...100) 
+			for (y in 0...h) 
+				if (Math.random() < 0.0005)
 				{
-					// TODO
-					var c = Color.BLACK;
-					c.r = Std.int((0.25 + Math.random() * 0.06 - 0.03) * 255);
-					c.g = Std.int((0.5  + Math.random() * 0.06 - 0.03) * 255);
-					c.b = Std.int((0.25  + Math.random() * 0.06 - 0.03) * 255);
-					image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), c );
-					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
+					image.setPixel32(x, y, Color.random() );
 				}
 					
 					
@@ -108,7 +104,7 @@ class Main extends Application
 	function onRender(c:RenderContext):Void
 	{
 		// render substeps
-		//for (i in 0...3) {
+		//for (i in 0...9) {
 			peoteView.renderToTexture(displayA);
 			peoteView.renderToTexture(displayB);
 		//}

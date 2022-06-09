@@ -41,7 +41,7 @@ class Colored implements Element
 		}
 		
 		// testing the original texturecolors without color gradiant
-		// formula = 'base';
+		formula = 'base';
 		
 		program.setColorFormula( formula );
 		

@@ -33,19 +33,11 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
-			//const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
-			//const float F = 0.0305, K = 0.062, a = 0.2, b = 0.1; // cellgrow
-			//const float F = 0.0305, K = 0.06, a = 0.2, b = 0.1; // mix of both
-			//const float F = 0.02, K = 0.055, a = 0.2, b = 0.1; // fluctuation
-			//const float F = 0.015, K = 0.055, a = 0.2, b = 0.1; // burnAndDie1
-			//const float F = 0.015, K = 0.05, a = 0.2, b = 0.1; // burnAndDie2
-			//const float F = 0.0087, K = 0.044, a = 0.2, b = 0.1; // turbulence
-			//const float F = 0.005, K = 0.03, a = 0.2, b = 0.1; // black hole
-			//const float F = 0.012, K = 0.04, a = 0.2, b = 0.1; // tvscreen
-			//const float F = 0.0085, K = 0.047, a = 0.2, b = 0.1; // balance (for !billy@fromDiscoChat)
-			
 			//const float dr=0.00001, dg=0.00001, db=0.000035, s=1., c=2., w=1., f=0.63, q=0.4;
-			const float dr=0.002, dg=0.003, db=0.004, s=0.1, c=0.2, w=0.1, f=0.5, q=0.1;
+			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.2, w=0.1, f=0.5, q=0.1; // test02
+			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.176, w=1.0, f=0.5, q=0.1; // test03
+			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.176, w=1.0, f=0.5, q=0.099; // test04 (stars)
+			const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.076, w=1.0, f=0.5, q=0.01; // test05
 			
 			//const float TIMESTEP = 1.0;
 			const float TIMESTEP = 0.1;
