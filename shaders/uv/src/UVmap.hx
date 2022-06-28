@@ -17,6 +17,15 @@ class UVmap implements Element
 	@sizeX public var w:Int;
 	@sizeY public var h:Int;
 	
+	//let the texture shift/resize inside slot/texCoords/tile area of Element
+	//@texPosX("image")public var txOffset:Int = 3000;
+	@texPosX("image") @constStart(3050) @constEnd(3000) @anim("offset", "constant") public var txOffset:Int;
+	@texPosY("image") public var tyOffset:Int = 5;
+	//@texSizeX("image") public var twOffset:Int = 5000;
+	@texSizeY("image") public var thOffset:Int = 12;
+	
+	var OPTIONS = { texRepeatX:true, texRepeatY:false, alpha:true };
+	
 	// TODO:
 	//var DEFAULT_FRAGMENT_SHADER = "";	
 	
@@ -44,17 +53,19 @@ class UVmap implements Element
 			{		
 				
 				// using red + blue colorchannels for horizontal mapping
-				float highByte = uvRGB.r * (256.0 / 257.0);
-				float lowByte  = uvRGB.b * (1.0 / 257.0);
+				//float highByte = uvRGB.r * (256.0 / 257.0);
+				//float lowByte  = uvRGB.b * (1.0 / 257.0);				
+				//float uCoord = highByte + lowByte;
 				
-				float uCoord = highByte + lowByte;
+				float uCoord =  (uvRGB.r * 256.0 + uvRGB.b ) / 257.0;
 				
 				// using green colorchannel for vertically mapping
 				float vCoord = uvRGB.g;
 
-				// TODO: offset
 				//vec2 imgTexRes = getTextureResolution(imgTexID);
+				
 				return getTextureColor( imgTexID, vec2( uCoord, vCoord ) );
+				//return getTextureColor( imgTexID, vec2( clamp(uCoord*1.0, 0.0, 1.0), clamp(vCoord*1.0, 0.0, 1.0) ) );
 				
 				//return vec4(uvRGB, 1.0); // to shows the pure uvmap uncomment here!
 			}			
@@ -65,9 +76,8 @@ class UVmap implements Element
 		// from inside of the glsl uvmapping() function for that texture-layer
 		
 		program.setColorFormula( "uvmapping(uvmap.rgb, image_ID)" );
-		
-		
-		program.setFragmentFloatPrecision("highp", true);
+				
+		//program.setFragmentFloatPrecision("high", true);
 		
 		display.addProgram(program);
 	}

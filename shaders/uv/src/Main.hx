@@ -36,26 +36,29 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
-		var display = new Display(0, 0, window.width, window.height, Color.GREY2);
+		var display = new Display(0, 0, window.width, window.height, Color.GREY1);
 
 		peoteView.addDisplay(display);
 		
-		Loader.imageArray(["assets/spiral0001.png", "assets/image.png"] , true, function (image:Array<Image>) 
+		Loader.imageArray(["assets/spiral8bpc.png", "assets/fosterWallace.png"] , true, function (image:Array<Image>)
 		{
-			var uvTexture = new Texture(image[0].width, image[0].height);
+			var uvTexture = new Texture(image[0].width, image[0].height, 1, 4, false, 0, 0);
 			uvTexture.setImage(image[0]);
 			
-			var imageTexture = new Texture(image[1].width, image[1].height);
+			var imageTexture = new Texture(image[1].width, image[1].height, 1, 4, false, 1, 0);
 			imageTexture.setImage(image[1]);
 			
 					
 			UVmap.init(display, uvTexture, imageTexture);
 			uvMap = new UVmap(0, 0, 600, 600);
 			
+			uvMap.timeOffset(0.0, 1.0);
+			UVmap.buffer.updateElement(uvMap);
+			
+			peoteView.start();
 		});
 		
 		
-		peoteView.start();
 	}
 	
 	
