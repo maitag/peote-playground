@@ -13,12 +13,15 @@ class NormalLight implements Element
 	@varying @posX public var x:Int = 50;
 	@varying @posY public var y:Int = 50;
 	
+	@varying @custom public var depth:Float = 0.25;
+	
 	// size in pixel
 	@varying @sizeX public var size:Int = 100;
 	@sizeY @const @formula("size") var h:Int;
 	
 	@pivotX @const @formula("size * 0.5") var px:Int;
 	@pivotY @const @formula("size * 0.5") var py:Int;
+	
 
 	// TODO:
 	//var DEFAULT_FRAGMENT_SHADER = "";	
@@ -41,25 +44,24 @@ class NormalLight implements Element
 
 		program.injectIntoFragmentShader(
 		"			
-			vec4 normalLight( int lightsTextureID, int normalTextureID )
+			vec4 normalLight( int lightsTextureID, int normalTextureID, float depth )
 			{
-				float lightZ = 0.5;
 				vec3 lightColor = vec3(1.0, 1.0, 1.0);
-				vec3 ambientColor = vec3(0.3, 0.3, 0.3);
-				vec3 falloff = vec3(0.4, 2.0, 5.0); // TODO
+				vec3 ambientColor = vec3(0.0, 0.0, 0.0);
+				vec3 falloff = vec3(0.4, 3.0, 20.0); // TODO: in depend of size!
 				
 				
-				vec2 texRes = getTextureResolution(lightsTextureID);
+				vec2 texRes = getTextureResolution(normalTextureID);
 				
-				vec4 normalTextureRGBZ = getTextureColor( normalTextureID, (vPos + (vTexCoord - 0.5)*vSize)/texRes );  // TODO
+				vec4 normalTextureRGBZ = getTextureColor( normalTextureID, (vPos + (vTexCoord - 0.5)*vSize)/texRes );
+				//normalTextureRGBZ.g = 1.0 - normalTextureRGBZ.g;
 				
 				// vector to position of light
-				// TODO: diff to z from normalTextureRGBZ.a
-				vec3 light = vec3(  ( vTexCoord - vec2(0.5, 0.5)  )     ,   lightZ ) * vSize.x;
+				vec3 light = vec3(  vTexCoord - 0.5 ,  normalTextureRGBZ.a - depth );
 				
 				float D = length(light);
-				// calculate the light falloff -> TODO!!!
-				float attenuation = 1.0;// / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) );
+				// calculate the light falloff
+				float attenuation = 1.0 / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) );
 				
 				//normalize our vectors
 				vec3 N = normalize(normalTextureRGBZ.rgb * 2.0 - 1.0);
@@ -80,7 +82,7 @@ class NormalLight implements Element
 		// the "_ID" postfix is to give access to use getTextureColor() manually 
 		// from inside of the glsl blur() function to that texture-layer
 		
-		program.setColorFormula( "normalLight(lights_ID, normal_ID)" ); // TODO: only need UV + Z here
+		program.setColorFormula( "normalLight(lights_ID, normal_ID, depth)" ); // TODO: only need UV + Z here
 		
 		
 		display.addProgram(program);
@@ -96,11 +98,8 @@ class NormalLight implements Element
 		buffer.addElement(this);
 	}
 
-	public function update(x:Int, y:Int, ?size:Null<Int>)
+	public function update()
 	{
-		this.x = x;
-		this.y = y;
-		if (size != null) this.size = size;
 		buffer.updateElement(this);
 	}
 

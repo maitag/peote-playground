@@ -4,13 +4,14 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
+import lime.ui.MouseWheelMode;
+import lime.graphics.Image;
 
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Color;
 import peote.view.Texture;
 import utils.Loader;
-import lime.graphics.Image;
 
 
 class Main extends Application
@@ -53,7 +54,7 @@ class Main extends Application
 			
 			// TODO: only need normalTexture here
 			NormalLight.init(display, lightsTexture, normalTexture);
-			light = new NormalLight();
+			light = new NormalLight(100, 100, 200);
 
 			
 			// TODO: second render-pass to accumulate light-map from texture to the pre-calculated lights by blender
@@ -62,10 +63,9 @@ class Main extends Application
 			
 			
 			
-			
-			
 			// add mouse events to move the light (to not run before it was instantiated):
 			window.onMouseMove.add(_onMouseMove);
+			window.onMouseWheel.add(_onMouseWheel);
 		});
 		
 		
@@ -79,9 +79,15 @@ class Main extends Application
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 	function _onMouseMove (x:Float, y:Float):Void {
-		light.update(Std.int(x), Std.int(y));
+		light.x = Std.int(x);
+		light.y = Std.int(y);
+		light.update();
 	}	
 
+	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void {
+		light.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.01;
+		light.update();
+	}
 	// ----------------- MOUSE EVENTS ------------------------------
 	
 	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
