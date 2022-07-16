@@ -37,6 +37,7 @@ class NormalLight implements Element
 	{	
 		buffer = new Buffer<NormalLight>(8, 8, true);
 		program = new Program(buffer);
+		program.alphaEnabled = true;
 		
 		// create a texture-layer named "base"
 		program.setTexture(lightsTexture, "lights", false);
@@ -53,16 +54,22 @@ class NormalLight implements Element
 				
 				vec2 texRes = getTextureResolution(normalTextureID);
 				
+				// fetch pixel from normal-map
 				vec4 normalTextureRGBZ = getTextureColor( normalTextureID, (vPos + (vTexCoord - 0.5)*vSize)/texRes );
-				//normalTextureRGBZ.g = 1.0 - normalTextureRGBZ.g;
+				
+				// flip x normal (TODO: better directly in blender by normalmap-generation)
+				normalTextureRGBZ.r = 1.0 - normalTextureRGBZ.r;
 				
 				// vector to position of light
 				vec3 light = vec3(  vTexCoord - 0.5 ,  normalTextureRGBZ.a - depth );
 				
 				float D = length(light);
 				// calculate the light falloff
-				float attenuation = 1.0 / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) );
-				
+				//float attenuation = 1.0 / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) );
+				//float attenuation = clamp(1.0 - D * D / (0.5 * 0.5), 0.0, 1.0);
+				float attenuation = max(1.0 - D * D / (0.25), 0.0);
+				attenuation *= attenuation;
+
 				//normalize our vectors
 				vec3 N = normalize(normalTextureRGBZ.rgb * 2.0 - 1.0);
 				vec3 L = normalize(light);

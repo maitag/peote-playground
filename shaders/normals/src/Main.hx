@@ -1,6 +1,8 @@
 package;
 
 import haxe.CallStack;
+import lime.ui.KeyCode;
+import lime.ui.KeyModifier;
 
 import lime.app.Application;
 import lime.ui.Window;
@@ -37,7 +39,7 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
-		var display = new Display(0, 0, window.width, window.height, Color.GREY2);
+		var display = new Display(0, 0, window.width, window.height);
 
 		peoteView.addDisplay(display);
 		
@@ -54,7 +56,7 @@ class Main extends Application
 			
 			// TODO: only need normalTexture here
 			NormalLight.init(display, lightsTexture, normalTexture);
-			light = new NormalLight(100, 100, 200);
+			light = new NormalLight(200, 200, 400);
 
 			
 			// TODO: second render-pass to accumulate light-map from texture to the pre-calculated lights by blender
@@ -84,8 +86,15 @@ class Main extends Application
 		light.update();
 	}	
 
+	var isShift = false;
+	
 	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void {
-		light.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.01;
+		if (isShift) {
+			light.size += ( (deltaY > 0) ? 1 : -1  ) * 10;
+		}
+		else {
+			light.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.01;
+		}
 		light.update();
 	}
 	// ----------------- MOUSE EVENTS ------------------------------
@@ -102,8 +111,12 @@ class Main extends Application
 	// override function onTouchEnd (touch:lime.ui.Touch):Void {}
 	
 	// ----------------- KEYBOARD EVENTS ---------------------------
-	// override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}	
-	// override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}
+	override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+		if (keyCode == KeyCode.LEFT_SHIFT) isShift = true;
+	}	
+	override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+		if (keyCode == KeyCode.LEFT_SHIFT) isShift = false;
+	}
 
 	// -------------- other WINDOWS EVENTS ----------------------------
 	// override function onWindowResize (width:Int, height:Int):Void { trace("onWindowResize", width, height); }
