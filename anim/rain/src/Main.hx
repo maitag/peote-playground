@@ -62,11 +62,11 @@ class Main extends Application
 			// TODO:
 			// angle for the wind-direction
 			
+			peoteView.zoom = 2.0;
+			peoteView.start();
 			
 		});
 		
-		peoteView.zoom = 2.0;
-		peoteView.start();
 	}
 	
 	

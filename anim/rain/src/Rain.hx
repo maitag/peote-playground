@@ -14,7 +14,6 @@ class Rain implements Element
 	@sizeX public var w:Int = 8;
 	@sizeY public var h:Int = 8;
 	
-	@custom public var seed:Int = 5;
 	
 	// ranges will be changed globally by program.setFormula()
 	@custom @const var rangeLeft:Int = 0;
@@ -26,11 +25,12 @@ class Rain implements Element
 	
 	@custom @constStart(0.0) @constEnd(1.0) @anim("repeat") var dropState:Float;
 	
-	//@posX @formula("floor(uTime/aTime0.y) * 100.0") public var x:Int; 
-	@posX @const @formula("rangeLeft + fract( sin( (floor((uTime-aTime0.x)/aTime0.y)+1.0)*seed )*100000.0) * rangeWidth") var x:Int; 
-	@posY @const @formula("rangeTop + ((dropState < splashOffset) ? dropState : splashOffset) * (rangeHeight)/splashOffset") var y:Int;
+	//@custom public var seed:Int = 5;
+	//@posX @const @formula("rangeLeft + fract( sin( (floor((uTime-aTime0.x)/aTime0.y)+1.0)*seed )*100000.0) * rangeWidth") var x:Int; 
+	@posX @const @formula("rangeLeft + fract( sin( (floor((uTime-aTime0.x)/aTime0.y)+1.0)*aTime0.x )*100000.0) * rangeWidth") var x:Int; 
+	@posY @const @formula("rangeTop + ((dropState < splashOffset) ? dropState*rangeHeight/splashOffset : rangeHeight)") var y:Int;
 	
-	@texTile @const @formula("(dropState < splashOffset) ? 0.0 : 1.0 + ((dropState - splashOffset)/(10.0-splashOffset*10.0)) * 30.0") var tile = 0;
+	@texTile @const @formula("(dropState < splashOffset) ? 0.0 : 1.0 + 3.0*(dropState - splashOffset)/(1.0-splashOffset)") var tile = 0;
 	
 	
 	static public var duration = 2.0;
@@ -39,7 +39,8 @@ class Rain implements Element
 	{
 		this.w = w;
 		this.h = h;
-		this.time(Math.random()*100, duration + Math.random()*0.25);
+		this.time(Math.random() * 100, duration + Math.random() * 0.25);
+		//this.seed = Std.int(Math.random() * 0xfff);
 	}
 
 	// --------------------------------------------------------------------------
