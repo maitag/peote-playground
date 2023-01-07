@@ -1,3 +1,0 @@
-#-cmd ps aux | grep node
--cmd npx kill-port 3000
--cmd haxe compile.hxml
