@@ -15,8 +15,8 @@ import utils.Loader;
 
 class Bulby implements Element
 {
-	@sizeX @const public var w:Int=60;
-	@sizeY @const public var h:Int=64;
+	@sizeX @const public var w:Int=512;
+	@sizeY @const public var h:Int=512;
 	
 	@posX @constStart(0) @constEnd(800) @anim("X","pingpong") @formula("xStart+(xEnd-w-xStart)*time0") public var x:Int;
 	@posY @constStart(0) @constEnd(600) @anim("Y","pingpong") @formula("yStart+(yEnd-h-yStart)*time1*time1") public var y:Int;
@@ -36,11 +36,11 @@ class Main extends Application
 		{
 			case WEBGL, OPENGL, OPENGLES:
 				
-				var peoteView = new PeoteView(window, Color.GREY3);
+				var peoteView = new PeoteView(window);
 
-				var display = new Display(0, 0, 800, 590, Color.GREY6);
+				var display = new Display(0, 0, 800, 600, Color.BLACK);
 				
-				var buffer = new Buffer<Bulby>(4, 4, true);
+				var buffer = new Buffer<Bulby>(1);
 				var program = new Program(buffer);
 				
 				Loader.image("assets/bulby.png", true, function(image:Image)
