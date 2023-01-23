@@ -17,6 +17,8 @@ class Bulby implements Element
 {
 	@sizeX @const public var w:Int=512;
 	@sizeY @const public var h:Int=512;
+
+	@texTile() public var tile:Int = 0;
 	
 	@posX @constStart(0) @constEnd(800) @anim("X","pingpong") @formula("xStart+(xEnd-w-xStart)*time0") public var x:Int;
 	@posY @constStart(0) @constEnd(600) @anim("Y","pingpong") @formula("yStart+(yEnd-h-yStart)*time1*time1") public var y:Int;
@@ -42,13 +44,18 @@ class Main extends Application
 				
 				var buffer = new Buffer<Bulby>(1);
 				var program = new Program(buffer);
-				
-				Loader.image("assets/bulby.png", true, function(image:Image)
+		
+				var frameSize = 64;
+
+				Loader.image("assets/bulby_spritesheet.png", true, function(image:Image)
 				{
 					var texture = new Texture(image.width, image.height);
+					// define texture tiles
+					texture.tilesX = Std.int(image.width / frameSize);
+					texture.tilesY = Std.int(image.height / frameSize);
 					texture.setImage(image);
 					
-					program.addTexture(texture, "custom");					
+					program.addTexture(texture, "custom");
 					program.snapToPixel(1); // for smooth animation
 
 					peoteView.addDisplay(display);
