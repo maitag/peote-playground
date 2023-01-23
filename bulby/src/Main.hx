@@ -37,6 +37,7 @@ class Main extends Application
 
 	var secondsRemaining:Float = 0;
 	var secondsDuration:Float = 0.5;
+	var isReady:Bool = false;
 	
 	override function onWindowCreate():Void
 	{		
@@ -71,6 +72,7 @@ class Main extends Application
 					buffer.addElement(bulby);
 					
 					peoteView.start();
+					isReady = true;
 				});				
 				
 			default:			
@@ -79,6 +81,8 @@ class Main extends Application
 	
 	override function update(deltaTime:Int) {
 		super.update(deltaTime);
+		if(!isReady) return;
+
 		if(secondsRemaining <= 0){
 			secondsRemaining = secondsDuration;
 			var randomTileIndex = Math.floor(Math.random() * 5);
