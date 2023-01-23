@@ -31,7 +31,13 @@ class Bulby implements Element
 }
 
 class Main extends Application
-{	
+{
+	var buffer:Buffer<Bulby>;
+	var bulby:Bulby;
+
+	var secondsRemaining:Float = 0;
+	var secondsDuration:Float = 0.5;
+	
 	override function onWindowCreate():Void
 	{		
 		switch (window.context.type)
@@ -42,7 +48,7 @@ class Main extends Application
 
 				var display = new Display(0, 0, 800, 600, Color.BLACK);
 				
-				var buffer = new Buffer<Bulby>(1);
+				buffer = new Buffer<Bulby>(1);
 				var program = new Program(buffer);
 		
 				var frameSize = 64;
@@ -60,8 +66,9 @@ class Main extends Application
 
 					peoteView.addDisplay(display);
 					display.addProgram(program);
-					
-					buffer.addElement(new Bulby(0, 0, peoteView.time));
+
+					bulby = new Bulby(0, 0, peoteView.time);
+					buffer.addElement(bulby);
 					
 					peoteView.start();
 				});				
@@ -69,5 +76,15 @@ class Main extends Application
 			default:			
 		}		
 	}		
-
+	
+	override function update(deltaTime:Int) {
+		super.update(deltaTime);
+		if(secondsRemaining <= 0){
+			secondsRemaining = secondsDuration;
+			var randomTileIndex = Math.floor(Math.random() * 5);
+			bulby.tile = randomTileIndex;
+			buffer.updateElement(bulby);
+		}
+		secondsRemaining -= (deltaTime / 1000);
+	}
 }
