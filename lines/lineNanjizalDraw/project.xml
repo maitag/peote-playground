@@ -10,7 +10,10 @@
 	<window width="800" height="600" fps="61" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<app main="Main" path="bin" file="Main" />
+	<!-- choose one of here: -->
+	<!--<app main="Main" path="bin" file="Main" />-->
+	<app main="MainPixelAnim" path="bin" file="MainPixelAnim" />
+	
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
