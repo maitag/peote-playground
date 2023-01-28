@@ -1,5 +1,6 @@
 package;
 
+import NanjizalDraw.DrawPixel;
 import NanjizalDraw.DrawLine;
 import haxe.CallStack;
 
@@ -29,20 +30,24 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------
-	var buffer:Buffer<LineSegment>;
+	var buffer_lines:Buffer<LineSegment>;
+	var buffer_pixels:Buffer<Pixel>;
 	
 	var isInit = false;
 	
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-
-		buffer = new Buffer<LineSegment>(4, 4, true);
 		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
-		var program = new Program(buffer);
-
 		peoteView.addDisplay(display);
-		display.addProgram(program);
+
+		buffer_lines = new Buffer<LineSegment>(16384, 1024, true);
+		var program_lines = new Program(buffer_lines);
+		display.addProgram(program_lines);
+
+		buffer_pixels = new Buffer<Pixel>(65535, 4096, true);
+		var program_pixels = new Program(buffer_pixels);
+		display.addProgram(program_pixels);
 
 		var drawLine:DrawLine = (x0, y0, x1, y1, thick, color) -> {
 			var line = new LineSegment();
@@ -52,12 +57,14 @@ class Main extends Application
 			line.yEnd = Std.int(y1);
 			line.c = color;
 			line.h = Std.int(thick);
-			buffer.addElement(line);
+			buffer_lines.addElement(line);
 		}
 
+		var drawPixel:DrawPixel = (x, y, color) -> {
+			buffer_pixels.addElement(new Pixel(x, y, color));
+		}
 		
-		
-		var nanj = new NanjizalDraw(drawLine);
+		var nanj = new NanjizalDraw(drawLine, drawPixel);
 		
 		nanj.strokeWidth = 2;
 		nanj.strokeColor = Color.GREEN;
@@ -74,6 +81,10 @@ class Main extends Application
 		// issue with moveTo?
 		nanj.moveTo( 400, 200 );
 		nanj.quadTo( 400,0, 500,500);
+
+		// testing drawPixel
+		@:privateAccess
+		nanj.drawPixel(400, 400, Color.WHITE);
 		
 		isInit = true;
 		

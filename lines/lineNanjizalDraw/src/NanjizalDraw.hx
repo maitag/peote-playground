@@ -5,6 +5,7 @@ import justPath.ILinePathContext;
 typedef QuadrilateralPos = {ax:Float, ay:Float, bx:Float, by:Float, cx:Float, cy:Float, dx:Float, dy:Float};
 typedef TrianglePos = {ax:Float, ay:Float, bx:Float, by:Float, cx:Float, cy:Float};
 typedef DrawLine = (x0:Float, y0:Float, x1:Float, y1:Float, thick:Float, color:Color) -> Void;
+typedef DrawPixel = (x:Int, y:Int, color:Color) -> Void;
 class Graphics {}
 
 @:access(stone.graphics.implementation.Graphics)
@@ -23,10 +24,13 @@ class NanjizalDraw implements ILinePathContext {
 	var y0:Float = 0.;
 	var svgLinePath:SvgLinePath;
 	var drawLine:DrawLine;
+	var drawPixel:DrawPixel;
 
-	public function new(drawLine:DrawLine, strokeColor:Color = 0xff0000ff, strokeWidth = 1., translateX = 0., translateY = 0., scaleX = 1., scaleY = 1.) {
+
+	public function new(drawLine:DrawLine, drawPixel:DrawPixel, strokeColor:Color = 0xff0000ff, strokeWidth = 1., translateX = 0., translateY = 0., scaleX = 1., scaleY = 1.) {
 		svgLinePath = new SvgLinePath(this);
 		this.drawLine = drawLine;
+		this.drawPixel = drawPixel;
 		this.strokeWidth = strokeWidth;
 		this.strokeColor = strokeColor;
 		this.translateX = translateX;
@@ -139,7 +143,7 @@ class NanjizalDraw implements ILinePathContext {
 		drawLine(x0, y0, x1, y1, thick, color);
 		return getInfo(x0, y0, x1, y1, thick);
 	}
-
+	
 	inline function getInfo(px:Float, py:Float, qx:Float, qy:Float, thick:Float):QuadrilateralPos {
 		var o = qy - py;
 		var a = qx - px;
