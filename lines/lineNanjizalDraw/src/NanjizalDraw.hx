@@ -10,12 +10,13 @@ class Graphics {}
 
 @:access(stone.graphics.implementation.Graphics)
 class NanjizalDraw implements ILinePathContext {
-	public var strokeWidth:Float;
+	// this can probably be Float as does not rely on graphicsLine thickness!
+	public var strokeWidth:Int;
 	public var strokeColor:Color;
-	public var translateX:Float;
-	public var translateY:Float;
-	public var scaleX:Float;
-	public var scaleY:Float;
+	public var translateX:Float = 0.;
+	public var translateY:Float = 0.;
+	public var scaleX:Float = 1.;
+	public var scaleY:Float = 1.;
 
 	var toggleDraw = true;
 	var info:QuadrilateralPos; // { ax: Float, ay: Float, bx: Float, by: Float, cx: Float, cy: Float, dx: Float, dy: Float };
@@ -27,7 +28,7 @@ class NanjizalDraw implements ILinePathContext {
 	var drawPixel:DrawPixel;
 
 
-	public function new(drawLine:DrawLine, drawPixel:DrawPixel, strokeColor:Color = 0xff0000ff, strokeWidth = 1., translateX = 0., translateY = 0., scaleX = 1., scaleY = 1.) {
+	public function new(drawLine:DrawLine, drawPixel:DrawPixel, strokeColor:Color = 0xff0000ff, strokeWidth = 1, translateX = 0., translateY = 0., scaleX = 1., scaleY = 1.) {
 		svgLinePath = new SvgLinePath(this);
 		this.drawLine = drawLine;
 		this.drawPixel = drawPixel;
@@ -53,7 +54,6 @@ class NanjizalDraw implements ILinePathContext {
 	}
 
 	function fillTriUnsafe(ax:Float, ay:Float, bx:Float, by:Float, cx:Float, cy:Float, hasHit:Bool = true):Null<TrianglePos> {
-		trace('fillTriUnsafe ');
 		var s0 = ay * cx - ax * cy;
 		var sx = cy - ay;
 		var sy = ax - cx;
@@ -61,8 +61,8 @@ class NanjizalDraw implements ILinePathContext {
 		var tx = ay - by;
 		var ty = bx - ax;
 		var A = -by * cx + ay * (-bx + cx) + ax * (by - cy) + bx * cy;
-		// var yIter3: IteratorRange = boundIterator3( ay, by, cy );
 		var xIter3:IteratorRange = boundIterator3(ax, bx, cx);
+		var yIter3: IteratorRange = boundIterator3( ay, by, cy );
 		var foundX = false;
 		var s = 0.;
 		var t = 0.;
@@ -70,17 +70,20 @@ class NanjizalDraw implements ILinePathContext {
 		var tyy = 0.;
 		var startX:Int = 0;
 		var count = 0;
-		for (y in boundIterator3(ay, by, cy)) {
+		var breakEarly = false;
+		for( y in yIter3 ) {
 			syy = sy * y;
 			tyy = ty * y;
 			foundX = false;
-			for (x in xIter3) {
-				s = s0 + tx * x + syy;
-				t = t0 + sx * x + tyy;
+			breakEarly = false;
+			for( x in xIter3 ){
+				s = s0 + sx * x + syy;
+				t = t0 + tx * x + tyy;
 				if (s <= 0 || t <= 0) {
 					// after filling break
 					if (foundX) {
 						graphicsLine(startX, y, x, y, 1, strokeColor);
+						breakEarly = true;
 						break;
 					}
 				} else {
@@ -88,16 +91,24 @@ class NanjizalDraw implements ILinePathContext {
 						// store first hit
 						if (foundX == false) {
 							startX = x;
-							trace('startX ' + x);
 						}
 						foundX = true;
 					} else {
 						// after filling break
 						if (foundX) {
 							graphicsLine(startX, y, x, y, 1, strokeColor);
+							breakEarly = true;
 							break;
 						}
 					}
+				}
+				
+				
+			}
+			// fix will improve pixelimage as well!
+			if( breakEarly == false ){
+				if( foundX == true ){
+					graphicsLine(startX, y, xIter3.max, y, 1, strokeColor);
 				}
 			}
 		}
@@ -139,11 +150,58 @@ class NanjizalDraw implements ILinePathContext {
 		}
 	}
 
-	function graphicsLine(x0:Float, y0:Float, x1:Float, y1:Float, thick:Float, color:Color):QuadrilateralPos {
-		drawLine(x0, y0, x1, y1, thick, color);
-		return getInfo(x0, y0, x1, y1, thick);
+	function graphicsLine( px:Float, py:Float, qx:Float, qy:Float, thick:Float, color:Color):QuadrilateralPos {
+		// thick can be 1 here!! and py = qy!!
+		drawLine( px, py, qx, qy, thick, color);
+		return getInfo( px, py, qx, qy, thick);
 	}
 	
+    public inline 
+    function fillLine( px: Float, py: Float, qx: Float, qy: Float
+                     , thick: Int, hasHit: Bool = true ): Null<QuadrilateralPos> {
+        var o = qy-py;
+        var a = qx-px;
+        var h = Math.pow( o*o + a*a, 0.5 );
+        var theta = Math.atan2( o, a );
+        return rotateLine( px, py, thick, h, theta, hasHit);
+    }
+
+inline
+function rotateLine( px: Float, py: Float
+                   , thick: Int, h: Float
+                   , theta: Float
+                   , hasHit: Bool = false
+                   ): Null<QuadrilateralPos> {
+    var sin = Math.sin( theta );
+    var cos = Math.cos( theta );
+    var radius = thick/2;
+    var dx = 0.1;
+    var dy = radius;
+    var cx = h;
+    var cy = radius;
+    var bx = h;
+    var by = -radius;
+    var ax = 0.1;
+    var ay = -radius;
+    var temp = 0.;
+    temp = px + rotX( ax, ay, sin, cos );
+    ay = py + rotY( ax, ay, sin, cos );
+    ax = temp;
+               
+    temp = px + rotX( bx, by, sin, cos );
+    by = py + rotY( bx, by, sin, cos );
+    bx = temp;
+
+    temp = px + rotX( cx, cy, sin, cos );
+    cy = py + rotY( cx, cy, sin, cos );
+    cx = temp;
+
+    temp = px + rotX( dx, dy, sin, cos );
+    dy = py + rotY( dx, dy, sin, cos ); 
+    dx = temp;
+    return fillQuadrilateral( ax, ay, bx, by, cx, cy, dx, dy, hasHit );
+}
+
 	inline function getInfo(px:Float, py:Float, qx:Float, qy:Float, thick:Float):QuadrilateralPos {
 		var o = qy - py;
 		var a = qx - px;
@@ -198,19 +256,18 @@ class NanjizalDraw implements ILinePathContext {
 	public function lineSegmentTo(x2:Float, y2:Float) {
 		if (toggleDraw) {
 			oldInfo = info;
-			info = graphicsLine(x0 * scaleX + translateX, y0 * scaleY + translateY, x2 * scaleX + translateX, y2 * scaleY + translateY, strokeWidth,
-				strokeColor);
+			info = fillLine(x0 * scaleX + translateX, y0 * scaleY + translateY, x2 * scaleX + translateX, y2 * scaleY + translateY, strokeWidth );//,strokeColor );
 			if (info != null && oldInfo != null) {
-				var xA = (oldInfo.bx + oldInfo.cx) / 2;
-				var yA = (oldInfo.by + oldInfo.cy) / 2;
-				// var yA = ( info.ax + info.dx )/2; <----!!!
-				// var xB = ( oldInfo.bx + oldInfo.cx )/2;
-				// var yB = ( info.ax + info.dx )/2;
-				graphicsLine(xA * scaleX + translateX, yA * scaleY + translateY, x0 * scaleX + translateX, y0 * scaleY + translateY, strokeWidth, strokeColor);
-				// Can try fillQuadrilateral here!
-				// fillQuadrilateral( oldInfo.bx*scaleX + translateX, oldInfo.by*scaleY + translateY, info.ax*scaleX + translateX, info.ay*scaleY + translateY, info.dx*scaleX + translateX, info.dy*scaleY + translateY, oldInfo.cx*scaleX + translateX, oldInfo.cy*scaleY + translateY, strokeColor );
+				fillQuadrilateral( oldInfo.bx*scaleX + translateX, oldInfo.by*scaleY + translateY
+									   , info.ax*scaleX + translateX, info.ay*scaleY + translateY
+									   , info.dx*scaleX + translateX, info.dy*scaleY + translateY
+									   , oldInfo.cx*scaleX + translateX, oldInfo.cy*scaleY + translateY
+									   , true );
+									   
 			}
-		} else {}
+		} else {
+
+		}
 		toggleDraw = !toggleDraw;
 		x0 = x2;
 		y0 = y2;
@@ -218,16 +275,15 @@ class NanjizalDraw implements ILinePathContext {
 
 	public function lineTo(x2:Float, y2:Float) {
 		oldInfo = info;
-		info = graphicsLine(x0 * scaleX + translateX, y0 * scaleY + translateY, x2 * scaleX + translateX, y2 * scaleY + translateY, strokeWidth, strokeColor);
+		info = fillLine(x0 * scaleX + translateX, y0 * scaleY + translateY, x2 * scaleX + translateX, y2 * scaleY + translateY, strokeWidth );//, strokeColor);
 		if (info != null && oldInfo != null) {
-			var xA = (oldInfo.bx + oldInfo.cx) / 2;
-			var yA = (oldInfo.by + oldInfo.cy) / 2;
-			// var yA = ( info.ax + info.dx )/2; <--!!
-			// var xB = ( oldInfo.bx + oldInfo.cx )/2;
-			// var yB = ( info.ax + info.dx )/2;
-			graphicsLine(xA * scaleX + translateX, yA * scaleY + translateY, x0 * scaleX + translateX, y0 * scaleY + translateY, strokeWidth, strokeColor);
-			// Can try fillQuadrilateral here!
-			// fillQuadrilateral( oldInfo.bx*scaleX + translateX, oldInfo.by*scaleY + translateY, info.ax*scaleX + translateX, info.ay*scaleY + translateY, info.dx*scaleX + translateX, info.dy*scaleY + translateY, oldInfo.cx*scaleX + translateX, oldInfo.cy*scaleY + translateY, strokeColor );
+			
+            fillQuadrilateral( oldInfo.bx*scaleX + translateX, oldInfo.by*scaleY + translateY
+				, info.ax*scaleX + translateX, info.ay*scaleY + translateY
+				, info.dx*scaleX + translateX, info.dy*scaleY + translateY
+				, oldInfo.cx*scaleX + translateX, oldInfo.cy*scaleY + translateY
+				, true );
+				
 		}
 		x0 = x2;
 		y0 = y2;
