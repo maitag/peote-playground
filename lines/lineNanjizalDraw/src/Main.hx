@@ -72,15 +72,15 @@ class Main extends Application
 		nanj.lineTo( 200, 150 );
 		nanj.lineTo( 130, 220 );
 		nanj.lineTo( 100, 100 );
-		
+
 		// fill is work in progress (not currently working)
 		nanj.fillTriangle( 100, 100, 200, 150, 130, 220 );
-
-		nanj.strokeWidth = 10;
+		nanj.fillQuadrilateral( 500, 300, 530, 220, 700, 120, 900, 500 );
+		nanj.strokeWidth = 50;
 		nanj.strokeColor = Color.MAGENTA;
 		// issue with moveTo?
 		nanj.moveTo( 400, 200 );
-		nanj.quadTo( 400,0, 500,500);
+		nanj.quadTo( 400, 20, 500, 500);
 
 		// testing drawPixel
 		@:privateAccess
