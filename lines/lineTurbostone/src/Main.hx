@@ -11,6 +11,8 @@ import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
 
+import utils.Loader;
+
 class Main extends Application
 {
 	override function onWindowCreate():Void
@@ -41,8 +43,24 @@ class Main extends Application
 
 		
 		// drawing a test-line
-		var line = new TurboLine(10, 20, 100, 200);
-		buffer.addElement(line);
+		//var line = new TurboLine(10, 20, 100, 200);
+		//buffer.addElement(line);
+		
+		
+		Loader.text( "assets/haxe-logo.json",
+			function(loaded:Int, size:Int) trace('loading progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)'),
+			function(errorMsg:String) trace('error $errorMsg'),
+			function(json:String) // on load
+			{
+				var turboLines = TurboData.decode(json);
+								
+				// TODO: 
+				// for ( line in turboLines )
+					// buffer.addElement( new TurboLine(line. , line. , line. , line. ) );
+				
+			}
+		);
+		
 		
 	}
 	
