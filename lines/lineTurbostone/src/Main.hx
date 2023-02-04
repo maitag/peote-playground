@@ -1,5 +1,6 @@
 package;
 
+import TurboData.TurboTranslate;
 import haxe.CallStack;
 
 import lime.app.Application;
@@ -35,7 +36,7 @@ class Main extends Application
 		var peoteView = new PeoteView(window);
 
 		var buffer = new Buffer<TurboLine>(32, 16, true);
-		var display = new Display(0, 0, window.width, window.height, Color.GREEN);
+		var display = new Display(0, 0, window.width, window.height, Color.BLACK);
 		var program = new Program(buffer);
 
 		peoteView.addDisplay(display);
@@ -53,10 +54,23 @@ class Main extends Application
 			function(json:String) // on load
 			{
 				var turboLines = TurboData.decode(json);
-								
-				// TODO: 
-				// for ( line in turboLines )
-					// buffer.addElement( new TurboLine(line. , line. , line. , line. ) );
+
+				var size = 640;
+				var x = -320 ;
+				var y = -320;
+				
+				for ( line in turboLines ){
+					
+					var start = TurboTranslate.model_to_view_point(line.from, size, x, y);
+					var end = TurboTranslate.model_to_view_point(line.to, size, x, y);
+					
+					var x0 = Std.int(start.x);
+					var y0 = Std.int(start.y);
+					var x1 = Std.int(end.x);
+					var y1 = Std.int(end.y);
+
+					buffer.addElement( new TurboLine(x0, y0, x1, y1) );
+				}
 				
 			}
 		);
