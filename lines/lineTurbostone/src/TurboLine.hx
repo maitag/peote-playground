@@ -17,7 +17,7 @@ class TurboLine implements Element
 	@rotation var r:Float;
 	
 	// color (RGBA)
-	@color public var c:Color = 0xff0000ff;
+	@color public var c:Color = 0xf6871fFF;
 	
 /*	// pivot x (rotation offset)
 	@pivotX public var px:Int = 0;
