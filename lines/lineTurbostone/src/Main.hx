@@ -56,10 +56,10 @@ class Main extends Application
 				var turboLines = TurboData.decode(json);
 
 				var size = 640;
-				var x = -320 ;
-				var y = -320;
+				var x = -340 ;
+				var y = -340;
 				
-				for ( line in turboLines ){
+				for ( line in turboLines ) {
 					
 					var start = TurboTranslate.model_to_view_point(line.from, size, x, y);
 					var end = TurboTranslate.model_to_view_point(line.to, size, x, y);
@@ -69,7 +69,7 @@ class Main extends Application
 					var x1 = Std.int(end.x);
 					var y1 = Std.int(end.y);
 
-					buffer.addElement( new TurboLine(x0, y0, x1, y1) );
+					buffer.addElement( new TurboLine(x0, y0, x1, y1, Color.GREEN) );
 				}
 				
 			}

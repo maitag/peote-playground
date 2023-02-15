@@ -43,23 +43,21 @@ class NotBillysFirst extends Application
 		display.addProgram(program);
 
 		
-		// drawing a test-line
-		//var line = new TurboLine(10, 20, 100, 200);
-		//buffer.addElement(line);
+		var filepath = "assets/star.json";
 		
 		
-		Loader.text( "assets/star.json",
+		Loader.text( filepath,
 			function(loaded:Int, size:Int) trace('loading progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)'),
 			function(errorMsg:String) trace('error $errorMsg'),
 			function(json:String) // on load
 			{
-				var turboLines = TurboData.decode(json);
+				var turboLines = TurboData.decode(json, filepath);
 
 				var size = 640;
 				var x = -340 ;
 				var y = -340;
 				
-				for ( line in turboLines ){
+				for ( line in turboLines ) {
 					
 					var start = TurboTranslate.model_to_view_point(line.from, size, x, y);
 					var end = TurboTranslate.model_to_view_point(line.to, size, x, y);
@@ -72,26 +70,11 @@ class NotBillysFirst extends Application
 					buffer.addElement( new TurboLine(x0, y0, x1, y1, Color.GREEN) );
 				}
 				
-			}
+			}			
 		);
 		
 		
 	}
 	
-	// ----------------- MOUSE EVENTS ------------------------------
-	// override function onMouseMove (x:Float, y:Float):Void {}
-	
-	// -------------- WINDOWS EVENTS ----------------------------
-	// override function onWindowResize (width:Int, height:Int):Void {}
-	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
-	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
-	
-	// ----------------- KEYBOARD EVENTS ---------------------------
-	// override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}	
-	// override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}
-
 	
 }
