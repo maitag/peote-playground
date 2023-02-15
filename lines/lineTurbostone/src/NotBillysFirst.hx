@@ -54,7 +54,7 @@ class NotBillysFirst extends Application
 				var turboLines = TurboData.decode(json, filepath);
 
 				var size = 640;
-				var x = -340 ;
+				var x = -340;
 				var y = -340;
 				
 				for ( line in turboLines ) {

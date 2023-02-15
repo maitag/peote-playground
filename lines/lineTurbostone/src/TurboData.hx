@@ -19,11 +19,13 @@ class DataFile {
 	public var lines:Array<Line>;
 }
 
+var rComments = new EReg("//.*?$", "gm");
+
 class TurboData
 {
 	public static function decode(json:String, filepath:String = "json file"):Array<Line> {
 		var parser = new JsonParser<DataFile>();
-		var data = parser.fromJson(json, filepath);
+		var data = parser.fromJson(rComments.replace(json, ""), filepath);
 		
 		// json2object errorhandling
 		if (parser.errors.length > 0) {

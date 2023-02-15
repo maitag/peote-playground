@@ -43,20 +43,18 @@ class SemmisFirstIdea extends Application
 		display.addProgram(program);
 
 		
-		// drawing a test-line
-		//var line = new TurboLine(10, 20, 100, 200);
-		//buffer.addElement(line);
+		var filepath = "assets/haxe-logo.json";
 		
 		
-		Loader.text( "assets/haxe-logo.json",
+		Loader.text( filepath,
 			function(loaded:Int, size:Int) trace('loading progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)'),
 			function(errorMsg:String) trace('error $errorMsg'),
 			function(json:String) // on load
 			{
-				var turboLines = TurboData.decode(json);
+				var turboLines = TurboData.decode(json, filepath);
 
 				var size = 66;
-				var x = -32 ;
+				var x = -32;
 				var y = -32;
 				
 				for ( y in 0...10 ) {
@@ -77,27 +75,11 @@ class SemmisFirstIdea extends Application
 				}
 				
 				
-				
 			}
 		);
 		
 		
 	}
 	
-	// ----------------- MOUSE EVENTS ------------------------------
-	// override function onMouseMove (x:Float, y:Float):Void {}
-	
-	// -------------- WINDOWS EVENTS ----------------------------
-	// override function onWindowResize (width:Int, height:Int):Void {}
-	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
-	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
-	
-	// ----------------- KEYBOARD EVENTS ---------------------------
-	// override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}	
-	// override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}
-
 	
 }
