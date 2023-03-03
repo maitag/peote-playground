@@ -14,7 +14,7 @@ import peote.view.Color;
 
 import utils.Loader;
 
-class NotBillysFirst extends Application
+class HappyBillyBucket extends Application
 {
 	override function onWindowCreate():Void
 	{
