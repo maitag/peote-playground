@@ -51,7 +51,19 @@ class HappyBillyBucket extends Application
 			function(errorMsg:String) trace('error $errorMsg'),
 			function(json:String) // on load
 			{
-				var turboLines = TurboData.decode(json, filepath);
+				
+				// sorry about this little dirty red-knob-hack
+				// (all will be more easy to use later by using "turbo-format" lib)				
+				var frame = new Array<String>();
+				var r = ~/("lines":\s*\[.*?\])/g;
+				while ( r.match(json) ) {
+					trace("frame:\n", r.matched(1), "\n\n");
+					frame.push("{" + r.matched(1) + "}");
+					json = r.replace(json, "");
+				}
+				// ----------------------------------------------------------------
+				
+				var turboLines = TurboData.decode(frame[0], filepath);
 
 				var size = 640;
 				var x = -340;
