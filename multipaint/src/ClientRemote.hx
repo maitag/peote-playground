@@ -196,7 +196,7 @@ class ClientRemote implements Remote {
 	
 	// for optimization: transfer only the relative movements into Bytes!
 	inline function mouseMove(x:Float, y:Float) {
-		//trace("mouseMove", x, y);
+		trace("mouseMove", x, y, x-lastX);
 		var _x:Int = lastX = (x < 0) ? 0 : Std.int(x);
 		var _y:Int = lastY = (y < 0) ? 0 : Std.int(y);
 		if (isDraw) draw(_x, _y) else move(_x, _y);		
@@ -451,7 +451,7 @@ class ClientRemote implements Remote {
 			peoteView.renderToTexture(displayDraw);
 						
 			// clear the buffer
-			for (i in 0...bufferDraw.length()) bufferDraw.removeElement(bufferDraw.getElement(i));
+			for (i in 0...bufferDraw.length) bufferDraw.removeElement(bufferDraw.getElement(i));
 			// TODO: need to upgrade peote-view for using this instead: bufferDraw.removeAllElements() or bufferDraw._maxElements = 0;
 		}
 	}
