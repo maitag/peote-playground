@@ -56,7 +56,29 @@ class Main extends Application {
 
 		// currently the Sprite is not visible because
 		// the texture_display is not added to PeoteView
+		// below we set up a new program that will render the texture which texture_display is producing
 
+		// make new buffer and program to render the texture
+		var renderBuffer = new Buffer<RenderElement>(1);
+		var renderProgram = new Program(renderBuffer);
+		// add render program to main display
+		display.addProgram(renderProgram);
+
+		// add the texture to the program
+		renderProgram.addTexture(texture, "sampledtexture");
+
+		// inject glsl function which samples the color from the passed texture aat vTexCoord
+		renderProgram.injectIntoFragmentShader("
+		vec4 getColor(int sampledtexture){
+			return getTextureColor(sampledtexture, vTexCoord);
+		}
+		");
+
+		// set program to use glsl function for the color
+		renderProgram.setColorFormula('getColor(sampledtexture_ID)');
+
+		// add new element to render buffer so that the render program has something to draw
+		renderBuffer.addElement(new RenderElement(0, 0, window.width, window.height));
 	}
 
 	// ------------------------------------------------------------
