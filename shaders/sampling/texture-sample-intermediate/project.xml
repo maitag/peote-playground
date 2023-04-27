@@ -42,7 +42,7 @@
 	<!-- <haxedef name="dump=pretty output" /> -->
 	
 	<!-- for html5 and loading inside onPreloadComplete-event the assets need to be embed=true --> 
-	<assets path="assets" exclude="lime.svg" embed="false" />
+	<assets path="assets" exclude="lime.svg" embed="true" />
 	
 	<icon path="assets/lime.svg" />
 	

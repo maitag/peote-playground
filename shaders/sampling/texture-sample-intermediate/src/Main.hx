@@ -14,7 +14,8 @@ class Main extends Application {
 	var spriteBuffer:Buffer<Sprite>;
 	var sprite:Sprite;
 
-	override function onWindowCreate():Void {
+	override function onPreloadComplete():Void {
+		// access embeded assets from here
 		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
 				try
@@ -101,10 +102,6 @@ class Main extends Application {
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------
-
-	override function onPreloadComplete():Void {
-		// access embeded assets from here
-	}
 
 	override function update(deltaTime:Int):Void {
 		// for game-logic update
