@@ -40,7 +40,7 @@ class Main extends Application
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
-		var sprite = new Sprite();
+		var sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
 		buffer.addElement(sprite);
 	}
 	

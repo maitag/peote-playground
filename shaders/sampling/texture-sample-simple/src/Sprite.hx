@@ -6,12 +6,12 @@ import peote.view.Color;
 class Sprite implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@posX public var x:Int=0;
-	@posY public var y:Int=0;
+	@posX public var x:Int;
+	@posY public var y:Int;
 	
 	// size in pixel
-	@sizeX public var w:Int=100;
-	@sizeY public var h:Int=100;
+	@sizeX public var w:Int;
+	@sizeY public var h:Int;
 	
 	// rotation around pivot point
 	@rotation public var r:Float;
@@ -28,5 +28,11 @@ class Sprite implements Element
 	// z-index
 	@zIndex public var z:Int = 0;	
 	
-	public function new() {}
+	public function new(x:Int, y:Int, width:Int, height:Int, color:Color) {
+		this.x = x;
+		this.y = y;
+		w = width;
+		h = height;
+		c = color;
+	}
 }
