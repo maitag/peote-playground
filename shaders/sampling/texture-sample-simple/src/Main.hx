@@ -34,7 +34,7 @@ class Main extends Application
 		var peoteView = new PeoteView(window);
 
 		var buffer = new Buffer<Sprite>(4, 4, true);
-		var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
+		var display = new Display(0, 0, window.width, window.height, Color.GREY4);
 		var program = new Program(buffer);
 
 		peoteView.addDisplay(display);
