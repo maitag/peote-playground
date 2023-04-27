@@ -48,6 +48,21 @@ class Main extends Application {
 		var texture = new Texture(window.width, window.height);
 		texture_display.setFramebuffer(texture, peoteView);
 
+		// wabbit Pwogwam
+		var spriteBuffer = new Buffer<Sprite>(100);
+		var spriteProgram = new Program(spriteBuffer);
+		display.addProgram(spriteProgram);
+
+		// load wabbit texture and give to Program
+		var wabbitImage = Assets.getImage("assets/wabbit_alpha.png");
+		var spriteTexture = new Texture(wabbitImage.width, wabbitImage.height);
+		spriteTexture.setImage(wabbitImage);
+		spriteProgram.addTexture(spriteTexture, "wabbit");
+
+		// init wabbit Sprite
+		var wabbit = new Sprite(150, 150, wabbitImage.width, wabbitImage.height, 0xffffffff);
+		spriteBuffer.addElement(wabbit);
+
 		// lightProgram to draw on texture_display (and therefore the texture)
 		lightBuffer = new Buffer<Sprite>(4, 4, true);
 		var lightProgram = new Program(lightBuffer);
@@ -99,7 +114,7 @@ class Main extends Application {
 
 			// return original sample color but use blended alpha 
 			return vec4(textureSample.rgb, alpha_blend);
-			
+
 		}
 		");
 
