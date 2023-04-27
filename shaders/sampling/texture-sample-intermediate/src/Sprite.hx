@@ -28,8 +28,6 @@ class Sprite implements Element
 	// z-index
 	@zIndex public var z:Int = 0;	
 	
-	// @texTile() public var tile:Int;
-
 	public function new(x:Int, y:Int, width:Int, height:Int, color:Color) {
 		this.x = x;
 		this.y = y;
