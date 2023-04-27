@@ -34,7 +34,7 @@ class Main extends Application {
 		var peoteView = new PeoteView(window);
 
 		// main display
-		var display = new Display(0, 0, window.width, window.height, Color.GREY4);
+		var display = new Display(0, 0, window.width, window.height, Color.CYAN);
 		peoteView.addDisplay(display);
 
 		// new display which will render to a texture
