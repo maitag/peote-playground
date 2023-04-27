@@ -17,10 +17,10 @@ class Sprite implements Element
 	@rotation public var r:Float;
 	
 	// pivot x (rotation offset)
-	@pivotX public var px:Int = 0;
+	@pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float = 0.0;
 
 	// pivot y (rotation offset)
-	@pivotY public var py:Int = 0;
+	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float = 0.0;
 	
 	// color (RGBA)
 	@color public var c:Color = 0xff0000ff;
