@@ -48,9 +48,11 @@ class Main extends Application {
 		// spriteProgram to draw on texture_display (and therefore the texture)
 		spriteBuffer = new Buffer<Sprite>(4, 4, true);
 		var spriteProgram = new Program(spriteBuffer);
+
 		// add sprite program to texture display
 		texture_display.addProgram(spriteProgram);
 
+		// init the Sprite
 		sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
 		spriteBuffer.addElement(sprite);
 
@@ -61,16 +63,31 @@ class Main extends Application {
 		// make new buffer and program to render the texture
 		var renderBuffer = new Buffer<RenderElement>(1);
 		var renderProgram = new Program(renderBuffer);
+
+		// ! enable alpha (otherwise we can only handle 0.0 or 1.0 alpha, nothing in between)
+		renderProgram.alphaEnabled = true;
+
 		// add render program to main display
 		display.addProgram(renderProgram);
 
 		// add the texture to the program
 		renderProgram.addTexture(texture, "sampledtexture");
 
-		// inject glsl function which samples the color from the passed texture aat vTexCoord
+		// inject glsl function which samples the color from "sampledtexture" at vTexCoord
 		renderProgram.injectIntoFragmentShader("
 		vec4 getColor(int sampledtexture){
-			return getTextureColor(sampledtexture, vTexCoord);
+
+			// sample the texture
+			vec4 sample = getTextureColor(sampledtexture, vTexCoord);
+			
+			// if the sample red is 100% red
+			if(sample.r == 1.0){
+				// return transparent color
+				return vec4(0.0, 0.0, 0.0, 0.0);
+			}
+
+			// otherwise return black with some transparency
+			return vec4(0.0,0.0,0.0,0.7);
 		}
 		");
 
