@@ -23,11 +23,13 @@ class Sprite implements Element
 	@pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float = 0.0;
 	
 	// color (RGBA)
-	@color public var c:Color = 0xff0000ff;
+	@color public var c:Color;
 	
 	// z-index
 	@zIndex public var z:Int = 0;	
 	
+	// @texTile() public var tile:Int;
+
 	public function new(x:Int, y:Int, width:Int, height:Int, color:Color) {
 		this.x = x;
 		this.y = y;
