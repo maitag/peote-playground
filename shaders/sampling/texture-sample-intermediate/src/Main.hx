@@ -49,7 +49,8 @@ class Main extends Application {
 		texture_display.setFramebuffer(texture, peoteView);
 
 		// wabbit Pwogwam
-		var spriteBuffer = new Buffer<Sprite>(100);
+		var total_wabbits = 1000;
+		var spriteBuffer = new Buffer<Sprite>(total_wabbits);
 		var spriteProgram = new Program(spriteBuffer);
 		display.addProgram(spriteProgram);
 
@@ -59,9 +60,13 @@ class Main extends Application {
 		spriteTexture.setImage(wabbitImage);
 		spriteProgram.addTexture(spriteTexture, "wabbit");
 
-		// init wabbit Sprite
-		var wabbit = new Sprite(150, 150, wabbitImage.width, wabbitImage.height, 0xffffffff);
-		spriteBuffer.addElement(wabbit);
+		// init wabbit Sprites
+		for(n in 0...total_wabbits){
+			var x = Std.int(Math.random() * window.width);
+			var y = Std.int(Math.random() * window.height);
+			var wabbit = new Sprite(x, y, wabbitImage.width, wabbitImage.height, 0xffffffff);
+			spriteBuffer.addElement(wabbit);
+		}
 
 		// lightProgram to draw on texture_display (and therefore the texture)
 		lightBuffer = new Buffer<Sprite>(4, 4, true);
