@@ -14,6 +14,10 @@ import peote.view.Color;
 
 class Main extends Application
 {
+	var buffer:Buffer<Sprite>;
+	var sprite:Sprite;
+
+
 	override function onWindowCreate():Void
 	{
 		switch (window.context.type)
@@ -33,14 +37,14 @@ class Main extends Application
 	{
 		var peoteView = new PeoteView(window);
 
-		var buffer = new Buffer<Sprite>(4, 4, true);
+		buffer = new Buffer<Sprite>(4, 4, true);
 		var display = new Display(0, 0, window.width, window.height, Color.GREY4);
 		var program = new Program(buffer);
 
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
-		var sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
+		sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
 		buffer.addElement(sprite);
 	}
 	
@@ -56,12 +60,17 @@ class Main extends Application
 		// for game-logic update
 	}
 
+	override function onMouseMove (x:Float, y:Float):Void {
+		sprite.x = Std.int(x);
+		sprite.y = Std.int(y);
+		buffer.updateElement(sprite);
+	}	
+
 	// override function render(context:lime.graphics.RenderContext):Void {}
 	// override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");		
 	// override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");		
 
 	// ----------------- MOUSE EVENTS ------------------------------
-	// override function onMouseMove (x:Float, y:Float):Void {}	
 	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
