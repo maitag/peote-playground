@@ -1,5 +1,7 @@
 package;
 
+import lime.utils.Assets;
+import lime.graphics.Image;
 import peote.view.Texture;
 import haxe.CallStack;
 import lime.app.Application;
@@ -11,8 +13,8 @@ import peote.view.Program;
 import peote.view.Color;
 
 class Main extends Application {
-	var spriteBuffer:Buffer<Sprite>;
-	var sprite:Sprite;
+	var lightBuffer:Buffer<Sprite>;
+	var light:Sprite;
 
 	override function onPreloadComplete():Void {
 		// access embeded assets from here
@@ -41,23 +43,30 @@ class Main extends Application {
 		// new display which will render to a texture
 		var texture_display = new Display(0, 0, window.width, window.height);
 		peoteView.addFramebufferDisplay(texture_display);
-
+		
 		// the texture which the display will render to
 		var texture = new Texture(window.width, window.height);
 		texture_display.setFramebuffer(texture, peoteView);
 
-		// spriteProgram to draw on texture_display (and therefore the texture)
-		spriteBuffer = new Buffer<Sprite>(4, 4, true);
-		var spriteProgram = new Program(spriteBuffer);
+		// lightProgram to draw on texture_display (and therefore the texture)
+		lightBuffer = new Buffer<Sprite>(4, 4, true);
+		var lightProgram = new Program(lightBuffer);
+		lightProgram.alphaEnabled = true;
 
-		// add sprite program to texture display
-		texture_display.addProgram(spriteProgram);
+		// load a texture to be used for gradient light
+		var lightImage = Assets.getImage("assets/gradient.png");
+		var lightTexture = new Texture(lightImage.width, lightImage.height);
+		lightTexture.setImage(lightImage);
+		lightProgram.addTexture(lightTexture, "light");
 
-		// init the Sprite
-		sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
-		spriteBuffer.addElement(sprite);
+		// add lightProgram to texture display
+		texture_display.addProgram(lightProgram);
 
-		// currently the Sprite is not visible because
+		// init the "light" sprite
+		light = new Sprite(0, 0, 320, 320, 0xff0000ff);
+		lightBuffer.addElement(light);
+
+		// currently the darkness/light is not rendered because
 		// the texture_display is not added to PeoteView
 		// below we set up a new program that will render the texture which texture_display is producing
 
@@ -76,19 +85,21 @@ class Main extends Application {
 
 		// inject glsl function which samples the color from "sampledtexture" at vTexCoord
 		renderProgram.injectIntoFragmentShader("
-		vec4 getColor(int sampledtexture){
-
-			// sample the texture
-			vec4 sample = getTextureColor(sampledtexture, vTexCoord);
+		vec4 getColor(int sampledtexture) {
 			
-			// if the sample red is 100% red
-			if(sample.r == 1.0){
-				// return transparent color
-				return vec4(0.0, 0.0, 0.0, 0.0);
-			}
+			// sample the texture
+			vec4 textureSample = getTextureColor(sampledtexture, vTexCoord);
 
-			// otherwise return black with some transparency
-			return vec4(0.0,0.0,0.0,0.7);
+			// the two alpha levels we are working with
+			float lightness_alpha = 1.0 - textureSample.a;
+			float darkness_alpha = 0.8;
+
+			// mix alpha level
+			float alpha_blend = mix(lightness_alpha, darkness_alpha, 0.5) ;
+
+			// return original sample color but use blended alpha 
+			return vec4(textureSample.rgb, alpha_blend);
+			
 		}
 		");
 
@@ -108,9 +119,9 @@ class Main extends Application {
 	}
 
 	override function onMouseMove(x:Float, y:Float):Void {
-		sprite.x = Std.int(x);
-		sprite.y = Std.int(y);
-		spriteBuffer.updateElement(sprite);
+		light.x = Std.int(x);
+		light.y = Std.int(y);
+		lightBuffer.updateElement(light);
 	}
 
 	// override function render(context:lime.graphics.RenderContext):Void {}
