@@ -8,7 +8,7 @@
 	
 	<!-- <window fps="60" width="800" height="600" vsync="true" antialiasing="4" resizable="true" depth-buffer="true" stencil-buffer="false" /> -->
 	<window width="800" height="600" fps="61" />
-	<window if="html5||android" width="0" height="0" />
+	<window if="html5||android" width="0" height="0" allowHighDPI="false" />
 	
 	<app main="Main" path="bin" file="Main" />
 	<!-- <define name="stats" if="html5" /> -->
