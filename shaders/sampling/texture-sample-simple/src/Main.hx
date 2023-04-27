@@ -36,12 +36,11 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-
-		buffer = new Buffer<Sprite>(4, 4, true);
 		var display = new Display(0, 0, window.width, window.height, Color.GREY4);
-		var program = new Program(buffer);
-
 		peoteView.addDisplay(display);
+		
+		buffer = new Buffer<Sprite>(4, 4, true);
+		var program = new Program(buffer);
 		display.addProgram(program);
 
 		sprite = new Sprite(0, 0, 100, 100, 0xff0000ff);
