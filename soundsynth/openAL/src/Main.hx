@@ -1,13 +1,13 @@
 package;
 
 import haxe.CallStack;
+import haxe.io.UInt8Array;
+import haxe.io.UInt16Array;
 
 import lime.app.Application;
 import lime.ui.Window;
 import lime.media.openal.AL;
 import lime.media.openal.ALC;
-import lime.utils.UInt8Array;
-import lime.utils.Int16Array;
 
 import peote.view.PeoteView;
 import peote.view.Display;
@@ -24,7 +24,7 @@ class Main extends Application
 		{
 			case WEBGL, OPENGL, OPENGLES:
 				try startSample(window)
-				catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
+				catch (_) trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()), _);
 			default: throw("Sorry, only works with OpenGL.");
 		}
 	}
@@ -85,7 +85,7 @@ class Main extends Application
 */
 		
 		// sound data from GPU:
-		AL.bufferData(buffer, AL.FORMAT_MONO8, dataGPU, dataGPU.byteLength, 256 * 43 * 4);
+		AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, 256 * 43 * 4);
 		
 		
 		var source = AL.createSource();
