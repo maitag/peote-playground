@@ -37,6 +37,10 @@
 	<haxedef name="peoteview_debug_shader" />
 
 	<haxeflag name="-dce" value="full" />
+	
+	<haxedef name="keep_inline_positions" />		
+	<haxedef name="no-deprecation-warnings" />
+	
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
 	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
 	<!-- <haxedef name="dump=pretty output" /> -->

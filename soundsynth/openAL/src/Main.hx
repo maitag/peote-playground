@@ -43,21 +43,21 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
-		var display = new Display(0, 0, 256, 43, Color.BLACK);
+		var display = new Display(0, 0, 441, 25, Color.BLACK);
 
 		peoteView.addDisplay(display);
 		
 		// generate the soundwave by GPU
 		SinWave.init(display);
-		sinwave = new SinWave(freq, 256, 43);
+		sinwave = new SinWave(freq, 441, 25);
 		
 		// render it into a texture to use for bufferdata !
-		var texture = new Texture(256, 43);
+		var texture = new Texture(441, 25);
 		display.setFramebuffer(texture);
 		peoteView.renderToTexture(display);
 		
-		// 256*43*4-> 44032 srate
-		var dataGPU:UInt8Array = texture.readPixelsUInt8(0, 0, 256, 43);
+		// 441 * 25 * 4-> 44100 srate
+		var dataGPU:UInt8Array = texture.readPixelsUInt8(0, 0, 441, 25);
 				
 		
 		// ----- play the soundwave by OpenAL --------
@@ -85,7 +85,7 @@ class Main extends Application
 */
 		
 		// sound data from GPU:
-		AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, 256 * 43 * 4);
+		AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, srate);
 		
 		
 		var source = AL.createSource();
