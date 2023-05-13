@@ -10,7 +10,9 @@
 	<window width="800" height="600" fps="61" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<app main="Main" path="bin" file="Main" />
+	<!--<app main="Main" path="bin" file="Main" />-->
+	<app main="MainFloat" path="bin" file="MainFloat" />
+	
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
@@ -38,6 +40,10 @@
 	<haxedef name="peoteview_debug_shader" />
 
 	<haxeflag name="-dce" value="full" />
+	
+	<haxedef name="keep_inline_positions" />		
+	<haxedef name="no-deprecation-warnings" />
+	
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
 	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
 	<!-- <haxedef name="dump=pretty output" /> -->

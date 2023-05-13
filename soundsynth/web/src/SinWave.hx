@@ -25,18 +25,22 @@ class SinWave implements Element
 	static public var buffer:Buffer<SinWave>;
 	static public var program:Program;	
 	
-	static public function init(display:Display)
+	static public function init(display:Display, useFloat:Bool = false)
 	{	
 		buffer = new Buffer<SinWave>(1, 1, true);
 		program = new Program(buffer);
 		
 		program.injectIntoFragmentShader(
-		"
+		'
 			#define PI 3.1415926538
 			
 			float getValue( float pos, float srate, float freq)
 			{
-				return ( sin( (pos * PI * 2.0 * freq) / srate ) + 1.0) / 2.0;
+				${ (useFloat) ? 
+					"return   sin( (pos * PI * 2.0 * freq) / srate );" :
+					"return ( sin( (pos * PI * 2.0 * freq) / srate ) + 1.0) / 2.0;"
+				}
+				
 			}
 			
 			vec4 sinwave( vec2 texCoord, vec2 size, float freq )
@@ -52,12 +56,13 @@ class SinWave implements Element
 
 				return vec4( r, g, b, a );
 			}			
-		"
+		'
 		);
 		
 		program.setColorFormula( 'sinwave(vTexCoord, vSize, freq)' );
-		//program.alphaEnabled = true;
-		//program.discardAtAlpha(0.0);
+		
+		program.alphaEnabled = false;
+		program.discardAtAlpha(null);
 		display.addProgram(program);
 	}
 	
