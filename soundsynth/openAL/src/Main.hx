@@ -1,11 +1,11 @@
 package;
 
-import haxe.CallStack;
 import haxe.io.UInt8Array;
 import haxe.io.UInt16Array;
 
 import lime.app.Application;
 import lime.ui.Window;
+
 import lime.media.openal.AL;
 import lime.media.openal.ALC;
 
@@ -85,7 +85,7 @@ class Main extends Application
 */
 		
 		// sound data from GPU:
-		AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, srate);
+		//AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, srate);
 		
 		
 		var source = AL.createSource();
@@ -95,12 +95,20 @@ class Main extends Application
 		AL.source3f (source, AL.POSITION, 0.0, 0.0, 0.0); // for first value: -1.0 -> left, 1.0 -> right
 		AL.source3f (source, AL.VELOCITY, 0.0, 0.0, 0.0);
 
-		AL.sourcei (source, AL.BUFFER, buffer);
+		//AL.sourcei (source, AL.BUFFER, buffer);
 		
 		// todo:
 		// AL.sourceQueueBuffer(source, buffer);		
 		
-		AL.sourcePlay(source);
+		// AL.sourcePlay(source);
+		
+		var timer = new haxe.Timer(1000);
+		timer.run = () -> {
+			AL.bufferData(buffer, AL.FORMAT_MONO8, lime.utils.UInt8Array.fromBytes(dataGPU.view.buffer), dataGPU.length, srate);
+			AL.sourcei (source, AL.BUFFER, buffer);
+			AL.sourcePlay(source);
+		};
+		
 		
 	}
 	
