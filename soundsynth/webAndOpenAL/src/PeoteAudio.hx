@@ -59,7 +59,7 @@ class AudioBackend
 	
 	public var sampleRate:Int;
 	
-	var bufferBytes:Bytes;
+	//var bufferBytes:Bytes;
 
 	public inline function new(sampleRate:Int)
 	{
@@ -77,7 +77,7 @@ class AudioBackend
 		buffer = AL.createBuffer();
 		source = AL.createSource();
 		
-		bufferBytes = Bytes.alloc(sampleRate << 1);
+		//bufferBytes = Bytes.alloc(sampleRate << 1);
 		
 		AL.sourcef  (source, AL.PITCH, 1.0);
 		AL.sourcef  (source, AL.GAIN, 1.0);
@@ -85,10 +85,12 @@ class AudioBackend
 		AL.source3f (source, AL.VELOCITY, 0.0, 0.0, 0.0);
 	}
 	
+	var AL_FORMAT_MONO_FLOAT32 = 0x10010;
+	
 	public inline function play(data:Float32Array)
 	{
-		// convert from Float32 to Int16
-		var i:Int = 0; var v:Int;
+		// if need to convert from Float32 to Int16
+/*		var i:Int = 0; var v:Int;
 		for (sample in data) {
 			v = Std.int(32767.0 * sample);
 			bufferBytes.set(i++, v);
@@ -99,6 +101,8 @@ class AudioBackend
 			lime.utils.Int16Array.fromBytes(bufferBytes), 
 			bufferBytes.length, sampleRate
 		);
+*/		
+		AL.bufferData(buffer, AL_FORMAT_MONO_FLOAT32, lime.utils.Int16Array.fromBytes(data.view.buffer), data.view.buffer.length, sampleRate);
 		
 		AL.sourcei(source, AL.BUFFER, buffer);
 		AL.sourcePlay(source);
