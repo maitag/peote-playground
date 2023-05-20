@@ -26,17 +26,25 @@ class AudioBackend
 		if (context == null) context = new AudioContext();
 		
 		buffer = context.createBuffer(1, sampleRate, sampleRate);
-		source = context.createBufferSource();
+		
 	}
 
 	public inline function play(data:Float32Array)
 	{		
+		
+		if (source != null)
+		{
+			source.stop();
+			source.disconnect(context.destination);
+		}
+		
+		source = context.createBufferSource();
+		
 		buffer.copyToChannel( cast data, 0, 0);
-		
 		source.buffer = buffer;
-		
 		source.connect(context.destination);
 		source.start();
+		
 	}
 }
 
