@@ -110,7 +110,7 @@ class AudioBackend
 			bufferBytes.length, sampleRate
 		);
 */		
-		AL.bufferData(buffer, AL_FORMAT_MONO_FLOAT32, lime.utils.Int16Array.fromBytes(data.view.buffer), data.view.buffer.length, sampleRate);
+		AL.bufferData(buffer, AL_FORMAT_MONO_FLOAT32, lime.utils.Float32Array.fromBytes(data.view.buffer), data.view.buffer.length, sampleRate);
 		
 		AL.sourcei(source, AL.BUFFER, buffer);
 		AL.sourcePlay(source);
