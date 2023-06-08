@@ -6,6 +6,7 @@ import peote.view.Program;
 import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
+import peote.view.utils.BlendMode;
 
 class NormalLight implements Element
 {
@@ -37,7 +38,6 @@ class NormalLight implements Element
 	{	
 		buffer = new Buffer<NormalLight>(8, 8, true);
 		program = new Program(buffer);
-		program.blendEnabled = true;
 		
 		// create a texture-layer named "base"
 		program.setTexture(lightsTexture, "lights", false);
@@ -72,6 +72,7 @@ class NormalLight implements Element
 
 				//normalize our vectors
 				vec3 N = normalize(normalTextureRGBZ.rgb * 2.0 - 1.0);
+				//vec3 N = normalTextureRGBZ.rgb * 2.0 - 1.0; // normally should be already normalized by blender!
 				vec3 L = normalize(light);
 				
 				//  dot product to determine diffuse by light and face-normal direction
@@ -88,6 +89,11 @@ class NormalLight implements Element
 		// instead of using normal "base" identifier to get the texture-color
 		// the "_ID" postfix is to give access to use getTextureColor() manually 
 		// from inside of the glsl blur() function to that texture-layer
+		
+		// blending to "add" multiple lights
+		program.blendEnabled = true;
+		program.blendSrc = BlendMode.ONE;
+		program.blendDst = BlendMode.ONE;
 		
 		program.setColorFormula( "normalLight(lights_ID, normal_ID, depth)" ); // TODO: only need UV + Z here
 		

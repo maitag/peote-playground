@@ -58,6 +58,8 @@ class Main extends Application
 			NormalLight.init(display, lightsTexture, normalTexture);
 			light = new NormalLight(200, 200, 400);
 
+			// "add" (blendmode!) another light
+			new NormalLight(150, 200, 400);
 			
 			// TODO: second render-pass to accumulate light-map from texture to the pre-calculated lights by blender
 			
