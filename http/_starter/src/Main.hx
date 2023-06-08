@@ -13,7 +13,7 @@ import peote.ui.interactive.UITextLine;
 import peote.ui.interactive.UITextPage;
 import peote.ui.event.PointerEvent;
 import peote.ui.style.BoxStyle;
-import peote.ui.style.TextStyle;
+import peote.ui.config.TextConfig;
 import peote.ui.style.interfaces.FontStyle;
 
 // ------------------------------------------
@@ -84,7 +84,7 @@ class Main extends Application
 		
 		var boxStyle  = new BoxStyle(Color.BLACK);		
 
-		var textStyle:TextStyle = {
+		var textConfig:TextConfig = {
 			backgroundStyle:boxStyle,
 			selectionStyle:BoxStyle.createById(1, Color.GREY3),
 			cursorStyle:BoxStyle.createById(2, Color.RED)
@@ -95,7 +95,7 @@ class Main extends Application
 		// ------ TOKEN --------
 		// ----------------------
 				
-		var token = new UITextLine<MyFontStyle>(0, 0, {width:720}, "<token-input>", font, fontStyleInput, textStyle);
+		var token = new UITextLine<MyFontStyle>(0, 0, 720, 0, "<token-input>", font, fontStyleInput, textConfig);
 
 		// set events
 		token.onPointerDown = function(t:UITextLine<MyFontStyle>, e:PointerEvent) {
@@ -112,7 +112,7 @@ class Main extends Application
 		// ------- INPUT --------
 		// ----------------------
 				
-		var input = new UITextLine<MyFontStyle>(0, 50, {width:720}, "<user-input>", font, fontStyleInput, textStyle);
+		var input = new UITextLine<MyFontStyle>(0, 50, 720, 0, "<user-input>", font, fontStyleInput, textConfig);
 
 		// set events
 		input.onPointerDown = function(t:UITextLine<MyFontStyle>, e:PointerEvent) {
@@ -129,7 +129,7 @@ class Main extends Application
 		// ------ OUTPUT --------
 		// ----------------------
 
-		var textPage = new UITextPage<MyFontStyle>(0, 112, "OUTPUT\nBY\nSOCKET-SERVICE (HTTP!)", font, fontStyle);
+		var textPage = new UITextPage<MyFontStyle>(0, 112, 0, 0, "OUTPUT\nBY\nSOCKET-SERVICE (HTTP!)", font, fontStyle);
 		
 		// set events
 		textPage.onPointerOver = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {

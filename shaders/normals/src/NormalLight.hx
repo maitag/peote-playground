@@ -37,7 +37,7 @@ class NormalLight implements Element
 	{	
 		buffer = new Buffer<NormalLight>(8, 8, true);
 		program = new Program(buffer);
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		
 		// create a texture-layer named "base"
 		program.setTexture(lightsTexture, "lights", false);
@@ -57,8 +57,8 @@ class NormalLight implements Element
 				// fetch pixel from normal-map
 				vec4 normalTextureRGBZ = getTextureColor( normalTextureID, (vPos + (vTexCoord - 0.5)*vSize)/texRes );
 				
-				// flip x normal (TODO: better directly in blender by normalmap-generation)
-				normalTextureRGBZ.r = 1.0 - normalTextureRGBZ.r;
+				// flip x normal (depends on uv-map generation variants)
+				//normalTextureRGBZ.r = 1.0 - normalTextureRGBZ.r;
 				
 				// vector to position of light
 				vec3 light = vec3(  vTexCoord - 0.5 ,  normalTextureRGBZ.a - depth );

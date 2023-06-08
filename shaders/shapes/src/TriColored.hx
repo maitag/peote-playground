@@ -20,10 +20,9 @@ class TriColored implements Element
 	@sizeX public var w:Float;
 	@sizeY public var h:Float;
 	
-	//@custom @varying public var tip:Float = 0.2;
-	
-	// TODO: triangle shape depending on some extra @custom vars	
 
+	// ---------------------------
+	
 	static public var buffer:Buffer<TriColored>;
 	static public var program:Program;
 
@@ -74,7 +73,7 @@ class TriColored implements Element
 		//program.setColorFormula( 'triangle(vTexCoord, tip)' );
 		program.setColorFormula( 'triangle(vTexCoord)' );
 		
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		
 		display.addProgram(program);

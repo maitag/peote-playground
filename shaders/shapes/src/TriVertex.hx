@@ -28,6 +28,8 @@ class TriVertex implements Element
 	@sizeX @formula("aPosition.y * w") public var w:Float;
 	@sizeY public var h:Float;
 	
+	//@rotation public var r:Float = 45.0;
+	
 	static public var buffer:Buffer<TriVertex>;
 	static public var program:Program;
 
@@ -56,7 +58,7 @@ class TriVertex implements Element
 
 		program.setColorFormula( 'triangleColor(vTexCoord)' );
 
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		
 		display.addProgram(program);

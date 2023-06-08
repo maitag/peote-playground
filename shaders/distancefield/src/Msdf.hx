@@ -64,7 +64,7 @@ class Msdf implements Element
 		//program.setColorFormula( "msdf(base_ID)" );
 		program.setColorFormula('mix(bgColor, color, msdf(base, vTexCoord, vec2(${Util.toFloatString(texture.width)}, ${Util.toFloatString(texture.height)}) ) )');
 		//program.setColorFormula("mix(bgColor, color, msdf( base, vTexCoord, textureSize(uTexture0, 0) ) )");
-		program.alphaEnabled = false;
+		program.blendEnabled = false;
 		//program.discardAtAlpha(0.0);
 				
 		display.addProgram(program);

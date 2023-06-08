@@ -14,7 +14,7 @@ import peote.ui.interactive.UITextPage;
 import peote.ui.event.PointerEvent;
 import peote.ui.style.BoxStyle;
 import peote.ui.style.RoundBorderStyle;
-import peote.ui.style.TextStyle;
+import peote.ui.config.TextConfig;
 import peote.ui.style.interfaces.FontStyle;
 
 // ------------------------------------------
@@ -86,7 +86,7 @@ class Main extends Application
 		var boxStyle  = new BoxStyle(Color.BLACK);		
 		var roundBorderStyle = new RoundBorderStyle(Color.GREEN);
 
-		var textStyle:TextStyle = {
+		var textConfig:TextConfig = {
 			backgroundStyle:boxStyle,
 			selectionStyle:BoxStyle.createById(1, Color.GREY3),
 			cursorStyle:BoxStyle.createById(2, Color.RED)
@@ -108,7 +108,7 @@ class Main extends Application
 		// ------ BUTTON --------
 		// ----------------------
 		
-		var button = new UITextLine<MyFontStyle>(0, 300, {width:200}, "generate", font, fontStyleInput, textStyle);
+		var button = new UITextLine<MyFontStyle>(0, 300, 200, 0, "generate", font, fontStyleInput, textConfig);
 		
 		// todo: event to send input to output ! (can do that later!.. np ^_^)
 		
@@ -119,7 +119,7 @@ class Main extends Application
 		// ------- INPUT --------
 		// ----------------------
 				
-		var input = new UITextPage<MyFontStyle>(0, 325,
+		var input = new UITextPage<MyFontStyle>(0, 325, 0, 0,
 
 // nanji-test-c o d e		
 '<EllipseShape 
@@ -131,7 +131,7 @@ class Main extends Application
 </EllipseShape>',
 
 
-			font, fontStyle, textStyle
+			font, fontStyle, textConfig
 		);
 
 		input.onPointerDown = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {

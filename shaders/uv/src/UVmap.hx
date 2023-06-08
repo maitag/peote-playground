@@ -24,7 +24,7 @@ class UVmap implements Element
 	//@texSizeX("image") public var twOffset:Int = 5000;
 	@texSizeY("image") public var thOffset:Int = 12;
 	
-	var OPTIONS = { texRepeatX:true, texRepeatY:false, alpha:true };
+	var OPTIONS = { texRepeatX:true, texRepeatY:false, blend:true };
 	
 	// TODO:
 	//var DEFAULT_FRAGMENT_SHADER = "";	

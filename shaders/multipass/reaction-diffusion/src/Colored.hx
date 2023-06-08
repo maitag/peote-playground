@@ -41,7 +41,7 @@ class Colored implements Element
 		}
 		program.setColorFormula( formula );
 		
-		program.alphaEnabled = false;
+		program.blendEnabled = false;
 		display.addProgram(program);
 	}
 	

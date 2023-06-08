@@ -91,7 +91,7 @@ class ElectroBolt implements Element
 		);
 		
 		program.setColorFormula( 'electroBolt(vTexCoord, vSize, speed, absoluteTime, actTime, scale)' );
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		display.addProgram(program);
 	}

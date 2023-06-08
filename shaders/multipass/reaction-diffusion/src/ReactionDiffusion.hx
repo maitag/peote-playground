@@ -82,7 +82,7 @@ class ReactionDiffusion implements Element
 		// this also works if has "base" inside DEFAULT_FORMULA_VARS
 		//program.setColorFormula( 'reactionDiffusion(${GaussianBlurHQ.TEXTURE_ID_base})' );
 		
-		program.alphaEnabled = false;
+		program.blendEnabled = false;
 		display.addProgram(program);
 				
 		return display;

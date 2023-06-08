@@ -12,7 +12,7 @@ class Canvas implements Element
 	@sizeX public var w:Float;	
 	@sizeY public var h:Float;
 	
-	var OPTIONS = { alpha:true };
+	var OPTIONS = { blend:true };
 
 	static var buffer:Buffer<Canvas>;
 	static var program:Program;

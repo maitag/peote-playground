@@ -97,7 +97,7 @@ class ClientRemote implements Remote {
 		programCanvas = new Program(bufferCanvas);		
 		programCanvas.setTexture(textureCanvas, "renderFrom");
 		//programCanvas.setColorFormula('renderFrom');
-		programCanvas.alphaEnabled = false; // TODO: to use this here it maybe have to fill with 0xffffff00 !
+		programCanvas.blendEnabled = false; // TODO: to use this here it maybe have to fill with 0xffffff00 !
 		programCanvas.discardAtAlpha(null);
 		
 		displayCanvas.addProgram(programCanvas);
@@ -116,7 +116,7 @@ class ClientRemote implements Remote {
 		
 		bufferDraw  = new Buffer<ElemPen>(1024, 512);
 		programDraw = new Program(bufferDraw);
-		programDraw.alphaEnabled = true;
+		programDraw.blendEnabled = true;
 		programDraw.discardAtAlpha(null);
 		
 		displayDraw.addProgram(programDraw);
@@ -129,7 +129,7 @@ class ClientRemote implements Remote {
 		
 		bufferPen  = new Buffer<ElemPen>(16, 8);
 		programPen = new Program(bufferPen);
-		programPen.alphaEnabled = true;
+		programPen.blendEnabled = true;
 		programCanvas.discardAtAlpha(null);
 		
 		displayPen.addProgram(programPen);

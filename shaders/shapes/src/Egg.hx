@@ -48,7 +48,7 @@ class Egg implements Element
 		
 		program.setColorFormula( 'vec4(1.0)*egg()' );
 		
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		
 		display.addProgram(program);

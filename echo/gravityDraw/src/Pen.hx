@@ -25,7 +25,7 @@ class Pen implements Element implements Entity
 	@color public var color:Color = 0x000000ff;
 	
 	var DEFAULT_COLOR_FORMULA = "color*circle(radius)";
-	var OPTIONS = { alpha:true };
+	var OPTIONS = { blend:true };
 
 	static var fShader =
 	'
@@ -55,7 +55,7 @@ class Pen implements Element implements Entity
 		buffer = new Buffer<Pen>(1024, 1024, true);
 		program = new Program(buffer);
 		program.injectIntoFragmentShader( fShader );
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		display.addProgram(program);
 	}

@@ -54,7 +54,7 @@ class Rain implements Element
 		program = new Program(buffer);
 		
 		program.setTexture(texture, "custom");
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		
 		program.setFormula("rangeLeft", Util.toFloatString(rangeLeft), false);
 		program.setFormula("rangeTop", Util.toFloatString(rangeTop), false);

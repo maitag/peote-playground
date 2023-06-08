@@ -37,7 +37,7 @@ class ReactionDiffusion implements Element
 			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.2, w=0.1, f=0.5, q=0.1; // test02
 			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.176, w=1.0, f=0.5, q=0.1; // test03
 			//const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.176, w=1.0, f=0.5, q=0.099; // test04 (stars)
-			const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.076, w=1.0, f=0.5, q=0.01; // test05
+			const float dr=0.0004, dg=0.0005, db=0.00045, s=0.1098, c=0.076, w=1.0, f=0.5, q=0.01; // test05 (star-rising)
 			
 			//const float TIMESTEP = 1.0;
 			const float TIMESTEP = 0.1;
@@ -85,7 +85,7 @@ class ReactionDiffusion implements Element
 		// this also works if has "base" inside DEFAULT_FORMULA_VARS
 		//program.setColorFormula( 'reactionDiffusion(${GaussianBlurHQ.TEXTURE_ID_base})' );
 		
-		program.alphaEnabled = false;
+		program.blendEnabled = false;
 		display.addProgram(program);
 				
 		return display;

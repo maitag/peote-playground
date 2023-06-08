@@ -58,7 +58,7 @@ class Triangle implements Element
 		//program.setColorFormula( 'triangle(vTexCoord, tip)' );
 		program.setColorFormula( 'vec4(1.0)*triangle(vTexCoord)' );
 		
-		program.alphaEnabled = true;
+		program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		
 		display.addProgram(program);
