@@ -6,7 +6,7 @@ import peote.view.Program;
 import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
-import peote.view.utils.BlendMode;
+import peote.view.utils.BlendFactor;
 
 class NormalLight implements Element
 {
@@ -92,9 +92,9 @@ class NormalLight implements Element
 		
 		// blending to "add" multiple lights
 		program.blendEnabled = true;
-		program.blendSrc = BlendMode.ONE;
-		program.blendDst = BlendMode.ONE;
-		
+		program.blendSrc = BlendFactor.ONE;
+		program.blendDst = BlendFactor.ONE;
+				
 		program.setColorFormula( "normalLight(lights_ID, normal_ID, depth)" ); // TODO: only need UV + Z here
 		
 		
