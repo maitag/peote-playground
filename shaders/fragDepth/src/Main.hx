@@ -54,13 +54,12 @@ class Main extends Application
 						
 			DepthPerPixel.init(display, tilesTexture);
 			
-			
+			// depend on movingTiles depth-value the drawing order here can be important
 			var tile0 = new DepthPerPixel(200, 200, 128, 128, 0);
 			var tile1 = new DepthPerPixel(300, 200, 128, 128, 1);
-			var tile1 = new DepthPerPixel(400, 200, 128, 128, 2);
-			var tile1 = new DepthPerPixel(500, 200, 128, 128, 3);
-			var tile1 = new DepthPerPixel(564, 200, 128, 128, 4);
-
+			var tile2 = new DepthPerPixel(400, 200, 128, 128, 2);
+			var tile3 = new DepthPerPixel(500, 200, 128, 128, 3);
+			var tile4 = new DepthPerPixel(564, 200, 128, 128, 4);
 			movingTile = new DepthPerPixel(200, 200, 128, 128, 1);
 			
 			// add mouse events to move the light (to not run before it was instantiated):
