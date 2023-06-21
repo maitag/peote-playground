@@ -15,20 +15,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="D:\maitag\2023\haxe\peote-view\src" />
-    <class path="C:\HaxeToolkit\haxe\lib\lime\8,0,1\src" />
-    <class path="C:\HaxeToolkit\haxe\lib\format\3,5,0" />
-    <class path="src" />
-    <class path="bin\neko\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="peote-view=0.8.8&#xA;lime=8.0.1&#xA;format=3.5.0&#xA;lime-openal&#xA;peoteview_instancedrawing&#xA;peoteview_vertexarrayobjects&#xA;native&#xA;lime-curl&#xA;peoteview_uniformbuffers&#xA;peoteview_debug_shader&#xA;HL_PATH=C:\HaxeToolkit\haxe\lib\lime\8,0,0\templates\bin\hl\Windows64&#xA;lime-harfbuzz&#xA;tools=8.0.1&#xA;lime-cairo&#xA;keep_inline_positions&#xA;no-deprecation-warnings&#xA;lime-opengl&#xA;no-compilation&#xA;disable_preloader_assets=1&#xA;peoteview_debug_texture&#xA;lime-native&#xA;lime-vorbis&#xA;lime-cffi&#xA;fdb&#xA;windows&#xA;desktop" />
-    <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
-    <option mainClass="ApplicationMain" />
-    <option enabledebug="False" />
-    <option additional="--macro lime._internal.macros.DefineMacro.run()&#xA;-dce full" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

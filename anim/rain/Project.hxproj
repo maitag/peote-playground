@@ -18,12 +18,6 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="peote-view=0.8.8&#xA;lime=7.9.0&#xA;howlerjs&#xA;peoteview_instancedrawing&#xA;peoteview_vertexarrayobjects&#xA;lime-webgl&#xA;lime-dom&#xA;lime-howlerjs&#xA;lime-html5&#xA;peoteview_uniformbuffers&#xA;peoteview_debug_shader&#xA;HL_PATH=C:\HaxeToolkit\hl&#xA;tools=7.9.0&#xA;lime-canvas&#xA;no-compilation&#xA;peoteview_debug_texture&#xA;fdb&#xA;html5&#xA;web&#xA;html5&#xA;html" />
-    <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
-    <option mainClass="ApplicationMain" />
-    <option enabledebug="False" />
-    <option additional="--macro lime._internal.macros.DefineMacro.run()&#xA;-dce full" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
