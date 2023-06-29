@@ -21,6 +21,7 @@ class Server
 			{
 				trace('onCreateJoint: Channel ${server.jointNr} created.');
 			},
+			
 			onUserConnect: function(server:PeoteServer, userNr:Int)
 			{
 				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
@@ -31,16 +32,19 @@ class Server
 				
 				server.setRemote(userNr, _serverRemote, 0); // --> Client's onRemote on will be called with remoteId 0				
 			},
+			
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
 			{
 				trace('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
 				serverRemote.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
 			},
+			
 			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
 				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
 				//serverRemote.get(userNr) = null;
 			},
+			
 			onError: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
 				trace('onCreateJointError:$reason, userNr:$userNr');

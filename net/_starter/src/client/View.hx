@@ -1,4 +1,4 @@
-package ;
+package client;
 
 import lime.ui.Window;
 
@@ -8,29 +8,36 @@ import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
 
+import peote.net.PeoteClient;
 import peote.net.Remote;
-import ServerRemote;
 
-// ----- functions that run on Client and called by Server ----
-class ClientRemote implements Remote {
+import server.*; // needs hack here (see below)
+
+class View implements Remote {
 	
-	var client:Client;
+	public var client:Client;
+		
+	//public var remoteUser:UserRemoteClient = null;	
+	// needs hack here because the type "ServerRemoteRemoteClient" could not be generated at this time
+	public var remoteUser = (null : UserRemoteClient);
 	
-	//public var server:ServerRemoteRemoteClient = null;
-	public var server = (null : ServerRemoteRemoteClient);
+	public inline function remoteIsReady( peoteClient:PeoteClient, remoteId:Int ) {
+		switch (remoteId) {
+			case 0:	remoteUser = User.getRemoteClient( peoteClient, remoteId);
+					remoteUser.hello();
+			default: trace("unknow remote ID");
+		}
+	}
+	
+	// ------------------------------------------------------------
+	// ---------------------- CONSTRUCTOR -------------------------
+	// ------------------------------------------------------------
 	
 	public function new( window:Window, client:Client ) {
 		
 		this.client = client;
 		
-		// delegate Lime mouse and keyboard events
-		
-		// TODO
-		
-		
 		// initialize peote-view
-		
-		// TODO
 		var peoteView = new PeoteView(window);
 
 		var buffer = new Buffer<Sprite>(4, 4, true);
@@ -44,32 +51,15 @@ class ClientRemote implements Remote {
 		buffer.addElement(sprite);
 				
 	}
-	
-	public function serverRemoteIsReady( server ) {
-		trace(Type.typeof(server));
-		this.server = server;
-		server.hello();
-	}
-	
-	
-	// ------------------------------------------------------------
-	// ------------ Delegated LIME EVENTS -------------------------
-	// ------------------------------------------------------------	
-
-	public function onMouseMove(x:Float, y:Float) {
-		// TODO
-	}
-	
-	
+		
 	
 	// ------------------------------------------------------------
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
 	@:remote public function hello():Void {
-		trace('Hello from server');
-		
-		if (server != null) server.message("good morning server");
+		trace('Hello from server');		
+		if (remoteUser != null) remoteUser.message("good morning server");
 	}
 
 	@:remote public function message(msg:String):Void {

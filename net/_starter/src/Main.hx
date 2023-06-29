@@ -4,6 +4,9 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
 
+import server.Server;
+import client.Client;
+
 
 class Main extends Application
 {
@@ -26,14 +29,13 @@ class Main extends Application
 
 	var channelName:String = "multiplayer";
 	
-	
 	public function startSample(window:Window)
 	{
 
 		#if (server || (!client))
 		
 			trace("trying to create server ...");
-			var server = new Server( host, port, channelName
+			new Server( host, port, channelName
 				#if ((!server) && (!client))
 					,true // emulate network (to test locally without peote-server)
 				#end
@@ -46,7 +48,7 @@ class Main extends Application
 		#if (client || (!server))
 			
 			trace("trying to enter server ...");
-			var client = new Client(window, host, port, channelName);
+			new Client(window, host, port, channelName);
 		
 		#end
 		

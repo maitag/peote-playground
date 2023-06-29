@@ -1,25 +1,29 @@
 package;
 
 import peote.net.Remote;
-import ClientRemote;
+
+import ClientRemote; // needs hack here (see below)
 
 class ServerRemote implements Remote {
 	
 	var server:Server;
 	var userNr:Int;
 	
-	//var client:ClientRemoteRemoteServer = null;
+	//var client:ClientRemoteRemoteServer = null;	
+	// needs hack here because the type "ClientRemoteRemoteServer" could not be generated at this time
 	var client = (null : ClientRemoteRemoteServer);
 	
+	public inline function clientRemoteIsReady( client ) {
+		//trace(Type.typeof(client));
+		this.client = client;
+		client.hello();
+	}
+	
+	// ------------------------------------------------------------
+
 	public function new( server:Server, userNr:Int) {
 		this.server = server;
 		this.userNr = userNr;
-	}
-	
-	public function clientRemoteIsReady( client ) {
-		trace(Type.typeof(client));
-		this.client = client;
-		client.hello();
 	}
 	
 	
@@ -28,8 +32,7 @@ class ServerRemote implements Remote {
 	// ------------------------------------------------------------
 	
 	@:remote public function hello():Void {
-		trace('Hello from client $userNr');
-		
+		trace('Hello from client $userNr');		
 		if (client != null) client.message("good morning client");
 	}
 
@@ -38,3 +41,4 @@ class ServerRemote implements Remote {
 	}
 
 }
+

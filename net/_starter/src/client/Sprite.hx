@@ -1,4 +1,4 @@
-package;
+package client;
 
 import peote.view.Element;
 import peote.view.Color;
