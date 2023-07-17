@@ -2,13 +2,14 @@ package server;
 
 import haxe.ds.IntMap;
 import peote.net.PeoteServer;
+import ui.UI;
 
 class Server
 {
 	public var peoteServer:PeoteServer;
 	public var users = new IntMap<User>();
 
-	public function new(host:String, port:Int, channelName:String, offline:Bool = false) 
+	public function new(peoteView:UI, host:String, port:Int, channelName:String, offline:Bool = false)
 	{
 		peoteServer = new PeoteServer(
 		{

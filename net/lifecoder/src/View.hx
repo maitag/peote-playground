@@ -3,6 +3,8 @@ package;
 import Client;
 import lime.ui.Window;
 
+import ui.UI;
+
 import peote.view.PeoteView;
 import peote.view.Buffer;
 import peote.view.Display;
@@ -34,22 +36,10 @@ class View implements Remote {
 	// ---------------------- CONSTRUCTOR -------------------------
 	// ------------------------------------------------------------
 	
-	public function new( window:Window, client:Client ) {
+	public function new( ui:UI, client:Client ) {
 		
 		this.client = client;
 		
-		// initialize peote-view
-		var peoteView = new PeoteView(window);
-
-		var buffer = new Buffer<Cursor>(4, 4, true);
-		var display = new Display(10, 10, window.width - 20, window.height - 20, Color.GREEN);
-		var program = new Program(buffer);
-
-		peoteView.addDisplay(display);
-		display.addProgram(program);
-
-		var sprite = new Cursor();
-		buffer.addElement(sprite);
 				
 	}
 		

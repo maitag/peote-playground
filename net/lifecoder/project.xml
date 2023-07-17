@@ -16,8 +16,15 @@
 	<source path="src" />
 	
 	<haxelib name="lime" />	
-	<haxelib name="peote-view" />
+	<haxelib name="json2object" />
+	
 	<haxelib name="peote-net" />
+	<haxelib name="peote-view" />
+	<haxelib name="peote-text" />
+	<haxelib name="input2action" />
+	<haxelib name="peote-ui" />
+	
+	<haxedef name="testlocal" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
@@ -41,6 +48,7 @@
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
 	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
 	<!-- <haxedef name="dump=pretty output" /> -->
+	<haxedef name="keep_inline_positions" />
 	
 	<!-- for html5 and loading inside onPreloadComplete-event the assets need to be embed=true --> 
 	<assets path="assets" exclude="lime.svg" embed="false" />

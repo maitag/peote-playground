@@ -1,21 +1,21 @@
 package;
 
-import lime.ui.Window;
 import peote.net.PeoteClient;
+import ui.UI;
 
 class Client {
 	
 	public var peoteClient:PeoteClient;
 	public var view:View;
 	
-	public function new(window:lime.ui.Window, host:String, port:Int, channelName:String) 
+	public function new(ui:UI, host:String, port:Int, channelName:String) 
 	{
 		peoteClient = new PeoteClient(
 		{
 			onEnter: function(client:PeoteClient)
 			{
 				trace('onEnterJoint: Joint number ${client.jointNr} entered');
-				view = new View(window, this);
+				view = new View(ui, this);
 				client.setRemote(view, 0);  // --> Server's onRemote will be called with remoteId 0
 			},
 			
