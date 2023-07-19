@@ -1,25 +1,19 @@
 package;
 
-import haxe.CallStack;
 import lime.app.Application;
-import lime.ui.Window;
-
 import ui.UI;
 
 #if html5
-import js.Boot;
+//import js.Boot;
 import js.Browser;
 #end
-
-import server.Server;
-import Client;
 
 
 class Main extends Application
 {
 	var host:String = "localhost";
 	var port:Int = 7680;
-	var channelName:String = "multiplayer";
+	var channelName:String = "life-coder";
 	
 	var ui:UI;
 	
@@ -38,32 +32,33 @@ class Main extends Application
 		
 	public function startSample()
 	{	
-		// resolving the channelname! 		
+		// resolving the channelname!		
 		#if html5
 		//catching URL param
 		var urlparamRegExp = ~/\?([\w_-]+)$/;
 		if (urlparamRegExp.match(Browser.document.URL)) {
-			trace("channel:"+urlparamRegExp.matched(1));
+			//trace("channel:" + urlparamRegExp.matched(1));
+			channelName = urlparamRegExp.matched(1);
 		}
-		#else //create peote-ui INPUT-field for!
 		#end
+		
+		#if testlocal
+		
+		new Server( ui, host, port, channelName, true );// emulate network
+		new Client(ui, host, port, channelName);
+		
+		#else
 		
 		// try to connect to that channel-name and if it not exists: START OWN SERVER !!! 
 		
-		// TODO: 
-		
-		trace("trying to create server ...");
-		new Server( ui, host, port, channelName
-			#if testlocal
-				,true // emulate network (to test locally without peote-server)
-			#end
-		);
-	
-		
 		trace("trying to enter server ...");
-		new Client(ui, host, port, channelName);
+		new Client(ui, host, port, channelName, function() {
+			// if no server exist
+			trace("trying to create server ...");
+			new Server( ui, host, port, channelName );
+		});
 		
-		
+		#end
 	}
 	
 	

@@ -14,218 +14,66 @@ import peote.text.Font;
 import peote.ui.PeoteUIDisplay;
 import peote.ui.interactive.*;
 import peote.ui.style.*;
-import peote.ui.style.interfaces.FontStyle;
 import peote.ui.config.*;
 import peote.ui.event.*;
 
-// ------------------------------------------
-// --- using a custom FontStyle here --------
-// ------------------------------------------
-
-@globalLineSpace // all pageLines using the same page.lineSpace (gap to next line into page)
-@:structInit
-class MyFontStyle implements FontStyle
-{
-	public var color:Color = Color.BLACK;
-	//public var color:Color = Color.GREEN.setAlpha(0.5);
-	public var width:Float = 10; // (<- is it still fixed to get from font-defaults if this is MISSING ?)
-	public var height:Float = 18;
-}
 
 class UI 
 {
+	public var editor:UITextPage<FontStyleEdit>;
+	
 	var window:Window;
 	var onInit:Void->Void;
 	
 	var peoteView:PeoteView;
 	var peoteUiDisplay:PeoteUIDisplay;
+		
+	var boxStyle:BoxStyle;		
+	var roundBorderStyle:RoundBorderStyle;		
+	
+	var cursorStyle:BoxStyle;
+	var selectionStyle:BoxStyle;
+	
+	var fontStyleHeader:FontStyleEdit;
+	var fontStyleInput:FontStyleEdit;
+	
+	var font:Font<FontStyleEdit>;
+
 	
 	public function new(window:Window, onInit:Void->Void) 
 	{
 		this.window = window;
 		this.onInit = onInit;
 		
-		try new Font<MyFontStyle>("assets/hack_ascii.json").load( init )
+		try new Font<FontStyleEdit>("assets/hack_ascii.json").load( init )
 		catch (_) trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()), _);
 	}
 
-	public function init(font:Font<MyFontStyle>)
-	{	
+	public function init(font:Font<FontStyleEdit>)
+	{
+		this.font = font;
 		peoteView = new PeoteView(window);
-		peoteView.start();
 
 		// ---- setting up some styles -----
 
-		var boxStyle  = new BoxStyle(0x041144ff);
+		boxStyle  = new BoxStyle(0x041144ff);		
+		roundBorderStyle = RoundBorderStyle.createById(0);		
 		
-		var roundBorderStyle = RoundBorderStyle.createById(0);		
+		cursorStyle = BoxStyle.createById(1, Color.RED);
+		selectionStyle = BoxStyle.createById(2, Color.GREY3);
 		
-		var cursorStyle = BoxStyle.createById(1, Color.RED);
-		var selectionStyle = BoxStyle.createById(2, Color.GREY3);
-		
-		var fontStyleHeader = MyFontStyle.createById(0);
-		var fontStyleInput = MyFontStyle.createById(1);
+		fontStyleHeader = FontStyleEdit.createById(0);
+		fontStyleInput = FontStyleEdit.createById(1);
 		
 		
-		var textInputConfig:TextConfig = {
-			backgroundStyle:boxStyle.copy(Color.GREY5),
-			selectionStyle: selectionStyle,
-			cursorStyle: cursorStyle
-		}
-		
-		var sliderConfig:SliderConfig = {
-			backgroundStyle: roundBorderStyle.copy(Color.GREY2),
-			draggerStyle: roundBorderStyle.copy(Color.GREY3, Color.GREY2, 0.5),
-			draggerSize:16,
-			draggSpace:1,
-		};
-		
-		// ---------------------------------------------------------
-		// --- creating PeoteUIDisplay with some styles in Order ---
-		// ---------------------------------------------------------
+		// --------------------------------------------------------
+		// --- creating PeoteUIDisplay with the styles in Order ---
+		// --------------------------------------------------------
 		
 		peoteUiDisplay = new PeoteUIDisplay(0, 0, window.width, window.height, Color.BLACK,
 			[roundBorderStyle, boxStyle, selectionStyle, fontStyleInput, fontStyleHeader, cursorStyle]
 		);
 		peoteView.addDisplay(peoteUiDisplay);
-
-		
-		// -----------------------------------------------------------
-		// ---- creating an Area, header and Content-Area ------------
-		// -----------------------------------------------------------
-		
-		var area = new UIArea(50, 50, 500, 500, {backgroundStyle:roundBorderStyle, resizeType:ResizeType.LEFT|ResizeType.BOTTOM_LEFT|ResizeType.BOTTOM, minWidth:200, minHeight:100} );
-		peoteUiDisplay.add(area);
-		
-		// to let the area drag
-		area.setDragArea(
-			Std.int(-peoteUiDisplay.xOffset / peoteUiDisplay.xz),
-			Std.int(-peoteUiDisplay.yOffset / peoteUiDisplay.yz),
-			Std.int(peoteUiDisplay.width    / peoteUiDisplay.xz),
-			Std.int(peoteUiDisplay.height   / peoteUiDisplay.yz)
-		);
-		
-		// ---- header textline (starts also area-dragging) ----		
-		
-		var header = new UITextLine<MyFontStyle>(0, 0, 500, 0, 1, "Shadercode ...", font, fontStyleHeader, {backgroundStyle:roundBorderStyle, hAlign:HAlign.CENTER});
-		header.onPointerDown = (_, e:PointerEvent)-> area.startDragging(e);
-		header.onPointerUp = (_, e:PointerEvent)-> area.stopDragging(e);
-		area.add(header);				
-		
-		
-		// ---------------------------------------------------------
-		// ------- inner UIArea for some scrollable content --------
-		// ---------------------------------------------------------
-		
-		// ---- inner UIArea for scrolling content ----
-		
-		var content = new UIArea(2, header.height, area.width-20-2, area.height-header.height-20, boxStyle);
-		area.add(content);
-		
-		// ---- add content ----
-		
-/*		var uiDisplay = new UIDisplay(20, 20, 200, 200, 1, Color.BLUE);
-		uiDisplay.onPointerOver = (_,_)-> uiDisplay.display.color = Color.RED;
-		uiDisplay.onPointerOut  = (_,_)-> uiDisplay.display.color = Color.BLUE;
-		uiDisplay.onPointerDown = (_, e:PointerEvent)-> {
-			uiDisplay.setDragArea(Std.int(content.x), Std.int(content.y), Std.int(content.width + uiDisplay.width - 10), Std.int(content.height + uiDisplay.height - 10));
-			uiDisplay.startDragging(e);
-		}
-		uiDisplay.onPointerUp = (_, e:PointerEvent)-> uiDisplay.stopDragging(e);
-		uiDisplay.onDrag = (_, x:Float, y:Float) -> {
-			content.updateInnerSize();
-			uiDisplay.maskByElement(content, true);
-		}
-		content.add(uiDisplay);
-		
-		var uiElement = new UIElement(220, 20, 200, 200, 0, roundBorderStyle);
-		uiElement.onPointerDown = (_, e:PointerEvent)-> {
-			uiElement.setDragArea(Std.int(content.x), Std.int(content.y), Std.int(content.width + uiElement.width - 10), Std.int(content.height + uiElement.height - 10));
-			uiElement.startDragging(e);
-		}
-		uiElement.onPointerUp = (_, e:PointerEvent)-> uiElement.stopDragging(e);
-		uiElement.onDrag = (_, x:Float, y:Float) -> {
-			content.updateInnerSize();
-			uiElement.maskByElement(content, true);
-		}
-		content.add(uiElement);		
-
-		var inputPage = new UITextPage<MyFontStyle>(250, 300, 0, 0, 1, "input\ntext by\nUIText\tPage", font, fontStyleInput, textInputConfig);
-		inputPage.onPointerDown = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {
-			t.setInputFocus(e);			
-			t.startSelection(e);
-		}
-		inputPage.onPointerUp = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {
-			t.stopSelection(e);
-		}
-		inputPage.onResizeWidth = (_, width:Int, deltaWidth:Int) -> {
-			content.updateInnerSize();
-			inputPage.maskByElement(content, true); // CHECK: need here ?
-		}
-		inputPage.onResizeHeight = (_, height:Int, deltaHeight:Int) -> {
-			content.updateInnerSize();
-			inputPage.maskByElement(content, true); // CHECK: need here ?
-		}
-		content.add(inputPage);
-		
-*/				
-		// ---------------------------------------------------------
-		// ---- Sliders to scroll the innerArea ----		
-		// ---------------------------------------------------------
-		
-		var hSlider = new UISlider(0, area.height-20, area.width-20, 20, sliderConfig);
-		hSlider.onMouseWheel = (_, e:WheelEvent) -> hSlider.setWheelDelta( e.deltaY );
-		//area.add(hSlider);		
-		
-		var vSlider = new UISlider(area.width-20, header.height, 20, area.height-header.height-20, sliderConfig);
-		vSlider.onMouseWheel = (_, e:WheelEvent) -> vSlider.setWheelDelta( e.deltaY );
-		area.add(vSlider);
-		
-		// bindings for sliders
-		content.bindHSlider(hSlider);
-		content.bindVSlider(vSlider);
-		
-		// ---------------------------------------------
-		// -------- button to change the size ----------		
-		// ---------------------------------------------
-/*		
-		var resizerBottomRight:UIElement = new UIElement(area.width - 19, area.height - 19, 18, 18, 2, roundBorderStyle.copy(Color.GREY3, Color.GREY1));	
-		
-		resizerBottomRight.onPointerDown = (_, e:PointerEvent)-> {
-			resizerBottomRight.setDragArea(
-				Std.int(area.x + 240),
-				Std.int(area.y + 140),
-				Std.int((peoteUiDisplay.width  - peoteUiDisplay.xOffset) / peoteUiDisplay.xz  - area.x - 240),
-				Std.int((peoteUiDisplay.height - peoteUiDisplay.yOffset) / peoteUiDisplay.yz  - area.y - 140)
-			);
-			resizerBottomRight.startDragging(e);
-		}
-		resizerBottomRight.onPointerUp = (_, e:PointerEvent)-> resizerBottomRight.stopDragging(e);
-		
-		resizerBottomRight.onDrag = (_, x:Float, y:Float) -> {
-			area.rightSize  = resizerBottomRight.right + 1;
-			area.bottomSize = resizerBottomRight.bottom + 1;
-			area.updateLayout();
-		};
-		resizerBottomRight.onPointerOver = (_,_)-> window.cursor = MouseCursor.RESIZE_NWSE;
-		resizerBottomRight.onPointerOut  = (_,_)-> window.cursor = MouseCursor.DEFAULT;
-		
-		area.add(resizerBottomRight);
-		
-*/		
-		// --- arrange header and sliders if area size is changing ---
-		
-		area.onResizeWidth = (_, width:Int, deltaWidth:Int) -> {
-			header.width = width;
-			vSlider.right = area.right;
-			content.rightSize = hSlider.rightSize = vSlider.left;
-		}
-
-		area.onResizeHeight = (_, height:Int, deltaHeight:Int) -> {
-			hSlider.bottom = area.bottom;
-			content.bottomSize = vSlider.bottomSize = hSlider.top;
-		}
-
 		
 		
 		// ---------------------------------------------------------
@@ -244,4 +92,150 @@ class UI
 		
 		onInit();
 	}
+	
+	// ---------------------------------------------------------
+	// ------------- create Text area for input or output ------
+	// ---------------------------------------------------------
+	
+	public function createCodeEditor(editMode = false, ?onInsertText:Int->Int->String->Void, ?onDeleteText:Int->Int->Int->Int->Void)
+	{
+		var textConfig:TextConfig = {
+			backgroundStyle:boxStyle.copy(Color.GREY5),
+			selectionStyle: selectionStyle,
+			cursorStyle: cursorStyle,
+			undoBufferSize: ((editMode) ? 100 : 0)
+		}
+		
+		var sliderConfig:SliderConfig = {
+			backgroundStyle: roundBorderStyle.copy(Color.GREY2),
+			draggerStyle: roundBorderStyle.copy(Color.GREY3, Color.GREY2, 0.5),
+			draggerSize:16,
+			draggSpace:1,
+		};
+		
+		// -----------------------------------------------------------
+		// ---- creating an Area, header and Content-Area ------------
+		// -----------------------------------------------------------
+		
+		var sliderSize:Int = 20;
+		var headerSize:Int = 20;
+		var gap:Int = 3;
+		
+		var area = new UIArea(0, 0, 400, 400, {backgroundStyle:roundBorderStyle, resizeType:ResizeType.ALL, minWidth:200, minHeight:100});
+		#if testlocal
+		if (!editMode) area.x = 400;
+		#end
+		// to let the area drag
+		area.setDragArea(0, 0, peoteUiDisplay.width, peoteUiDisplay.height);
+		peoteUiDisplay.add(area);
+		
+		
+		// --------------------------
+		// ------ header area -------		
+		// --------------------------
+		
+		var headerArea = new UIArea(gap, gap, area.width - gap - gap, headerSize, {backgroundStyle:roundBorderStyle});
+		// start/stop area-dragging
+		headerArea.onPointerDown = (_, e:PointerEvent)-> area.startDragging(e);
+		headerArea.onPointerUp = (_, e:PointerEvent)-> area.stopDragging(e);
+		area.add(headerArea);
+		
+		if (editMode) {
+			var runButton = new UITextLine<FontStyleEdit>(0, 0, 0, 20, 
+				"Run", font, fontStyleHeader, { backgroundStyle:roundBorderStyle, textSpace:{left:7,right:7} }
+			);
+			headerArea.add(runButton);
+			runButton.right = headerArea.right;
+			runButton.updateLayout();
+			
+			headerArea.onResizeWidth = (_, width:Int, deltaWidth:Int) -> {
+				runButton.right = headerArea.right;
+			}
+		}
+		
+
+		// --------------------------
+		// ------- edit area --------
+		// --------------------------
+		
+		editor = new UITextPage<FontStyleEdit>(gap, headerSize + gap + 1,
+			area.width - sliderSize - gap - gap - 1,
+			area.height - headerSize - sliderSize - 2 - gap - gap,
+			"",
+			font, fontStyleInput, textConfig
+		);
+		
+		if (editMode) {
+			editor.onPointerDown = function(t, e) {
+				t.setInputFocus(e);			
+				t.startSelection(e);
+			}		
+			editor.onPointerUp = function(t, e) {
+				t.stopSelection(e);
+			}
+			editor.onInsertText = function(t:UITextPage<FontStyleEdit>, fromLine:Int, toLine:Int, fromPos:Int, toPos:Int, chars:String)  {
+				onInsertText(fromLine, fromPos, chars );
+			}
+			editor.onDeleteText = function(t:UITextPage<FontStyleEdit>, fromLine:Int, toLine:Int, fromPos:Int, toPos:Int, chars:String)  {
+				onDeleteText(fromLine, toLine, fromPos, toPos );
+			}
+		} 
+		else {
+			editor.cursorShow();
+		}
+		
+		area.add(editor);
+		
+		
+		
+		// ------------------------------------
+		// ---- sliders to scroll editor ----		
+		// ------------------------------------
+		
+		var hSlider = new UISlider(gap, area.height-sliderSize-gap, editor.width, sliderSize, sliderConfig);
+		hSlider.onMouseWheel = (_, e:WheelEvent) -> hSlider.setWheelDelta( e.deltaY );
+		area.add(hSlider);		
+		
+		var vSlider = new UISlider(area.width-sliderSize-gap, headerSize + gap + 1, sliderSize, editor.height, sliderConfig);
+		vSlider.onMouseWheel = (_, e:WheelEvent) -> vSlider.setWheelDelta( e.deltaY );
+		area.add(vSlider);
+				
+		// bind editor to sliders
+		editor.bindHSlider(hSlider);
+		editor.bindVSlider(vSlider);
+
+				
+		// --- arrange header and sliders if area size is changing ---
+		
+		area.onResizeWidth = (_, width:Int, deltaWidth:Int) -> {
+			headerArea.width = width - gap - gap;
+			vSlider.right = area.right - gap;
+			editor.rightSize = vSlider.left - 1;
+			hSlider.width = editor.width;
+		}
+
+		area.onResizeHeight = (_, height:Int, deltaHeight:Int) -> {
+			hSlider.bottom = area.bottom - gap;
+			editor.bottomSize = hSlider.top - 1;
+			vSlider.height = editor.height;
+		}
+		
+	}
+	
+	public function insertCode(fromLine:Int, fromPos:Int, chars:String):Void {
+		//editor.insertChars(chars, fromLine, fromPos);
+		//editor.updateLayout();
+		editor.setCursorAndLine(fromPos, fromLine);
+		editor.textInput(chars);
+	}
+	
+	@:access(peote.ui.interactive)
+	public function deleteCode(fromLine:Int, toLine:Int, fromPos:Int, toPos:Int):Void {
+		editor.setOldTextSize();
+		editor.deleteChars(fromLine, toLine, fromPos, toPos);
+		editor.setCursorAndLine(fromPos, fromLine, false);
+		editor.updateTextOnly(true);		
+	}
+	
+	
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="PeoteViewSamples" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
+	<meta title="Lifecoder" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
@@ -24,7 +24,7 @@
 	<haxelib name="input2action" />
 	<haxelib name="peote-ui" />
 	
-	<haxedef name="testlocal" />
+	<!--<haxedef name="testlocal" />-->
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
