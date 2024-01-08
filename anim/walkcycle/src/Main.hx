@@ -60,15 +60,16 @@ class Main extends Application
 		buffer.addElement(sprite);
 		
 		// anim tile from 0 to 23
-		sprite.animTile(0, 23);
-		sprite.timeTile(0.0, 1.4); // from start-time (0.0) and during 5 seconds 
+		sprite.animTile(0, 23);    // params: start-tile, end-tile
+		sprite.timeTile(0.0, 1.4); // params: start-time, duration
 		
 		
 		// don't forget to update after changing for tile-anim!
 		buffer.updateElement(sprite);
 		
 		
-		peoteView.start(); // after this the "peote time" counts up !
+		// after this the "peote time" counts up !
+		peoteView.start();
 	
 	}
 	
