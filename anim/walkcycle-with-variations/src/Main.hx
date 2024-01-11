@@ -38,7 +38,7 @@ class Main extends Application
 		peoteView = new PeoteView(window);
 
 		var total_elements = 2000;
-		var buffer = new Buffer<AnimTileSprite>(total_elements, total_elements, true);
+		var buffer = new Buffer<AnimTileSprite32x32>(total_elements, total_elements, true);
 		var display = new Display(0, 0, window.width, window.height);
 		var program = new Program(buffer);
 
@@ -71,26 +71,22 @@ class Main extends Application
 			[0x92fc5dff, 0xfc8d5dff ],
 		];
 
-		for(n in 0...total_elements){
-			var sprite = new AnimTileSprite();
-			buffer.addElement(sprite);
+		for(n in 0...total_elements)
+		{
+			var sprite = new AnimTileSprite32x32();
 			
 			var x_offset = random_int(0, 32);
 			var is_walking_to_right = n % 2 == 0;
 			
 			// start x position off screen to left or right alternatively
 			var x = is_walking_to_right ? -32 - x_offset : display.width + x_offset;
+
 			// start y positions along y axis from top to bottom
 			var y = Std.int(y_offset * n);
-
-			sprite.x = x;
-			sprite.y = y;
 			
-			// flip sprite x if walking to right (because walkcylce is towards the left)
-			if(is_walking_to_right){
-				sprite.width = -32;
-			}
-	
+			// put at y position (no animation there!)
+			sprite.y = y;
+				
 			// anim tiles for walk cycle ---------------------------------------------------------
 			var walkcycle_duration = frame_count / random_int(6, 24);
 			sprite.animTile(0, frame_count - 1); // start tile, end tile
@@ -99,20 +95,19 @@ class Main extends Application
 			// anim position ---------------------------------------------------------------------
 			var from = x;
 			var to = is_walking_to_right ? x + distance_of_walk : x - distance_of_walk ;
-			sprite.animPos(Std.int(from), y, Std.int(to), y); // start x, start y, end x, end y
+			sprite.animPos( Std.int(from), Std.int(to) ); // start/end of x position
 			
 			var walk_time_start = random_int(1, 60);
-			var walk_time_end = walk_time_start + cycles_count * walkcycle_duration;
-			sprite.timePos(walk_time_start, walk_time_end); // start time, end time
+			var walk_time_duration = walk_time_start + cycles_count * walkcycle_duration;
+			sprite.timePos(walk_time_start, walk_time_duration); // start time, duration
 						
 			// anim color ------------------------------------------------------------------------
 			var color_index = random_int(0, colors.length - 1);
 			sprite.animCol(colors[color_index][0], colors[color_index][1]); // color at start, color at end
-			sprite.timeCol(walk_time_start, walk_time_end / 3);
+			sprite.timeCol(walk_time_start, walk_time_duration / 3);
 			
-			// don't forget to update after changing for tile-anim!
-			buffer.updateElement(sprite);
-			
+			// don't forget to add it to the buffer!
+			buffer.addElement(sprite);	
 		}
 
 		peoteView.start(); // after this the "peote time" counts up !
