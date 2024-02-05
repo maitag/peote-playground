@@ -12,11 +12,12 @@ Lose collection of samples and demos of the peote libraries:
 Here is a small diagram of which lib is based on what:  
 ```
         peote-ui
-        /      \
-  peote-text    \
-      /          \
-peote-view    peote-layout  peote-net  peote-event
--- LIME --    ---------- pure haxe ---------------
+        /     \
+   peote-text  \
+      /         \
+ peote-view      \
+    /             \
+L I M E       peote-layout     peote-event     peote-net   
 ```
 
 
