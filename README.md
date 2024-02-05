@@ -2,10 +2,10 @@
 
 Lose collection of samples and demos of the peote libraries:
 
-[peote-view](https://github.com/maitag/peote-view)
-[peote-text](https://github.com/maitag/peote-text)
-[peote-ui](https://github.com/maitag/peote-ui)
-[peote-net](https://github.com/maitag/peote-net)
+[peote-view](https://github.com/maitag/peote-view) - base render layer  
+[peote-text](https://github.com/maitag/peote-text) - handles text rendering  
+[peote-ui](https://github.com/maitag/peote-ui) - fast user interface  
+[peote-net](https://github.com/maitag/peote-net) - networking  
 
 Among other things, it should also show various use cases and procedures, or how everything interacts with other common haxelibs. 
 
