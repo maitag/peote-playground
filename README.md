@@ -1,5 +1,13 @@
-# peote-view-samples
+# peote-view-playground
 
-Samples and demos for [peote-view](https://github.com/maitag/peote-view) library. 
+Lose collection of samples and demos of the peote libraries:
 
-Feel free to add new samples! (start quick in using copy of the `_starter/` folder)
+[peote-view](https://github.com/maitag/peote-view)
+[peote-text](https://github.com/maitag/peote-text)
+[peote-ui](https://github.com/maitag/peote-ui)
+[peote-net](https://github.com/maitag/peote-net)
+
+Among other things, it should also show various use cases and procedures, or how everything interacts with other common haxelibs. 
+
+Feel free to play around or add some new ones!
+(start quick in using a copy of the `_starter/` folder)
