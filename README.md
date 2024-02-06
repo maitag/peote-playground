@@ -1,6 +1,6 @@
 # peote-playground
 
-Lose collection of samples and demos of the peote libraries:
+Random collection of samples and demos into peotelibs haxespace:
 
 [peote-view](https://github.com/maitag/peote-view) - base render layer  
 [peote-text](https://github.com/maitag/peote-text) - handles text rendering  
