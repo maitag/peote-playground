@@ -1,7 +1,7 @@
 If no special license is available within an asset folder,
-the following license applies to all external or internal selfcreated graphics, soudns, 3d models or
-content inside of .blend-files etc.
-so everything whats created outside of pure programming code.
+the following license applies to all external or internal selfcreated graphics, sounds, 3d models or
+other artistic content inside of .blend-files etc.
+In other words, everything that was created outside of pure programming code.
 
 
 
