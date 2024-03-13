@@ -5,13 +5,14 @@ import lime.graphics.RenderContext;
 
 import lime.app.Application;
 import lime.ui.Window;
-import lime.graphics.Image;
 
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
+import peote.view.TextureData;
+import peote.view.TextureFormat;
 
 
 class Main extends Application
@@ -45,8 +46,8 @@ class Main extends Application
 		
 		
 		// textures to render into		
-		var textureA = new Texture(w, h, 1, 4, false, 0, 0, true );
-		var textureB = new Texture(w, h, 1, 4, false, 0, 0, true );
+		var textureA = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGB});
+		var textureB = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGB});
 		
 		// initialize some random cells into textureB (TODO: let paint into later!)
 		textureB.setImage( genRandomCellImage(w, h) );
@@ -82,20 +83,21 @@ class Main extends Application
 		window.onRender.add(onRender);
 	}
 	
-	public static function genRandomCellImage(w:Int, h:Int):Image {
-		var image = new Image(null, 0, 0, w, h, 0x022112FF);
+	public static function genRandomCellImage(w:Int, h:Int):TextureData {
+		var textureData = new TextureData(w, h, TextureFormat.FLOAT_RGB);
+		textureData.clearFloat(0.5);
 		//for (x in 0...100)
 		for (x in 0...w)
 			//for (y in 0...100) 
 			for (y in 0...h) 
-				if (Math.random() < 0.0005)
+				if (Math.random() < 0.008)
 				{
-					image.setPixel32(x, y, Color.random() );
+					textureData.setPixelFloatRGB(x, y, Math.random(), Math.random(), Math.random() );
 				}
 					
 					
 					
-		return image;
+		return textureData;
 	}
 
 	// ------------------------------------------------------------

@@ -29,7 +29,7 @@ class ReactionDiffusion implements Element
 
 		program.injectIntoFragmentShader(
 		"				
-			//const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
+			const float F = 0.0405, K = 0.062, a = 0.2, b = 0.1; // fingerprint
 			//const float F = 0.0305, K = 0.062, a = 0.2, b = 0.1; // cellgrow
 			//const float F = 0.0305, K = 0.06, a = 0.2, b = 0.1; // mix of both
 			//const float F = 0.02, K = 0.055, a = 0.2, b = 0.1; // fluctuation
@@ -38,7 +38,7 @@ class ReactionDiffusion implements Element
 			//const float F = 0.0087, K = 0.044, a = 0.2, b = 0.1; // turbulence
 			//const float F = 0.005, K = 0.03, a = 0.2, b = 0.1; // black hole
 			//const float F = 0.012, K = 0.04, a = 0.2, b = 0.1; // tvscreen
-			const float F = 0.0085, K = 0.047, a = 0.2, b = 0.1; // balance (for !billy@fromDiscoChat)
+			//const float F = 0.0085, K = 0.047, a = 0.2, b = 0.1; // balance (for !billy@fromDiscoChat)
 			
 			const float TIMESTEP = 1.0;
 			

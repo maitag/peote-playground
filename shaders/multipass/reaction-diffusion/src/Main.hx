@@ -5,13 +5,14 @@ import lime.graphics.RenderContext;
 
 import lime.app.Application;
 import lime.ui.Window;
-import lime.graphics.Image;
 
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Buffer;
 import peote.view.Color;
 import peote.view.Texture;
+import peote.view.TextureFormat;
+import peote.view.TextureData;
 
 
 class Main extends Application
@@ -45,11 +46,11 @@ class Main extends Application
 		
 		
 		// textures to render into		
-		var textureA = new Texture(w, h, 1, 4, false, 0, 0, true );
-		var textureB = new Texture(w, h, 1, 4, false, 0, 0, true );
+		var textureA = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RG} );
+		var textureB = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RG} );
 		
 		// initialize some random cells into textureB (TODO: let paint into later!)
-		textureB.setImage( genRandomCellImage(w, h) );
+		textureB.setImage( genRandomCellData(w, h) );
 		
 		// hidden displays that only renders into textures		
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
@@ -82,23 +83,23 @@ class Main extends Application
 		window.onRender.add(onRender);
 	}
 	
-	public static function genRandomCellImage(w:Int, h:Int):Image {
-		var image = new Image(null, 0, 0, w, h, Color.RED);
+	public static function genRandomCellData(w:Int, h:Int):TextureData {
+		var textureData = new TextureData(w, h, TextureFormat.FLOAT_RG);
+		
+		textureData.clearFloat(1.0);
+
 		for (x in 0...100)
 			for (y in 0...100) 
 				if (Math.random() < 0.1)
 				{
-					// TODO
-					var c = Color.BLACK;
-					c.r = Std.int((0.25 + Math.random() * 0.06 - 0.03) * 255);
-					c.g = Std.int((0.5  + Math.random() * 0.06 - 0.03) * 255);
-					image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), c );
-					//image.setPixel32(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), Color.random() );
+					var r:Float = (0.2 + Math.random() * 0.06 - 0.03);
+					var g:Float = (0.5  + Math.random() * 0.06 - 0.03);
+					textureData.setPixelFloatRG(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), r, g );
 				}
 					
 					
 					
-		return image;
+		return textureData;
 	}
 
 	// ------------------------------------------------------------
