@@ -3,14 +3,7 @@ package;
 import lime.app.Application;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Buffer;
-import peote.view.Texture;
-import peote.view.Element;
-import peote.view.Color;
-
+import peote.view.*;
 import utils.Loader;
 
 class SemmiBucket implements Element
@@ -58,7 +51,7 @@ class Mudu extends Application
 				Loader.image("assets/mudu.png", true, function(image:Image)
 				{
 					var texture = new Texture(image.width, image.height);
-					texture.setImage(image);
+					texture.setData(image);
 					
 					program.addTexture(texture, "custom");
 					program.snapToPixel(1); // for smooth animation

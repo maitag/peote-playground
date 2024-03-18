@@ -4,13 +4,10 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
-
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
 import lime.graphics.Image;
+
+import peote.view.*;
+import utils.Loader;
 
 
 class Main extends Application

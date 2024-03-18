@@ -5,11 +5,7 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Color;
+import peote.view.*;
 
 
 class Main extends Application
@@ -60,8 +56,7 @@ class Main extends Application
 		
 		// after 1 second delay via haxe-Timer its is start changing color also
 		haxe.Timer.delay(
-			function()
-			{
+			function() {
 				sprite.animCol(Color.GREEN, Color.BLUE); // from green to blue
 				sprite.timeCol(peoteView.time, 2.0); // from actual time and during 2 seconds
 				buffer.updateElement(sprite); // don't forget to "update" !
@@ -69,6 +64,19 @@ class Main extends Application
 			1000
 		);
 		
+		/*
+		var sprite1 = new AnimColPosSprite();
+		buffer.addElement(sprite1);
+
+		var scheduler = new PeoteScheduler();
+		scheduler
+			//  delay, duration, function
+			.add( 0.0, 3.0, (delay, duration) -> { sprite.animPos(0, 100, 700, 100); sprite.timePos(peoteView.time+delay, duration); } )
+				.end()
+			.add( 0.0, 1.0, (delay, duration) -> { sprite.animCol(Color.RED, Color.GREEN); sprite.timeCol(peoteView.time+delay, duration); } )
+				.next( 0.0,   2.0,    (delay, duration) -> { sprite.animCol(Color.GREEN, Color.BLUE); sprite.timeCol(peoteView.time+delay, duration); } )
+				.repeat(2) // to let color repeat 2 times ( without param it repeats endless )
+		*/		
 	}
 	
 	// ------------------------------------------------------------

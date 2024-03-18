@@ -4,13 +4,10 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
-
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
 import lime.graphics.Image;
+
+import peote.view.*;
+import utils.Loader;
 
 
 class Main extends Application
@@ -42,11 +39,11 @@ class Main extends Application
 		
 		Loader.imageArray(["assets/spiral8bpc.png", "assets/fosterWallace.png"] , true, function (image:Array<Image>)
 		{
-			var uvTexture = new Texture(image[0].width, image[0].height, 1, 4, false, 0, 0);
-			uvTexture.setImage(image[0]);
+			var uvTexture = new Texture(image[0].width, image[0].height);
+			uvTexture.setData(image[0]);
 			
-			var imageTexture = new Texture(image[1].width, image[1].height, 1, 4, false, 1, 0);
-			imageTexture.setImage(image[1]);
+			var imageTexture = new Texture(image[1].width, image[1].height, 1, {smoothShrink: true});
+			imageTexture.setData(image[1]);
 			
 					
 			UVmap.init(display, uvTexture, imageTexture);

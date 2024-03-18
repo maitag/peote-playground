@@ -49,7 +49,7 @@ class Main extends Sprite {
 		Loader.image ("assets/openfl.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
-			texture.setImage(image);
+			texture.setData(image);
 			program.setTexture(texture, "custom");
 			program.discardAtAlpha(0.2);
 			

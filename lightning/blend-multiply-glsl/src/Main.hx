@@ -1,15 +1,12 @@
 package;
 
-import lime.utils.Assets;
-import peote.view.Texture;
 import haxe.CallStack;
+
 import lime.app.Application;
 import lime.ui.Window;
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Color;
+import lime.utils.Assets;
+
+import peote.view.*;
 
 class Main extends Application {
 	var light:Sprite;
@@ -65,7 +62,7 @@ class Main extends Application {
 		// load a texture to be used for each 'light'
 		var lightImage = Assets.getImage("assets/white_alpha_gradient-sinusoidal.png");
 		var lightTexture = new Texture(lightImage.width, lightImage.height);
-		lightTexture.setImage(lightImage);
+		lightTexture.setData(lightImage);
 		lightProgram.addTexture(lightTexture, "light");
 
 		// add a light which will follow mouse position
@@ -117,7 +114,7 @@ class Main extends Application {
 		// load wabbit texture and give to program
 		var wabbitImage = Assets.getImage("assets/wabbit_alpha.png");
 		var wabbitTexture = new Texture(wabbitImage.width, wabbitImage.height);
-		wabbitTexture.setImage(wabbitImage);
+		wabbitTexture.setData(wabbitImage);
 		wabbitProgram.addTexture(wabbitTexture, "wabbit");
 
 		// add wabbit Sprites

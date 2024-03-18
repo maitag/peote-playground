@@ -3,14 +3,7 @@ package;
 import lime.app.Application;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Buffer;
-import peote.view.Texture;
-import peote.view.Element;
-import peote.view.Color;
-
+import peote.view.*;
 import utils.Loader;
 
 class Bulby implements Element
@@ -60,7 +53,7 @@ class Main extends Application
 					// define texture tiles
 					texture.tilesX = Std.int(image.width / frameSize);
 					texture.tilesY = Std.int(image.height / frameSize);
-					texture.setImage(image);
+					texture.setData(image);
 					
 					program.addTexture(texture, "custom");
 					program.snapToPixel(1); // for smooth animation

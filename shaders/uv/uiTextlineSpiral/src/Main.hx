@@ -6,10 +6,7 @@ import lime.app.Application;
 import lime.ui.Window;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
+import peote.view.*;
 import utils.Loader;
 
 import peote.text.Font;
@@ -74,10 +71,10 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		var uvTexture = new Texture(image.width, image.height, 1, 4, false, 0, 0);
-		uvTexture.setImage(image);
+		var uvTexture = new Texture(image.width, image.height);
+		uvTexture.setData(image);
 			
-		var fbTexture = new Texture(4096, 40, 1, 4, false, 1, 0);
+		var fbTexture = new Texture(4096, 40, {smoothShrink: true});
 		
 		// set up Display for framebuffer
 		var fontStyle = new MyFontStyle();

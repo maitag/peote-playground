@@ -4,13 +4,11 @@ import peote.view.PeoteGL.Version;
 import peote.view.PeoteGL.Precision;
 import peote.view.PeoteGL.GLUniformLocation;
 
-import peote.view.utils.GLTool;
+import peote.view.intern.GLTool;
 
-import peote.view.PeoteView;
-import peote.view.Color;
-import peote.view.Display;
-import peote.view.UniformBufferView;
-import peote.view.UniformBufferDisplay;
+import peote.view.*;
+import peote.view.intern.UniformBufferView;
+import peote.view.intern.UniformBufferDisplay;
 
 @:access(peote.view)
 class CustomDisplay extends Display 

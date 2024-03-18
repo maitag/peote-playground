@@ -1,11 +1,6 @@
 package;
 
-import peote.view.Color;
-import peote.view.Element;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Buffer;
-import peote.view.UniformFloat;
+import peote.view.*;
 
 class Tri implements Element
 {
@@ -56,7 +51,11 @@ class Tri implements Element
 		program.injectIntoFragmentShader(
 		"
 			vec4 triangleColor( vec2 texCoord ) {
-				return vColor0*(1.0 - vTexCoord.y) + vColor1*(1.0 - vTexCoord.x) + vColor2*(vTexCoord.y - 1.0 + vTexCoord.x);
+				float y = vTexCoord.y;
+				float w1 =  vTexCoord.x;
+				float w2 = 1.0 - y - w1;
+				return vColor2*y + vColor1*w1 + vColor0*w2;
+				//return vColor0*(1.0 - vTexCoord.y) + vColor1*(1.0 - vTexCoord.x) + vColor2*(vTexCoord.y - 1.0 + vTexCoord.x);
 			}			
 		");
 

@@ -4,13 +4,11 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
-
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
 import lime.graphics.Image;
+
+import peote.view.*;
+
+import utils.Loader;
 
 
 class Main extends Application
@@ -44,11 +42,11 @@ class Main extends Application
 		{
 			//var texture = new Texture(image.width, image.height);
 			// important is to set min/mag filter
-			var texture = new Texture(image.width, image.height, false, 1, 1);
-			texture.setImage(image);
+			var texture = new Texture(image.width, image.height, {smoothExpand: true, smoothShrink: true});
+			texture.setData(image);
 					
 			Msdf.init(display, texture);
-			msdf = new Msdf(0, 0, 800, 800);
+			msdf = new Msdf(0, 0, 320, 320);
 			
 		});
 		

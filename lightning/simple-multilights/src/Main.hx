@@ -9,10 +9,7 @@ import lime.ui.Window;
 import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
+import peote.view.*;
 import utils.Loader;
 
 
@@ -46,10 +43,10 @@ class Main extends Application
 		Loader.imageArray(["assets/mandelbulb_light_alpha0001.png", "assets/mandelbulb_normal0001.png"] , true, function (image:Array<Image>)
 		{
 			var lightsTexture = new Texture(image[0].width, image[0].height); // , 1, 4, false, 0, 0);
-			lightsTexture.setImage(image[0]);
+			lightsTexture.setData(image[0]);
 			
 			var normalTexture = new Texture(image[1].width, image[1].height); // , 1, 4, false, 0, 0);
-			normalTexture.setImage(image[1]);
+			normalTexture.setData(image[1]);
 
 			
 			// TODO: render all into Texture per frame!

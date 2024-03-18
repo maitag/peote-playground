@@ -7,11 +7,7 @@ import lime.ui.KeyModifier;
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Color;
+import peote.view.*;
 
 
 class Main extends Application

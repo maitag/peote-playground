@@ -8,11 +8,7 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Color;
+import peote.view.*;
 
 import echo.Echo;
 import echo.World;

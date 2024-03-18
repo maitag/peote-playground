@@ -4,13 +4,11 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
-
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
 import lime.graphics.Image;
+
+import peote.view.*;
+
+import utils.Loader;
 
 
 class Main extends Application
@@ -44,14 +42,12 @@ class Main extends Application
 		{
 			var texture = new Texture(image.width, image.height);
 			//var texture = new Texture(image.width, image.height, 1, 4, true);
-			texture.setImage(image);
+			texture.setData(image);
 					
 			GaussianBlurHQ.init(display, texture);
 			blurHQ = new GaussianBlurHQ(10, 10, 400, 300);
 			
 		});
-		
-		
 		
 		
 		peoteView.start();

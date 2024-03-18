@@ -46,7 +46,7 @@ class Main extends Application
 		Loader.image("assets/object_bw_depth_alpha.png", true, function (image:Image)
 		{
 			var tilesTexture = new Texture(image.width, image.height); // , 1, 4, false, 0, 0);
-			tilesTexture.setImage(image);
+			tilesTexture.setData(image);
 			
 			// how many tiles into x and y direction
 			tilesTexture.tilesX = 5;

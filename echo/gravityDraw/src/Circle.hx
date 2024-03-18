@@ -1,10 +1,6 @@
 package;
 
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Element;
-import peote.view.Color;
-import peote.view.Program;
+import peote.view.*;
 
 class Circle implements Element implements Entity
 {

@@ -1,11 +1,9 @@
 package;
 
-import peote.view.PeoteView;
-import peote.view.Color;
-import peote.view.Display;
+import peote.view.*;
 import peote.view.PeoteGL.Version;
-import peote.view.UniformBufferView;
-import peote.view.UniformBufferDisplay;
+import peote.view.intern.UniformBufferView;
+import peote.view.intern.UniformBufferDisplay;
 
 
 @:access(peote.view)

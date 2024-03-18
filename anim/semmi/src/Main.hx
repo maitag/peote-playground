@@ -3,13 +3,7 @@ package;
 import lime.app.Application;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Buffer;
-import peote.view.Texture;
-import peote.view.Color;
-
+import peote.view.*;
 import utils.Loader;
 
 class Main extends Application
@@ -30,7 +24,7 @@ class Main extends Application
 				Loader.image("assets/semmi_colors_by_yenoPenn.png", true, function(image:Image)
 				{
 					var texture = new Texture(image.width, image.height);
-					texture.setImage(image);
+					texture.setData(image);
 					
 					program.addTexture(texture, "custom");					
 					program.snapToPixel(1); // for smooth animation

@@ -10,10 +10,9 @@
 	<window width="800" height="600" fps="61" />
 	<window if="html5||android" width="0" height="0" allowHighDPI="false" />
 	
+	
 	<!--<app main="Main" path="bin" file="Main" />-->
 	<app main="Main" path="bin" file="Main" />
-	
-	
 	
 	
 	

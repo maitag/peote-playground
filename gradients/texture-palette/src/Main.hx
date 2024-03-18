@@ -6,15 +6,9 @@ import lime.app.Application;
 import lime.ui.Window;
 import lime.graphics.Image;
 
-import utils.Loader;
+import peote.view.*;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Buffer;
-import peote.view.Program;
-import peote.view.Color;
-import peote.view.Texture;
-import peote.view.Element;
+import utils.Loader;
 
 /**
 
@@ -100,7 +94,7 @@ class Main extends Application
 		
 		// init palette texture, generating Image procedurally
 		paletteTexture = new Texture(colors.length, colors.length);
-		paletteTexture.setImage(generatePaletteImage(colors), 0);
+		paletteTexture.setData(generatePaletteImage(colors), 0);
 		programPalette.setTexture(paletteTexture, "base");
 
 		// show palette element
@@ -116,7 +110,7 @@ class Main extends Application
 
 			// init grayscale texture with Image loaded from disk
 			spriteTexture = new Texture(image.width, image.height);
-			spriteTexture.setImage(image, 0);
+			spriteTexture.setData(image, 0);
 			
 			// set graycale and palette texture in sprite program
 			programSprite.setTexture(spriteTexture, "base");

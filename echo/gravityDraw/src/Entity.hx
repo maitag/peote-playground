@@ -1,6 +1,6 @@
 package;
-import peote.view.Color;
 
+import peote.view.Color;
 
 interface Entity 
 {

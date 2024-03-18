@@ -1,14 +1,11 @@
 package;
 
 import haxe.CallStack;
-import peote.view.UniformFloat;
 
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
+import peote.view.*;
 
 class Main extends Application
 {
