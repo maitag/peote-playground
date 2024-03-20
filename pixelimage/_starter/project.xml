@@ -1,49 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="PeoteUi" package="peote.ui" version="0.8.0" company="Sylvio Sell - maitag" />
+	<meta title="PeoteViewVision" package="peote.vision" version="0.9.0" company="Semmi" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
 	<!-- check this for GG-Playstore: <setenv name="ANDROID_GRADLE_TASK" value=":app:bundleRelease" /> -->
-	
+
+
+	<!-- samples -->
 	<app main="Main" path="bin" file="Main" />
+	<!--
+		MoreMainHereToCopyIn,
+	-->
 	
-	<!--<define name="stats" if="html5" />-->
 	
-	<!--<window fps="60" width="800" height="600" vsync="true" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" /> -->
-	<window width="800" height="600" fps="61" allowHighDPI="false" />
-	<window width="0" height="0" fps="61" if="html5||android" />
-	<window if="html5" allowHighDPI="false" />
-	
-	<!--<set name="angle" if="windows" />-->
-	
+	<!--<window fps="60" width="800" height="600" vsync="true" antialiasing="4" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" /> -->
+	<window width="800" height="600" fps="61" />
+	<!--<window if="html5||android" width="0" height="0" />-->
+	<window if="html5||android" width="0" height="0" allowHighDPI="true" />
+		
 	<source path="src" />
 	
-	<haxelib name="lime" />
-	
-	<haxelib name="json2object" />
-	<!-- <haxelib name="jasper" /> -->
-	
+	<haxelib name="lime" />	
 	<haxelib name="peote-view" />
-	<haxelib name="peote-text" />
-	<haxelib name="input2action" />
-	<haxelib name="peote-ui" />
-	
-	<!-- TODO: --><!-- <haxedef name="peoteui_multitouch" /> -->
-	
-	<define name="peoteui_maxDisplays" value="10" /> <!-- for optimization use "1" (max is 32) -->
-
-	<!-- to disable masking of ui-elements for more performance -->
-	<!--<haxedef name="peoteui_no_masking" />-->
-	
-	<!-- to disable masking of InteractiveTextlines for more performance -->
-	<!--<haxedef name="peoteui_no_textmasking" />-->
-	
-	<haxedef name="peoteui_debug_macro" />
-	<haxedef name="peotetext_debug_macro" />
-	
-	<haxedef name="peotelayout_debug" />
+	<haxelib name="pi_xy" />
+	<haxelib name="iterMagic" />
+	<haxelib name="format" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
@@ -55,18 +38,20 @@
 	<haxedef name="peoteview_instancedrawing" />
 	<haxedef name="peoteview_vertexarrayobjects" />
 
+
 	<!--<haxedef name="peoteview_debug_macro" />-->
 	<!--<haxedef name="peoteview_debug_buffer" />-->
 	<!--<haxedef name="peoteview_debug_view" />-->
-	<!--<haxedef name="peoteview_debug_display" />
+	<!--<haxedef name="peoteview_debug_display" />-->
 	<!--<haxedef name="peoteview_debug_program" />-->
-	<!--<haxedef name="peoteview_debug_texture" />-->
-	<!--<haxedef name="peoteview_debug_shader" />-->
+	<haxedef name="peoteview_debug_texture" />
+	<!-- <haxedef name="peoteview_debug_shader" /> -->
 
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
-	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
+	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome it needs also "-debug" -->
 	<haxeflag name="-dce" value="full" />
-	<!-- <haxedef name="dump=pretty output" /> -->
+	<!-- <haxedef name="message.reporting=pretty" /> -->
+	<haxedef name="keep_inline_positions" />
 	
 	<!-- <haxedef name="HXCPP_CHECK_POINTER"/> -->
 	<!-- <haxedef name="HXCPP_M32" if="cpp" /> --> <!-- on windows 64 is default -->
@@ -74,10 +59,12 @@
 	<!-- <haxedef name="HXCPP_MSVC_VER=120" if="cpp" /> -->
 	<!-- <haxedef name="HXCPP_MSVC_VER=140" if="cpp" /> -->
 	
-	<!-- <setenv name="SHOW_CONSOLE" /> --> <!-- on windows it shows console if start by clicking on .exe -->
+	<!-- <haxedef name="js-es" value="6" /> -->
 	
+	<!-- <setenv name="SHOW_CONSOLE" /> --> <!-- on windows it shows console if start by clicking on .exe -->
+		
 	<!-- for html5 and loading inside onPreloadComplete-event the assets need to be embed=true --> 
-	<assets path="assets" rename="assets" exclude="lime.svg" embed="false" />
+	<assets path="assets" exclude="lime.svg" embed="false" />
 	
 	<icon path="assets/lime.svg" />
 	

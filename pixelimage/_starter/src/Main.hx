@@ -1,151 +1,97 @@
 package;
 
+import haxe.CallStack;
+
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Color;
+import peote.view.*;
 
-import peote.text.Font;
+import pi_xy.Pixelimage;
+import pi_xy.Pixelimage.ImageType;
 
-import peote.ui.PeoteUIDisplay;
-import peote.ui.interactive.UITextLine;
-import peote.ui.interactive.UITextPage;
-import peote.ui.event.PointerEvent;
-import peote.ui.style.BoxStyle;
-import peote.ui.style.RoundBorderStyle;
-import peote.ui.config.TextConfig;
-import peote.ui.style.interfaces.FontStyle;
 
-// ------------------------------------------
-// --- using a custom FontStyle here --------
-// ------------------------------------------
 
-@packed // this is need for ttfcompile fonts (gl3font)
-@globalLineSpace // all pageLines using the same page.lineSpace (gap to next line into page)
-@:structInit
-class MyFontStyle implements FontStyle
+
+class Elem implements Element
 {
-	public var color:Color = Color.GREEN;
-	public var width:Float = 18; // (<- is it still fixed to get from font-defaults if this is MISSING ?)
-	public var height:Float = 20;
-	@global public var weight = 0.5; //0.49 <- more thick (only for ttfcompiled fonts)
+	@posX public var x:Int;
+	@posY public var y:Int;
+	
+	@sizeX public var w:Int;
+	@sizeY public var h:Int;
+	
+	public function new(x:Int=0, y:Int=0, w:Int=100, h:Int=100)
+	{
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
+	}
 }
 
-// -----------------------------------
-// -------- main code starts ---------
-// -----------------------------------
+
 
 class Main extends Application
-{
-	var peoteView:PeoteView;
-	var uiDisplay:PeoteUIDisplay;
-	
-	
-	// L I M E - initializing
-	
+{	
 	override function onWindowCreate():Void
 	{
 		switch (window.context.type)
 		{
 			case WEBGL, OPENGL, OPENGLES:
 				try startSample(window)
-				catch (_) trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()), _);
+				catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
 			default: throw("Sorry, only works with OpenGL.");
 		}
 	}
 
-	// ---------------------------------------------------------------------------
-	// --- before starting PeoteUIDisplay, it have to load the fonts at first  ---
-	// ---------------------------------------------------------------------------
-
 	public function startSample(window:Window)
-	{
-		new Font<MyFontStyle>("assets/fonts/packed/hack/config.json").load( onFontLoaded );
+	{	
+
+		// create a new vision-image with a gold background
+		// var image = new Pixelimage(512, 512, ImageType.BYTES_INT);
+		var image = new Pixelimage(512, 512);
+
+		
+		// draw something inside
+		for (y in 0...128) {
+			for (x in 0...256) {
+				image.setPixel(x, y, 0xffFFFF00); // ARGB ?
+				// image.setPixel(x, y, Color.YELLOW);
+			}	
+		}
+		
+
+		// create new peote-view texture
+		var texture = new Texture(512, 512);
+
+		// put vision-image data into peote-view texture
+		texture.setData(image);
+		
+
+
+		// -------------------------------------------------------------
+
+
+		// set up a view, display, program and a buffer with one Element
+		var peoteView = new PeoteView(window);
+		var display   = new Display(10, 10, 512, 512, Color.GREY3);
+
+		peoteView.addDisplay(display);  // display to view
+		
+		var buffer  = new Buffer<Elem>(10);
+		var program = new Program(buffer);
+		
+		var element = new Elem(0, 0, 512, 512);
+		buffer.addElement(element);
+		
+		// add texture to program
+		program.setTexture(texture, "custom");
+		//program.discardAtAlpha(0.1);
+		program.blendEnabled = true;
+			
+		display.addProgram(program);  // programm to display
 	}
 	
-	// ----------------------------------------------
-	// ------ OK, we are READY at now (^_^)  --------
-	// ----------------------------------------------
 
-	public function onFontLoaded(font:Font<MyFontStyle>) // don'T forget argument-type here !
-	{					
-		peoteView = new PeoteView(window);
-		uiDisplay = new PeoteUIDisplay(20, 20, 1768, 1200, Color.BLACK + 0x0a030100);
-		peoteView.addDisplay(uiDisplay);		
-		
-		
-		// ----------------------
-		// ------ Styles --------
-		// ----------------------
-				
-		var fontStyle = new MyFontStyle();		
-		var fontStyleInput = new MyFontStyle();
-		fontStyleInput.color = Color.GREY5;
-		
-		var boxStyle  = new BoxStyle(Color.BLACK);		
-		var roundBorderStyle = new RoundBorderStyle(Color.GREEN);
-
-		var textConfig:TextConfig = {
-			backgroundStyle:boxStyle,
-			selectionStyle:BoxStyle.createById(1, Color.GREY3),
-			cursorStyle:BoxStyle.createById(2, Color.RED)
-		}
-		
-		
-		// ----------------------
-		// ------ OUTPUT --------
-		// ----------------------
-		
-
-		// ... need help by half and nanji here ;:)
-		
-		
-		
-	
-		
-		// ----------------------
-		// ------ BUTTON --------
-		// ----------------------
-		
-		var button = new UITextLine<MyFontStyle>(0, 300, 200, 0, "generate", font, fontStyleInput, textConfig);
-		
-		// todo: event to send input to output ! (can do that later!.. np ^_^)
-		
-		uiDisplay.add(button);
-		
-				
-		// ----------------------
-		// ------- INPUT --------
-		// ----------------------
-				
-		var input = new UITextPage<MyFontStyle>(0, 325, 0, 0,
-
-// nanji-test-c o d e		
-'<EllipseShape 
-	top="100" 
-	width="200" 
-	height="50" 
-	strokeColor="0xFF0000" strokeWidth="1" 
-	fill="0xFF00FF00">
-</EllipseShape>',
-
-
-			font, fontStyle, textConfig
-		);
-
-		input.onPointerDown = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {
-			t.setInputFocus(e);
-			t.startSelection(e);
-		}
-		input.onPointerUp = function(t:UITextPage<MyFontStyle>, e:PointerEvent) {
-			t.stopSelection(e);
-		}
-		uiDisplay.add(input);
-		
-		// -----------------------------------
-				
-		PeoteUIDisplay.registerEvents(window);
-	}
-	
 }
