@@ -60,7 +60,25 @@ class Main extends Application
 				// image.setPixel(x, y, Color.YELLOW);
 			}	
 		}
-		
+		var Violet      = 0xFF9400D3;
+		var Indigo      = 0xFF4b0082;
+		var Blue        = 0xFF0000FF;
+		var Green       = 0xFF00ff00;
+		var Yellow      = 0xFFFFFF00;
+		var Orange      = 0xFFFF7F00;
+		var Red         = 0xFFFF0000;
+		var scale       = 10;
+		// image.gradientShape.triangle( 100, 100, 0xf0ffcf00, 300, 220, 0xf000cfFF, 120, 300, 0xf0cF00FF );
+		image.transparent = true;
+		var colors = [ Violet, Indigo, Blue, Green, Yellow, Orange, Red ];
+		var vertColor = colors[0]; 
+		for( x in 0...70*scale ){
+			 vertColor = colors[ Math.floor( (x/scale) / 10 ) ];
+			 for( y in 0...768-70-45 ) image.setARGB( x, y, vertColor );
+		}
+		image.gradientShape.triangle( 100, 100, 0xf0ffcf00, 300, 220, 0xf000cfFF, 120, 300, 0xf0cF00FF );
+		image.gradientShape.triangle( 100+120, 100+20, 0xccff0000, 300+120, 220+20, 0xcc0000FF, 120+120, 300+20, 0xcc00ff00 );
+		image.putPixelImage( image, 45, 45 );
 
 		// create new peote-view texture
 		var texture = new Texture(512, 512);
