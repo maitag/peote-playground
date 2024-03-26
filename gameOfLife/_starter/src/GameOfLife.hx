@@ -58,7 +58,7 @@ class GameOfLife
 		var birth_rule:Int = 0;		
 		for (c in s.split('/')[0].split('') ) survival_rule |= 1 << Std.parseInt(c);
 		for (c in s.split('/')[1].split('') ) birth_rule |= 1 << Std.parseInt(c);
-		return (survival_rule << 8) | birth_rule;
+		return (survival_rule << 9) | birth_rule;
 	}	
 	
 	public static function genRandomCells(textureData:TextureData, posX:Int, posY:Int, sizeX:Int = 10, sizeY:Int = 10):Void 
@@ -77,8 +77,8 @@ class GameOfLife
 	
 	public static function nextLifeGeneration( srcTextureData:TextureData, destTextureData:TextureData, rule:Int):Void
 	{
-		var survival_rule:UInt = rule >> 8;
-		var birth_rule:UInt = 0xff & rule;
+		var survival_rule:UInt = rule >> 9;
+		var birth_rule:UInt = 0x1ff & rule;
 
 		var x:Int, y:Int, x_neg:Int, y_neg:Int, x_pos:Int, y_pos:Int;
 		var sum:UInt;
