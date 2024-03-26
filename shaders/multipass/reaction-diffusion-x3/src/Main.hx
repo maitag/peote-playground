@@ -50,7 +50,7 @@ class Main extends Application
 		var textureB = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGB});
 		
 		// initialize some random cells into textureB (TODO: let paint into later!)
-		textureB.setImage( genRandomCellImage(w, h) );
+		textureB.setData( genRandomCellImage(w, h) );
 		
 		// hidden displays that only renders into textures		
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
