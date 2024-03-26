@@ -1,14 +1,16 @@
 package;
 
+import haxe.ds.Vector;
 import peote.view.TextureData;
 
-// coded by Sylvio Sell, 2014 rostock germany
+// coded by Sylvio Sell, 2024 rostock germany
 // for algorithm look here: http://www.conwaylife.com/wiki/Cellular_automaton 
+// simple Lime sample here: https://github.com/openfl/lime-samples/tree/master/demos/GameOfLife
 
 class GameOfLife
 {
 	// some Rules
-	public static var cellRules = [
+	public static var common = [
 		'0/2',        // Live Free or Die
 		'23/3',       // Conway's Game of Life :)
 		'5/345',
@@ -34,15 +36,33 @@ class GameOfLife
 		'235678/378',
 		'235678/3678'
 	];
-		
-		
-	public static function getRandomRule():String
+	
+	public static var rule:Vector<Int>;
+
+	public static function initDefaults()
 	{
-		return cellRules[ Math.floor(Math.random() * cellRules.length) ]; 
+		rule = new Vector<Int>(common.length);
+		for (i in 0...common.length) {
+			rule.set(i, rulefromString( common[i] ) );
+		}
+	}
+		
+	public static function randomRule():Int
+	{
+		return rule.get( Std.int(Math.random() * rule.length) ); 
 	}
 	
+	public static function rulefromString(s:String):Int
+	{
+		var survival_rule:Int = 0;
+		var birth_rule:Int = 0;		
+		for (c in s.split('/')[0].split('') ) survival_rule |= 1 << Std.parseInt(c);
+		for (c in s.split('/')[1].split('') ) birth_rule |= 1 << Std.parseInt(c);
+		return (survival_rule << 8) | birth_rule;
+	}	
 	
-	public static function genRandomCells(textureData:TextureData, posX:Int, posY:Int, sizeX:Int = 10, sizeY:Int = 10):Void {
+	public static function genRandomCells(textureData:TextureData, posX:Int, posY:Int, sizeX:Int = 10, sizeY:Int = 10):Void 
+	{
 		posX -= Std.int(sizeX/2);
 		posY -= Std.int(sizeY/2);
 		for (y in posY...posY+sizeY)
@@ -55,14 +75,11 @@ class GameOfLife
 	// ----------------------- algorythm for cell automation ------------------------
 	// ------------------------------------------------------------------------------
 	
-	public static function nextLifeGeneration( srcTextureData:TextureData, destTextureData:TextureData, rule:String):Void
+	public static function nextLifeGeneration( srcTextureData:TextureData, destTextureData:TextureData, rule:Int):Void
 	{
-		var s_rule:UInt = 0; // survival rule
-		var b_rule:UInt = 0; // birth_rule
-		
-		for (c in rule.split('/')[0].split('') ) s_rule |= 1 << Std.parseInt(c);
-		for (c in rule.split('/')[1].split('') ) b_rule |= 1 << Std.parseInt(c);
-		
+		var survival_rule:UInt = rule >> 8;
+		var birth_rule:UInt = 0xff & rule;
+
 		var x:Int, y:Int, x_neg:Int, y_neg:Int, x_pos:Int, y_pos:Int;
 		var sum:UInt;
 		var w:Int = srcTextureData.width;
@@ -98,14 +115,14 @@ class GameOfLife
 				//trace(x,y,x_pos,y_pos,x_neg,y_neg,sum,s_rule,b_rule);
 				if (srcTextureData.get_R(x, y) == 255) // --- old cell is alife ---
 				{	
-					if ( (s_rule & sum) > 0 )
+					if ( (survival_rule & sum) > 0 )
 						destTextureData.set_R(x, y, 255); // life again
 					else
 						destTextureData.set_R(x, y, 0); // dead
 				}
 				else                                       // --- old cell is dead ---
 				{	
-					if ( (b_rule & sum) > 0 )
+					if ( (birth_rule & sum) > 0 )
 						destTextureData.set_R(x, y, 255); // birthday
 					else
 						destTextureData.set_R(x, y, 0); // still dead

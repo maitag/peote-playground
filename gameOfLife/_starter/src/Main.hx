@@ -52,7 +52,7 @@ class Main extends Application
 	var delayTime:Float = 0.1;
 	var swap:Bool = false;
 	
-	var rule:String = '23/3'; // Conway's
+	var rule:Int = GameOfLife.rulefromString('23/3');  // Conway's
 
 	var textureData0:TextureData;
 	var textureData1:TextureData;
@@ -64,6 +64,8 @@ class Main extends Application
 
 	public function startSample(window:Window)
 	{
+		GameOfLife.initDefaults();
+
 		var peoteView = new PeoteView(window);
 
 		var display = new Display(0, 0, Std.int(w*scale), Std.int(h*scale));
@@ -103,7 +105,7 @@ class Main extends Application
 			lastTime = Timer.stamp();
 			
 			// change cell automation rule randomly
-			if (Math.random() < 0.1) rule = GameOfLife.getRandomRule();
+			if (Math.random() < 0.1) rule = GameOfLife.randomRule();
 
 			// calculate next state depending on prev state
 			if (swap) {
