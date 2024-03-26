@@ -6,11 +6,8 @@ import lime.app.Application;
 import lime.ui.Window;
 import lime.graphics.Image;
 
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Texture;
+import peote.view.*;
+import peote.view.TextureData;
 import utils.Loader;
 
 class Main extends Application
@@ -35,41 +32,48 @@ class Main extends Application
 		var peoteView = new PeoteView(window);
 
 		var buffer = new Buffer<AnimTileSprite>(4, 4, true);
-		var display = new Display(0, 0, window.width, window.height);
+		var display = new Display(0, 0, window.width, window.height, Color.GREY1);
 		var program = new Program(buffer);
 
 		peoteView.addDisplay(display);
 		display.addProgram(program);
+		
+		// Loader.image("assets/walk.png", true, function(image:Image)
+		Loader.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
+		{
+			// var texture = new Texture(1024, 384);
+			// texture.setData(image);
 
-		var texture = new Texture(1024, 384);
-		texture.tilesX = 8;
-		texture.tilesY = 3;
+			var texture = new Texture(1024, 384, {format:TextureFormat.LUMINANCE_ALPHA});
+			texture.setData( TextureData.fromFormatPNG(bytes) );
 
-		Loader.image("assets/walk.png", true, function(image:Image) {
-			texture.setImage(image);
+			texture.tilesX = 8;
+			texture.tilesY = 3;
+	
+			program.addTexture(texture, "custom");
+			program.updateTextures();
+
+
+			var sprite = new AnimTileSprite();
+
+			sprite.x = 200;
+			sprite.y = 200;
+
+			buffer.addElement(sprite);
+			
+			
+			// anim tile from 0 to 23
+			sprite.animTile(0, 23);    // params: start-tile, end-tile
+			sprite.timeTile(0.0, 1.4); // params: start-time, duration
+			
+			
+			// don't forget to update after changing for tile-anim!
+			buffer.updateElement(sprite);
+			
+			
+			// after this the "peote time" counts up !
+			peoteView.start();
 		});
-
-		program.addTexture(texture, "custom");
-		program.updateTextures();
-
-		var sprite = new AnimTileSprite();
-
-		sprite.x = 200;
-		sprite.y = 200;
-
-		buffer.addElement(sprite);
-		
-		// anim tile from 0 to 23
-		sprite.animTile(0, 23);    // params: start-tile, end-tile
-		sprite.timeTile(0.0, 1.4); // params: start-time, duration
-		
-		
-		// don't forget to update after changing for tile-anim!
-		buffer.updateElement(sprite);
-		
-		
-		// after this the "peote time" counts up !
-		peoteView.start();
 	
 	}
 	
