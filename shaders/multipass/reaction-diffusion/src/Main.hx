@@ -94,7 +94,7 @@ class Main extends Application
 				{
 					var r:Float = (0.2 + Math.random() * 0.06 - 0.03);
 					var g:Float = (0.5  + Math.random() * 0.06 - 0.03);
-					textureData.setPixelFloatRG(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), r, g );
+					textureData.setFloat_RG(Std.int(w / 2 - 50 + x), Std.int(h / 2 - 50 + y), r, g );
 				}
 					
 					

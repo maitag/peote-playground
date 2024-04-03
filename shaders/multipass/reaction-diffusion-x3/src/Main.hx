@@ -44,13 +44,18 @@ class Main extends Application
 
 		peoteView = new PeoteView(window);
 		
+		#if html5
+		var textureFormat = TextureFormat.FLOAT_RGBA; // PROBLEM with RGB and Framebuffer here
+		#else
+		var textureFormat = TextureFormat.FLOAT_RGB;
+		#end
 		
 		// textures to render into		
-		var textureA = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGB});
-		var textureB = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGB});
+		var textureA = new Texture(w, h, 1, {format:textureFormat});
+		var textureB = new Texture(w, h, 1, {format:textureFormat});
 		
 		// initialize some random cells into textureB (TODO: let paint into later!)
-		textureB.setData( genRandomCellImage(w, h) );
+		textureB.setData( genRandomCellImage(w, h, textureFormat) );
 		
 		// hidden displays that only renders into textures		
 		var buffer = new Buffer<ReactionDiffusion>(1); // sharing the same peote-view (vertex) Buffer
@@ -83,8 +88,8 @@ class Main extends Application
 		window.onRender.add(onRender);
 	}
 	
-	public static function genRandomCellImage(w:Int, h:Int):TextureData {
-		var textureData = new TextureData(w, h, TextureFormat.FLOAT_RGB);
+	public static function genRandomCellImage(w:Int, h:Int, textureFormat:TextureFormat):TextureData {
+		var textureData = new TextureData(w, h, textureFormat);
 		textureData.clearFloat(0.5);
 		//for (x in 0...100)
 		for (x in 0...w)
@@ -92,7 +97,7 @@ class Main extends Application
 			for (y in 0...h) 
 				if (Math.random() < 0.008)
 				{
-					textureData.setPixelFloatRGB(x, y, Math.random(), Math.random(), Math.random() );
+					textureData.setFloat(x, y, Math.random(), Math.random(), Math.random() );
 				}
 					
 					
@@ -106,10 +111,10 @@ class Main extends Application
 	function onRender(c:RenderContext):Void
 	{
 		// render substeps
-		//for (i in 0...9) {
+		for (i in 0...9) {
 			peoteView.renderToTexture(displayA);
 			peoteView.renderToTexture(displayB);
-		//}
+		}
 	}
 	
 
