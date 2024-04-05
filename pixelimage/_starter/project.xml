@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="PeoteViewVision" package="peote.vision" version="0.9.0" company="Semmi" />
+	<meta title="PeoteViewPiXY" package="peote.pixy" version="0.9.0" company="Semmi" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
