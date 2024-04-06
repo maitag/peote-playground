@@ -56,7 +56,9 @@ class Main extends Application
 			light = new NormalLight(200, 200, 1024, 0.25, Color.RED);
 
 			// "add" (blendmode!) another light
-			for (i in 0...2048) new NormalLight(Std.random(1024), Std.random(1024), 128 + Std.random(64), Math.random()*.6, Color.random().setRed(Math.random()*0.9).setAlpha(1.0));
+			var color = Color.random();
+			color.setFloatRed(Math.random()*0.9);
+			for (i in 0...2048) new NormalLight(Std.random(1024), Std.random(1024), 128 + Std.random(64), Math.random()*.6, color.setFloatAlpha(1.0));
 			
 			// TODO: better render color-texture at first and then into a second program all the lights into "add" mode
 			
