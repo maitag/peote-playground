@@ -5,10 +5,7 @@ import haxe.io.UInt16Array;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
+import peote.view.*;
 
 import js.html.audio.AudioContext;
 import js.lib.Float32Array;
