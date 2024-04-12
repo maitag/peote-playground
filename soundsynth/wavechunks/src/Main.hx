@@ -51,8 +51,8 @@ class Main extends Application {
 		
 		
 		// create and render it into texture
-		texture = new Texture(441, 25, 1, 4, false, 0, 0, true);
-		display.setFramebuffer(texture);	
+		texture = new Texture(441, 25);
+		display.setFramebuffer(texture);
 		
 	}
 
@@ -68,16 +68,16 @@ class Main extends Application {
 		peoteView.renderToTexture(display);
 		
 		// send data to audio
-		//peoteAudio.play(texture.readPixelsFloat32(0, 0, 441, 25));
+		peoteAudio.play(texture.readPixelsFloat32(0, 0, 441, 25));
 		
 		
 		// TODO: use into PeoteAudio at what works into SinWave-Sample at now for OpenAL
-		
+		/*
 		var timer = new haxe.Timer(990);
 		timer.run = () -> {
 				peoteAudio.play(texture.readPixelsFloat32(0, 0, 441, 25));
 		};
-		
+		*/
 	}
 	
 }

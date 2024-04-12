@@ -10,8 +10,8 @@
 	<window width="800" height="600" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<!--<app main="Main" path="bin" file="Main" />-->
-	<app main="MainFloat" path="bin" file="MainFloat" />
+	<app main="Main" path="bin" file="Main" />
+	<!-- <app main="MainFloat" path="bin" file="MainFloat" /> -->
 	
 	<!-- <define name="stats" if="html5" /> -->
 	

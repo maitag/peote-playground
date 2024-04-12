@@ -4,13 +4,10 @@ import haxe.CallStack;
 
 import lime.app.Application;
 import lime.ui.Window;
-
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
-import utils.Loader;
 import lime.graphics.Image;
+
+import peote.view.*;
+import utils.Loader;
 
 
 class Main extends Application
@@ -43,8 +40,8 @@ class Main extends Application
 		Loader.image ("assets/test0.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
-			//var texture = new Texture(image.width, image.height, 1, 4, true);
-			texture.setImage(image);
+			//var texture = new Texture(image.width, image.height, {smoothShrink:true});
+			texture.setData(image);
 			
 			Shaking.init(display, texture);
 			shaking = new Shaking(20, 20, 200, 150);

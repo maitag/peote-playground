@@ -6,10 +6,7 @@ import haxe.io.Float32Array;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
-import peote.view.PeoteView;
-import peote.view.Display;
-import peote.view.Color;
-import peote.view.Texture;
+import peote.view.*;
 
 import js.html.audio.AudioContext;
 //import js.lib.Float32Array;
@@ -60,7 +57,7 @@ class MainFloat extends Application {
 		sinwave = new SinWave(frequency, widthTexture, heightTexture);
 
 		// render it into a texture to use for bufferdata !
-		var texture = new Texture(widthTexture, heightTexture, 1, 4, false, 0, 0, true);
+		var texture = new Texture(widthTexture, heightTexture, 1, { format: TextureFormat.FLOAT_RGBA });
 		display.setFramebuffer(texture);
 		peoteView.renderToTexture(display);
 

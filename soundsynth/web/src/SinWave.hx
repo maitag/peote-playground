@@ -61,7 +61,7 @@ class SinWave implements Element
 		
 		program.setColorFormula( 'sinwave(vTexCoord, vSize, freq)' );
 		
-		program.alphaEnabled = false;
+		program.blendEnabled = false;
 		program.discardAtAlpha(null);
 		display.addProgram(program);
 	}

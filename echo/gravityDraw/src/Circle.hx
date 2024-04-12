@@ -21,7 +21,7 @@ class Circle implements Element implements Entity
 	@color public var color:Color = 0x000000ff;
 	
 	var DEFAULT_COLOR_FORMULA = "color*circle(radius)";
-	var OPTIONS = { alpha:true };
+	var OPTIONS = { blend:true };
 
 	static var fShader =
 	'
