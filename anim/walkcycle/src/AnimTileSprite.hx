@@ -15,7 +15,7 @@ class AnimTileSprite implements Element
 
 	// ---- animated by shader ----
 	
-	// texture slot
+	// texture tile number
 	@texTile @anim("Tile", "repeat")
 	public var tile:Int = 0;
 	
