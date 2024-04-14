@@ -49,12 +49,13 @@ class Main extends Application
 			program.addTexture(texture, "custom");
 
 
-			var walker = new Walker();
-			walker.y = 0;
+			var walker = new Walker(0, 256);
 
 			buffer.addElement(walker);
 
-			walker.animX(-128, window.width); // params: startX, endX
+			// both directions:
+			walker.animX(window.width, -walker.size); // params: startX, endX
+			// walker.animX(-walker.size, window.width); // params: startX, endX
 			walker.timeX(0.0, 2.3); // params: start-time, duration
 			
 			
