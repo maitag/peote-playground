@@ -31,11 +31,17 @@ class Main extends Application
 	{
 		var peoteView = new PeoteView(window);
 
-		var buffer = new Buffer<Walker>(4, 4, true);
 		var display = new Display(0, 0, window.width, window.height);
+		
+		var buffer = new Buffer<Walker>(320000, 4096, true);
 		var program = new Program(buffer);
 
+		var bufferRail = new Buffer<Rail>(256, 32, true);
+		var programRail = new Program(bufferRail);
+
 		peoteView.addDisplay(display);
+
+		display.addProgram(programRail);
 		display.addProgram(program);
 		
 		Loader.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
@@ -52,15 +58,14 @@ class Main extends Application
 			var y:Int = 0;
 			var s:Int = 7;
 			while (y < 768) {
-				var walker = new Walker(y, Color.random(), s);
-
-				buffer.addElement(walker);
-
-				walker.goLeftOrRight(window.width, Math.random() * 2.3 + 1.4);
+				var rail = new Rail(y, Color.random(), peoteView.width);
+				bufferRail.addElement(rail);
 				
-				
-				// don't forget to update after changing for tile-anim!
-				buffer.updateElement(walker);
+				for (i in 0...10000) {
+					var walker = new Walker(y, Color.random(), s);
+					walker.goLeftOrRight(window.width, Math.random() * 2.3 + 1.4);
+					buffer.addElement(walker);
+				}
 
 
 				y+=s+=4;
