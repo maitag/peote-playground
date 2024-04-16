@@ -2,6 +2,7 @@ package;
 
 import Math;
 import peote.view.Element;
+import peote.view.Color;
 
 class Walker implements Element
 {
@@ -31,11 +32,14 @@ class Walker implements Element
 	// texture tile number
 	@texTile @const @formula("floor(mod(  ((xStart < xEnd) ? 1.0 : -1.0) *  x * 0.15 * 128.0/size , 23.0))")
 	var tile:Int;
+
+	@color var c:Color;
 	
 	var OPTIONS = { blend:true };
 
-	public function new(y:Int, size:Int) {
+	public function new(y:Int, color:Color, size:Int) {
 		this.y = y;
+		this.c = color;
 		this.size = size;
 	}
 

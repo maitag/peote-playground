@@ -32,7 +32,7 @@ class Main extends Application
 		var peoteView = new PeoteView(window);
 
 		var buffer = new Buffer<Walker>(4, 4, true);
-		var display = new Display(0, 0, window.width, window.height, Color.GREY1);
+		var display = new Display(0, 0, window.width, window.height);
 		var program = new Program(buffer);
 
 		peoteView.addDisplay(display);
@@ -52,7 +52,7 @@ class Main extends Application
 			var y:Int = 0;
 			var s:Int = 7;
 			while (y < 768) {
-				var walker = new Walker(y, s);
+				var walker = new Walker(y, Color.random(), s);
 
 				buffer.addElement(walker);
 
