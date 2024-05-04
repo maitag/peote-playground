@@ -50,6 +50,7 @@ class Msdf implements Element
 			{				
 				float sd = median(tex.r, tex.g, tex.b);
 				float screenPxDistance = screenPxRange(texCoord, texSize)*(sd - 0.5);
+				//float screenPxDistance = 37.5*(sd - 0.5);
 				
 				return clamp(screenPxDistance + 0.5, 0.0, 1.0);
 			}			
@@ -60,11 +61,12 @@ class Msdf implements Element
 		
 		//program.setColorFormula( "msdf(base_ID)" );
 		// program.setColorFormula('mix(bgColor, color, msdf(base, vTexCoord, vec2(${Util.toFloatString(texture.width)}, ${Util.toFloatString(texture.height)}) ) )');
+		// program.setColorFormula('mix(bgColor, color, msdf(base, vTexCoord, vec2(${Util.toFloatString(Std.int(texture.width/texture.tilesX))}, ${Util.toFloatString(Std.int(texture.height/texture.tilesY))}) ) )');
 		program.setColorFormula('mix(bgColor, vec4(color.rgb*base.a, 1.0), msdf(base, vTexCoord, vec2(${Util.toFloatString(Std.int(texture.width/texture.tilesX))}, ${Util.toFloatString(Std.int(texture.height/texture.tilesY))}) ) )');
 		//program.setColorFormula("mix(bgColor, color, msdf( base, vTexCoord, textureSize(uTexture0, 0) ) )");
 		program.blendEnabled = false;
 		
-		program.discardAtAlpha(0.5);
+		// program.discardAtAlpha(0.5);
 				
 		display.addProgram(program);
 	}

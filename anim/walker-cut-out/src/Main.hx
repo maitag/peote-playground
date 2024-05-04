@@ -39,6 +39,7 @@ class Main extends Application
 		peoteView.addDisplay(display);
 		
 		Loader.image ("assets/walk.png", true, function (image:Image)
+		// Loader.image ("assets/walkOnlyMSDF.png", true, function (image:Image)
 		{
 			// important is to set min/mag filter
 			var texture = new Texture(image.width, image.height, {smoothExpand: true, smoothShrink: true, tilesX: 16, tilesY: 6});
@@ -47,7 +48,7 @@ class Main extends Application
 			Msdf.init(display, texture);
 
 			
-			// msdf = new Msdf(0, 0, 64, 64);
+			// msdf = new Msdf(0, 0, 128, 128);
 			msdf = new Msdf(0, 0, 600, 600);
 			
 
