@@ -31,6 +31,8 @@ class Glyph implements Element
 		"
 			// look at here to generate: http://www.massmind.org/techref/datafile/charset/extractor/charset_extractor.htm
 
+			#define CHARSIZE vec2(8.0, 12.0)
+
 			const vec4 glyphes[95] = vec4[95] (
 				vec4(0x000000,0x000000,0x000000,0x000000), // ch_spc
 				vec4(0x003078,0x787830,0x300030,0x300000), // ch_exc
@@ -136,15 +138,14 @@ class Glyph implements Element
 				return floor( mod( floor(n/pow(2.0,floor(b)) ), 2.0) );   
 			}
 
-			#define CHARSIZE vec2(8, 12)
 
-			float glyphpixel( vec2 texCoord, int glyphnumber)
+			float glyph_pixel( vec2 texCoord, float glyphnumber)
 			{
 				texCoord = floor( vec2(texCoord.x, 1.0 - texCoord.y) * CHARSIZE );
 				
 				float bit = (CHARSIZE.x - texCoord.x - 1.0) + texCoord.y * CHARSIZE.x;
 
-				vec4 g = glyphes[glyphnumber];
+				vec4 g = glyphes[int(glyphnumber)];
 
 				float intensity = 0.0;
 				intensity += get_bit(g.x, bit - 72.0);
@@ -153,15 +154,16 @@ class Glyph implements Element
 				intensity += get_bit(g.w, bit - 00.0);
 
 				// bounds
-				intensity = (all(greaterThanEqual(texCoord,vec2(0))) && all(lessThan(texCoord,CHARSIZE))) ? intensity : 0.0;
+				intensity = (all(greaterThanEqual(texCoord,vec2(0.0))) && all(lessThan(texCoord,CHARSIZE))) ? intensity : 0.0;
 
 				return intensity;
 			}			
 		"
 		);
 		
-		program.setColorFormula( 'mix( bgColor, color, glyphpixel(vTexCoord, aGlyph) )' );
-		program.blendEnabled = true;
+		program.setColorFormula( 'mix( bgColor, color, glyph_pixel(vTexCoord, aGlyph) )' );
+		
+		// program.blendEnabled = true;
 		program.discardAtAlpha(0.0);
 		display.addProgram(program);
 	}
