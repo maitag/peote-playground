@@ -42,13 +42,15 @@ class Main extends Application
 		var w = 8 * scale;
 		var h = 12 * scale;
 
-		new Glyph(cursorX     , 0, w, h, "H".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, "E".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, "L".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, "L".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, "O".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, " ".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
-		new Glyph(cursorX += w, 0, w, h, "?".charCodeAt(0)-32, Color.GOLD, Color.BLUE);
+		new Glyph(cursorX     , 0, w, h, 'H', Color.GOLD, Color.BLUE);
+		new Glyph(cursorX += w, 0, w, h, 'e', Color.GOLD, Color.BLUE);
+		new Glyph(cursorX += w, 0, w, h, 'l', Color.GOLD, Color.BLUE);
+		new Glyph(cursorX += w, 0, w, h, 'l', Color.GOLD, Color.BLUE);
+		new Glyph(cursorX += w, 0, w, h, 'o', Color.GOLD, Color.BLUE);
+		new Glyph(cursorX += w, 0, w, h, ' ', Color.ORANGE);
+		new Glyph(cursorX += w, 0, w, h, '\\',Color.ORANGE);
+		new Glyph(cursorX += w, 0, w, h, 'o', Color.ORANGE);
+		new Glyph(cursorX += w, 0, w, h, '/', Color.ORANGE);
 		
 	}
 	

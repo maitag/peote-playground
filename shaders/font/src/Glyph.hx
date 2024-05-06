@@ -30,7 +30,7 @@ class Glyph implements Element
 		program.injectIntoFragmentShader(
 		"
 			// look at here to generate: http://www.massmind.org/techref/datafile/charset/extractor/charset_extractor.htm
-			
+
 			const vec4 glyphes[95] = vec4[95] (
 				vec4(0x000000,0x000000,0x000000,0x000000), // ch_spc
 				vec4(0x003078,0x787830,0x300030,0x300000), // ch_exc
@@ -96,6 +96,7 @@ class Glyph implements Element
 				vec4(0x003C0C,0x0C0C0C,0x0C0C0C,0x3C0000), // ch_rsb
 				vec4(0x10386C,0xC60000,0x000000,0x000000), // ch_pow
 				vec4(0x000000,0x000000,0x000000,0x00FF00), // ch_usc
+				                                           // no ` here
 				vec4(0x000000,0x00780C,0x7CCCCC,0x760000), // a
 				vec4(0x00E060,0x607C66,0x666666,0xDC0000),
 				vec4(0x000000,0x0078CC,0xC0C0CC,0x780000),
@@ -167,13 +168,23 @@ class Glyph implements Element
 	
 	
 	
-	public function new(x:Int, y:Int, w:Int, h:Int, glyph:Int, color:Color, bgColor:Color = 0) 
+	public function new(x:Int, y:Int, w:Int, h:Int, char:String, color:Color, bgColor:Color = 0) 
 	{
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		this.glyph = glyph;
+
+		var charcode = char.charCodeAt(0);
+
+		// glyphes starts with the "space" char .)
+		charcode -= 32;
+		
+		// fix the missing char
+		if (charcode > 63) charcode--;
+
+		this.glyph = charcode;
+
 		this.color = color;
 		this.bgColor = bgColor;
 
