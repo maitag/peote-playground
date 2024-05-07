@@ -29,7 +29,7 @@ class Glyph implements Element
 		
 		program.injectIntoFragmentShader(
 		"
-			// look at here to generate: http://www.massmind.org/techref/datafile/charset/extractor/charset_extractor.htm
+			// good TOOL to generate: https://github.com/Chlumsky/msdf-atlas-gen?tab=readme-ov-file#atlas-types
 
 			#define CHARSIZE vec2(8.0, 12.0)
 
