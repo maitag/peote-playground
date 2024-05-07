@@ -2,7 +2,10 @@ package;
 
 import peote.view.*;
 
-class Glyph implements Element
+// works 100% for html5 (opengl ES3)
+// can have problems on ES2: https://community.khronos.org/t/constant-vec3-array-no-go/60184
+
+class GlyphES3 implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int;
@@ -19,12 +22,12 @@ class Glyph implements Element
 	
 	// --------------------------------------------------------------------------	
 	
-	static public var buffer:Buffer<Glyph>;
+	static public var buffer:Buffer<GlyphES3>;
 	static public var program:Program;	
 	
 	static public function init(display:Display)
 	{	
-		buffer = new Buffer<Glyph>(256, 128, true);
+		buffer = new Buffer<GlyphES3>(256, 128, true);
 		program = new Program(buffer);
 		
 		program.injectIntoFragmentShader(

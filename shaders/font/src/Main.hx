@@ -9,6 +9,11 @@ import lime.graphics.Image;
 import peote.view.*;
 import utils.Loader;
 
+// works 100% only on html5
+// typedef Glyph = GlyphES3;
+
+// this should work on all targets
+typedef Glyph = GlyphHX;
 
 class Main extends Application
 {
