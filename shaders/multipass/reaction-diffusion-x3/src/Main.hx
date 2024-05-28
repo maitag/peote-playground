@@ -45,7 +45,7 @@ class Main extends Application
 		peoteView = new PeoteView(window);
 		
 		#if html5
-		var textureFormat = TextureFormat.FLOAT_RGBA; // PROBLEM with RGB and Framebuffer here
+		var textureFormat = TextureFormat.FLOAT_RGBA; // PROBLEM with RGB and Framebuffer here (EXT_color_buffer_float)
 		#else
 		var textureFormat = TextureFormat.FLOAT_RGB;
 		#end
