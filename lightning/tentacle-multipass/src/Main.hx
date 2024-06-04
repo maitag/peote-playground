@@ -39,85 +39,139 @@ class Main extends Application
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
 
+		// ----------------------------------------------
+		// 1) Display that renders all UV-mapped+AO Elements 
+		// ----------------------------------------------
+		var uvAoAlphaDisplay = new Display(0, 0, 512, 512);
+		var uvAoAlphaDisplayFBO = new Texture(512, 512, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false} );
+
+		peoteView.setFramebuffer(uvAoAlphaDisplay, uvAoAlphaDisplayFBO); // render into -> uvAoAlphaDisplayFBO
+		peoteView.addFramebufferDisplay(uvAoAlphaDisplay);
+
+		// to test
+		uvAoAlphaDisplay.x = 128; uvAoAlphaDisplay.y = 0; peoteView.addDisplay(uvAoAlphaDisplay);
+
+
 		// ----------------------------------------------------------
-		// Program that renders all Tentacle Elements -> NORMAL-MAPS
+		// 2) Display that renders all Tentacle Elements -> NORMAL-MAPS
 		// ----------------------------------------------------------
 		var normalDisplay = new Display(0, 0, 512, 512);
-		var normalDisplayTexture = new Texture(512, 512, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false} );
+		var normalDisplayFBO = new Texture(512, 512, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false} );
 
-		peoteView.setFramebuffer(normalDisplay, normalDisplayTexture); // render into -> normalDisplayTexture
+		peoteView.setFramebuffer(normalDisplay, normalDisplayFBO); // render into -> normalDisplayFBO
 		peoteView.addFramebufferDisplay(normalDisplay);
 
-		// to test the normal rendering texture
+		// to test
 		normalDisplay.y = 128; peoteView.addDisplay(normalDisplay);
 		
 		
 		// ----------------------------------------------------------
-		// Program that renders all Light Elements -> using the full NORMAL-MAP from before
+		// 3) Display that renders all Light Elements -> using the full normalDisplayFBO
 		// ----------------------------------------------------------
 		var lightDisplay = new Display(0, 0, 512, 512);
-		var lightDisplayTexture = new Texture(512, 512, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false} );
+		var lightDisplayFBO = new Texture(512, 512, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false} );
 
-		peoteView.setFramebuffer(lightDisplay, lightDisplayTexture); // render into -> lightDisplayTexture
+		peoteView.setFramebuffer(lightDisplay, lightDisplayFBO); // render into -> lightDisplayFBO
 		peoteView.addFramebufferDisplay(lightDisplay);
 
-		// to test the normal rendering texture
+		// to test
 		lightDisplay.x = 128; lightDisplay.y = 128; peoteView.addDisplay(lightDisplay);
+
 
 		// ----------------------------------------------------------
 		// ----------------------------------------------------------
 		// ----------------------------------------------------------
 		
-		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png"], true, function (image:Array<Image>)
+		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
 		{
-			//--------------------------------------
-			// TO CALCULATE THE LIGHT BY NORMAL MAPs
-			//--------------------------------------
-			var normalDepthTexture = new Texture(image[0].width, image[0].height);
+			// ----- Textures -------
+			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false});
 			normalDepthTexture.setData(image[0]);
 
-			// -------- setup some tentacles  -----------
+			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
+			uvAoAlphaTexture.setData(image[1]);
+			
+			var haxeUVTexture = new Texture(image[2].width, image[2].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
+			haxeUVTexture.setData(image[2]);
+			
 
+			// ----- Tentacle and Lights Buffers -----
 			var bufferTentacle = new Buffer<ElementTentacle>(1024, 512);
-			var normalProgram = new ProgramNormal(bufferTentacle, normalDepthTexture);
-			normalDisplay.addProgram(normalProgram);
+			bufferLight = new Buffer<ElementLight>(1024, 512);
+			
+
+			// ------ Tentacle Programs -------
+			
+			// 1) render all tentacles uv-mapped + ambient-occlusion and alpha + depth into uvAoAlphaDisplayFBO			
+			var programUvAoAlpha = new ProgramUvAoAlpha(bufferTentacle, normalDepthTexture, uvAoAlphaTexture, haxeUVTexture);
+			uvAoAlphaDisplay.addProgram(programUvAoAlpha);
+			
+			// 2) render all tentacles with normals and depth into normalDisplayFBO			
+			var programNormal = new ProgramNormal(bufferTentacle, normalDepthTexture);
+			normalDisplay.addProgram(programNormal);
+			
+
+			// ------ Light Program -------
+
+			// 3) render all tentacle-lights into lightDisplayFBO
+			var programLight = new ProgramLight(bufferLight, normalDisplayFBO);
+			lightDisplay.addProgram(programLight);
+			
+			
+			//-------------------------------------------------
+			// TO MIX the aoUvAlphaFBO with the lightDisplayFBO 
+			//-------------------------------------------------
+			
+			// render only one Element into final Program and Display
+			var bufferView = new Buffer<ElementView>(1);			
+			var programView = new Program(bufferView);
+
+			programView.blendEnabled = true;
+
+			// create texture-layer
+			programView.setTexture(uvAoAlphaDisplayFBO, "uvAoAlpha", false);
+			programView.setTexture(lightDisplayFBO, "light", true);
+			programView.setColorFormula( "vec4( vec3(uvAoAlpha/2.0 + light/2.0), uvAoAlpha.a)" );
+
+			
+			// ----------------------------------------------------
+			// final view Display what displays the combined result 
+			// ----------------------------------------------------
+			var viewDisplay = new Display(0, 0, 512, 512);
+			peoteView.addDisplay(viewDisplay);
+
+			viewDisplay.addProgram(programView);
+			
+			bufferView.addElement(new ElementView(0, 0, 512, 512));
+
+
+						
+			// ----------------------------------------------------
+			// ---------- add some tentacles and lights -----------
+			// ----------------------------------------------------
 
 			var tentacle1 = new ElementTentacle();
 			bufferTentacle.addElement(tentacle1);
-
-			var tentacle2 = new ElementTentacle(64, 64, 128, 128, 90, 64, 64);
+			
+			var tentacle2 = new ElementTentacle(64, 64, 128, 128, 180, 64, 64);
+			// tentacle2.depth= 0.1;
 			bufferTentacle.addElement(tentacle2);
-
-
-
-			// -------- setup some lights  -----------
-
-			bufferLight = new Buffer<ElementLight>(1024, 512);
-			var programLight = new ProgramLight(bufferLight, normalDisplayTexture);
-			lightDisplay.addProgram(programLight);
-
+			
 			var light1 = new ElementLight(10, 10, 256, Color.YELLOW);
 			bufferLight.addElement(light1);
-
+			
 			var light2 = new ElementLight(100, 100, 256, Color.RED);
 			bufferLight.addElement(light2);
-
-			// and the global "control"-light (by mouse)
+			
+			// global "mouse-control"-light
 			light = new ElementLight(0, 0, 256);
 			bufferLight.addElement(light);
-
-
-
-			//----------------------------------------------------------------------------------
-			// TO MIX the final lightDisplayTexture up on each Tentacles ambient occlusion color
-			//----------------------------------------------------------------------------------
 			
-			// var uvAoAlphaTexture = new Texture(image[1].width, image[1].height);
-			// uvAoAlphaTexture.setData(image[1]);
 			
+
 			
 			// ----------------------------------------------------			
-			peoteView.zoom = 2.0;
+			peoteView.zoom = 2;
 			
 			// add mouse events to move the light (to not run before it was instantiated):
 			window.onMouseMove.add(_onMouseMove);
@@ -127,11 +181,14 @@ class Main extends Application
 		
 	}
 	
+
 	
 	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
+
+
 	function _onMouseMove (x:Float, y:Float):Void {
 		light.x = Std.int(x/peoteView.zoom);
 		light.y = Std.int(y/peoteView.zoom);

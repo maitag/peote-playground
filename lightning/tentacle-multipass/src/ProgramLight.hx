@@ -4,12 +4,12 @@ import peote.view.*;
 
 class ProgramLight extends Program
 {
-	public function new(buffer:Buffer<ElementLight>, normalDepthTexture:Texture)
+	public function new(buffer:Buffer<ElementLight>, normalDisplayTexture:Texture)
 	{	
 		super(buffer);
 		
 		// create texture-layer
-		setTexture(normalDepthTexture, "normalDepth", false);
+		setTexture(normalDisplayTexture, "normalDisplay", false);
 
 		injectIntoFragmentShader(
 		"	
@@ -58,7 +58,7 @@ class ProgramLight extends Program
 		// the "_ID" postfix is to give access to use getTextureColor() manually 
 		// from inside of the glsl blur() function to that texture-layer
 		
-		setColorFormula( "color*normalLight(normalDepth_ID, depth)" ); // TODO: only need UV + Z here
+		setColorFormula( "color*normalLight(normalDisplay_ID, depth)" );
 
 		// blending to "add" multiple lights
 		blendEnabled = true;

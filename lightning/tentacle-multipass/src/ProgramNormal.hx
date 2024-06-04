@@ -29,7 +29,7 @@ class ProgramNormal extends Program
 				vec3 N;
 
 				// z-buffer
-				if (normalDepthTex.a < 1.0) 
+				if (normalDepthTex.a < 1.0)
 				{
 					gl_FragDepth = ( normalDepthTex.a / 3.0 + depth);
 
@@ -48,7 +48,7 @@ class ProgramNormal extends Program
 		setColorFormula( "normalDepthAlpha(normalDepth, depth)" );
 
 		zIndexEnabled= true;
-		blendEnabled = false;	
+		blendEnabled = false;
 	}
 
 }
