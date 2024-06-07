@@ -20,6 +20,9 @@ class ElementTentacle implements Element
 	@pivotX var px:Int = 0;
 	@pivotY var py:Int = 0;
 
+	// tile number for animation
+	@texTile("uvAoAlpha", "normalDepth") @anim("Tile", "repeat") var tile:Int = 0;
+
 	// var OPTIONS = { texRepeatX:true, texRepeatY:true };
 
 	// --------------------------------------------------------------------------

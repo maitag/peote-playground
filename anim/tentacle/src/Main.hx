@@ -46,10 +46,10 @@ class Main extends Application
 			// ----- create Textures from the loaded images -------
 			//-----------------------------------------------------
 
-			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false});
+			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, tilesX:8, tilesY:3});
 			normalDepthTexture.setData(image[0]);
 
-			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
+			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true, tilesX:8, tilesY:3});
 			uvAoAlphaTexture.setData(image[1]);
 			
 			var haxeUVTexture = new Texture(image[2].width, image[2].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
@@ -85,17 +85,28 @@ class Main extends Application
 			peoteView.addDisplay(combineDisplay);
 
 						
-			// ----------------------------------------------------
-			// ---------- add some tentacles and lights -----------
-			// ----------------------------------------------------
+			// ----------------------------------------
+			// ---------- add some tentacles ----------
+			// ----------------------------------------
 
 			var tentacle1 = new ElementTentacle();
+			tentacle1.animTile(0, 24);    // params: start-tile, end-tile
+			tentacle1.timeTile(0.0, 2.1); // params: start-time, duration
 			bufferTentacle.addElement(tentacle1);
+			
 			
 			var tentacle2 = new ElementTentacle(64, 64, 128, 128, 180, 64, 64);
 			// tentacle2.depth= 0.1;
+			tentacle2.animTile(0, 24);    // params: start-tile, end-tile
+			tentacle2.timeTile(0.0, 1.9); // params: start-time, duration
 			bufferTentacle.addElement(tentacle2);
 			
+
+			// --------------------------------------
+			// ---------- add some lights -----------
+			// --------------------------------------
+
+
 			var light1 = new ElementLight(10, 10, 256, Color.YELLOW);
 			bufferLight.addElement(light1);
 			
@@ -103,7 +114,7 @@ class Main extends Application
 			bufferLight.addElement(light2);
 			
 			// global "mouse-control"-light
-			light = new ElementLight(0, 0, 256);
+			light = new ElementLight(0, 0, 256, 0xffff66ff);
 			bufferLight.addElement(light);
 			
 			
@@ -112,6 +123,7 @@ class Main extends Application
 			// ----------------------------------------------------		
 
 			peoteView.zoom = 2;
+			peoteView.start();
 			
 			// add mouse events to move the light (to not run before it was instantiated):
 			window.onMouseMove.add(_onMouseMove);

@@ -32,7 +32,7 @@ abstract CombineDisplay(Display) to Display
 
 		program.setTexture(uvAoAlphaTexture, "uvAoAlpha", false);
 		program.setTexture(lightTexture, "light", false);
-		program.setColorFormula( "vec4( vec3(uvAoAlpha/1.0 + light/1.5), uvAoAlpha.a)");
+		program.setColorFormula( "vec4( vec3(uvAoAlpha/1.5 + light/1.5), uvAoAlpha.a)");
 				
 		this.addProgram(program);
 
