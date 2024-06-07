@@ -12,6 +12,7 @@ import lime.graphics.Image;
 import peote.view.*;
 import utils.Loader;
 
+import fb_light.*;
 
 class Main extends Application
 {
@@ -31,69 +32,86 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
 	
-	var light:NormalLight = null; 
-	
-	var bufferTentacle:Buffer<Tentacle>;
-	// bufferLights
-
-	// displayElements
-	// displayElementsNormal
-	// displayLights
+	var bufferLight:Buffer<ElementLight>;
+	var light:ElementLight; // one light is controled by mouse
 
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
 
-		#if html5
-		// at now this is need because the normalProgram is initialized AFTERWARDS (there it will enable the extension automatically!)
-		// -> will be fixed in peote-view soon!
-		
-		peoteView.gl.getExtension("EXT_color_buffer_float");
-		#end
-
-		var normalDisplay = new Display(0, 0, 512, 512);
-		var normalDisplayTexture = new Texture(512, 512, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false} );
-
-		peoteView.setFramebuffer(normalDisplay, normalDisplayTexture); // render into -> normalDisplayTexture
-		peoteView.addFramebufferDisplay(normalDisplay);
-
-		// to test the normal rendering texture
-		normalDisplay.y = 128; peoteView.addDisplay(normalDisplay);
-		
-		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png"], true, function (image:Array<Image>)
+		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
 		{
-			var normalDepthTexture = new Texture(image[0].width, image[0].height);
+			//-----------------------------------------------------
+			// ----- create Textures from the loaded images -------
+			//-----------------------------------------------------
+
+			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false});
 			normalDepthTexture.setData(image[0]);
 
-			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height);
+			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
 			uvAoAlphaTexture.setData(image[1]);
 			
-			bufferTentacle = new Buffer<Tentacle>(1024, 512);
-			var normalProgram = new NormalProgram(normalDisplay, bufferTentacle, normalDepthTexture);
-			
-			var t1 = new Tentacle();
-			bufferTentacle.addElement(t1);
-
-			var t2 = new Tentacle(64, 64, 128, 128, 90, 64, 64);
-			bufferTentacle.addElement(t2);
-
-			// -------- LIGHT ---------
-
-			var display = new Display(0, 0, window.width, window.height);
-			peoteView.addDisplay(display);
-
-			NormalLight.init(display, normalDisplayTexture);
-			light = new NormalLight(200, 200, 400);
-
-			// "add" (blendmode!) another light
-			// new NormalLight(150, 200, 400);
+			var haxeUVTexture = new Texture(image[2].width, image[2].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
+			haxeUVTexture.setData(image[2]);
 			
 
-			// TODO: another render-pass to accumulate light-map from texture to the pre-calculated lights by blender
+			//----------------------------------------------------
+			// ----- create Buffers for Tentacles and Lights -----
+			//----------------------------------------------------
+
+			var bufferTentacle = new Buffer<ElementTentacle>(1024, 512);
+			bufferLight = new Buffer<ElementLight>(1024, 512);
+			
+
+			//-------------------------------------------------
+			//           Framebuffer chain  
+			//-------------------------------------------------
+
+			// --- render all tentacles uv-mapped, ao-prelightned with alpha and in depth ---
+			var uvAoAlphaDepthFB = new UvAoAlphaDepthFB(512, 512, bufferTentacle, normalDepthTexture, uvAoAlphaTexture, haxeUVTexture);
+			uvAoAlphaDepthFB.addToPeoteView(peoteView);
+			
+			// ------ render all normals together to use for lightning -------
+			var normalDepthFB = new NormalDepthFB(512, 512, bufferTentacle, normalDepthTexture);
+			normalDepthFB.addToPeoteView(peoteView);
+
+			// ------ render all lights while using normalDepthFB texture -----
+			var lightFB = new LightFB(512, 512, bufferLight, normalDepthFB.texture);
+			lightFB.addToPeoteView(peoteView);
+			
+			// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
+			var combineDisplay = new CombineDisplay(0, 0, 512, 512, uvAoAlphaDepthFB.texture, lightFB.texture);
+			peoteView.addDisplay(combineDisplay);
+
+						
+			// ----------------------------------------------------
+			// ---------- add some tentacles and lights -----------
+			// ----------------------------------------------------
+
+			var tentacle1 = new ElementTentacle();
+			bufferTentacle.addElement(tentacle1);
+			
+			var tentacle2 = new ElementTentacle(64, 64, 128, 128, 180, 64, 64);
+			// tentacle2.depth= 0.1;
+			bufferTentacle.addElement(tentacle2);
+			
+			var light1 = new ElementLight(10, 10, 256, Color.YELLOW);
+			bufferLight.addElement(light1);
+			
+			var light2 = new ElementLight(100, 100, 256, Color.RED);
+			bufferLight.addElement(light2);
+			
+			// global "mouse-control"-light
+			light = new ElementLight(0, 0, 256);
+			bufferLight.addElement(light);
 			
 			
-			peoteView.zoom = 2.0;
+			// ----------------------------------------------------			
+			// ----------------------------------------------------			
+			// ----------------------------------------------------		
+
+			peoteView.zoom = 2;
 			
 			// add mouse events to move the light (to not run before it was instantiated):
 			window.onMouseMove.add(_onMouseMove);
@@ -101,19 +119,20 @@ class Main extends Application
 		});
 		
 		
-		//peoteView.start();
-		
 	}
 	
+
 	
 	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
+
+
 	function _onMouseMove (x:Float, y:Float):Void {
 		light.x = Std.int(x/peoteView.zoom);
 		light.y = Std.int(y/peoteView.zoom);
-		light.update();
+		bufferLight.updateElement(light);
 	}	
 
 	var isShift = false;
@@ -126,7 +145,7 @@ class Main extends Application
 			light.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.01;
 		}
 		trace(light.depth);
-		light.update();
+		bufferLight.updateElement(light);
 	}
 	// ----------------- MOUSE EVENTS ------------------------------
 	

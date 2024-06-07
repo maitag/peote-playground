@@ -131,7 +131,7 @@ class Main extends Application
 			// create texture-layer
 			programView.setTexture(uvAoAlphaDisplayFBO, "uvAoAlpha", false);
 			programView.setTexture(lightDisplayFBO, "light", true);
-			programView.setColorFormula( "vec4( vec3(uvAoAlpha/2.0 + light/2.0), uvAoAlpha.a)" );
+			programView.setColorFormula( "vec4( vec3(uvAoAlpha/1.0 + light/1.5), uvAoAlpha.a)" );
 
 			
 			// ----------------------------------------------------

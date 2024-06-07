@@ -8,7 +8,6 @@ class ProgramNormal extends Program
 	{	
 		super(buffer);
 		
-		// create texture-layer
 		setTexture(normalDepthTexture, "normalDepth", false);
 		
 		injectIntoFragmentShader(

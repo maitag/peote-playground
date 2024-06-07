@@ -2,7 +2,7 @@ package;
 
 import peote.view.*;
 
-class Tentacle implements Element
+class ElementTentacle implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int = 0;
@@ -19,7 +19,9 @@ class Tentacle implements Element
 	// pivot point for rotation
 	@pivotX var px:Int = 0;
 	@pivotY var py:Int = 0;
-	
+
+	// var OPTIONS = { texRepeatX:true, texRepeatY:true };
+
 	// --------------------------------------------------------------------------
 	
 	public function new(x:Int = 0, y:Int = 0, w:Int = 128, h:Int = 128, r:Float = 0.0, px:Int = 0, py:Int = 0)
