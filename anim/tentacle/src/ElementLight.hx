@@ -5,7 +5,7 @@ import peote.view.*;
 class ElementLight implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@varying @posX public var x:Int = 50;
+	@varying @posX @anim("PosX", "pingpong") public var x:Int = 50;
 	@varying @posY public var y:Int = 50;
 	
 	@varying @custom public var depth:Float = 0.0;

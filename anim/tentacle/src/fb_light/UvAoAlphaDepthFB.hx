@@ -46,7 +46,7 @@ abstract UvAoAlphaDepthFB(Display) to Display
 
 	public inline function addToPeoteView(peoteView:PeoteView, ?atDisplay:Display, addBefore:Bool=false)
 	{
-		if (texture == null) this.setFramebuffer(new Texture(this.width, this.height, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false} ), peoteView);
+		if (texture == null) this.setFramebuffer(new Texture(this.width, this.height, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} ), peoteView);
 		this.addToPeoteViewFramebuffer(peoteView, atDisplay, addBefore);
 	}
 
