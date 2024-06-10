@@ -80,11 +80,11 @@ class Benchmark extends Application
 			normalDepthFB.addToPeoteView(peoteView);
 
 			// ------ render all lights while using normalDepthFB texture -----
-			var lightFB = new LightFB(width, height, bufferLight, normalDepthFB.texture);
+			var lightFB = new LightFB(width, height, bufferLight, normalDepthFB.fbTexture);
 			lightFB.addToPeoteView(peoteView);
 			
 			// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
-			var combineDisplay = new CombineDisplay(0, 0, width, height, uvAoAlphaDepthFB.texture, lightFB.texture);
+			var combineDisplay = new CombineDisplay(0, 0, width, height, uvAoAlphaDepthFB.fbTexture, lightFB.fbTexture);
 			peoteView.addDisplay(combineDisplay);
 
 						

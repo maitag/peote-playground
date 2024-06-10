@@ -3,7 +3,7 @@ package fb_light;
 import peote.view.*;
 import peote.view.intern.BufferInterface;
 
-@:forward(x, y, width, height)
+@:forward(width, height, fbTexture)
 abstract UvAoAlphaDepthFB(Display) to Display
 {
 	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTexture:Texture, uvAoAlphaTexture:Texture, haxeUVTexture:Texture)
@@ -46,12 +46,9 @@ abstract UvAoAlphaDepthFB(Display) to Display
 
 	public inline function addToPeoteView(peoteView:PeoteView, ?atDisplay:Display, addBefore:Bool=false)
 	{
-		if (texture == null) this.setFramebuffer(new Texture(this.width, this.height, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} ), peoteView);
+		if (this.fbTexture == null) this.setFramebuffer(new Texture(this.width, this.height, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} ), peoteView);
 		this.addToPeoteViewFramebuffer(peoteView, atDisplay, addBefore);
 	}
 
-	public inline function removeFromPeoteView(peoteView:PeoteView) this.removeFromPeoteViewFramebuffer(peoteView);
-	
-	public var texture(get, never):Texture;
-	@:access(peote.view.Display) inline function get_texture():Texture return this.fbTexture;
+	public inline function removeFromPeoteView(peoteView:PeoteView) this.removeFromPeoteViewFramebuffer(peoteView);	
 }
