@@ -9,14 +9,16 @@ class ProgramNormal extends Program
 		super(buffer);
 		
 		setTexture(normalDepthTexture, "normalDepth", false);
-		
+
 		injectIntoFragmentShader(
 		"	
 			vec2 rotate(vec2 v, float a) {
 				float s = sin(a);
-				float c = cos(a);
-				mat2 m = mat2(-c, -s, s, -c);
-				// mat2 m = mat2(c, -s, s, c);
+				
+				// float c = cos(a);
+				float c = -cos(a);
+				
+				mat2 m = mat2(c, -s, s, c);
 				return m * v;
 			}
 
@@ -25,11 +27,17 @@ class ProgramNormal extends Program
 				// flip x normal (depends on uv-map generation variants)
 				// normalDepthTex.r = 1.0 - normalDepthTex.r;
 				
+				// little hack to mirror horizontally use a negative rotation (to flip x normal)
+				if (vRotZ.x < 0.0) normalDepthTex.r = 1.0 - normalDepthTex.r;
+
 				vec3 N;
+
 
 				// z-buffer
 				if (normalDepthTex.a < 1.0)
 				{
+					// TODO: scale factor in depend of size, by split the depth component or by extra attribute!
+
 					gl_FragDepth = ( normalDepthTex.a / 3.0 + depth);
 
 					// normalize and rotate vector

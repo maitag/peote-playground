@@ -157,6 +157,11 @@ class Main extends Application
 			// tentacle2.depth= 0.1;
 			bufferTentacle.addElement(tentacle2);
 			
+			// using hack to make negative Rotation in constructor if the element is flipped horizontally
+			var tentacle3 = new ElementTentacle(75, 64, -96, 96, 45, -64, 64);
+			// tentacle2.depth= 0.1;
+			bufferTentacle.addElement(tentacle3);
+			
 			var light1 = new ElementLight(10, 10, 256, Color.YELLOW);
 			bufferLight.addElement(light1);
 			

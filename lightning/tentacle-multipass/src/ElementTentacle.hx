@@ -30,7 +30,13 @@ class ElementTentacle implements Element
 		this.y = y;
 		this.w = w;
 		this.h = h;
+
+		// if element is flipped by negative size, this hack makes the rotation negative to mirror the normals:
+		if (w < 0 && r>=0.0) {
+			r = -360 + r%360;
+		}
 		this.r = r;
+
 		this.px = px;
 		this.py = py;
 	}
