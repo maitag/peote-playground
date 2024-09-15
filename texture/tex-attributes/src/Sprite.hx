@@ -13,20 +13,19 @@ class Sprite implements Element
 	@sizeX public var w:Int=100;
 	@sizeY public var h:Int=100;
 	
-	// rotation around pivot point
-	@rotation public var r:Float;
+	// extra tex attributes for clipping
+	@texX public var clipX:Int = 0;
+	@texY public var clipY:Int = 0;
+	@texW public var clipWidth:Int = 0;
+	@texH public var clipHeight:Int = 0;
 	
-	// pivot x (rotation offset)
-	@pivotX public var px:Int = 0;
+	// extra tex attributes to adjust texture within the clip
+	@texPosX  public var clipPosX:Int = 0;
+	@texPosY  public var clipPosY:Int = 0;
+	@texSizeX public var clipSizeX:Int = 0;
+	@texSizeY public var clipSizeY:Int = 0;
+	
+	var OPTIONS = { texRepeatX: false, texRepeatY: false, blend: true };
 
-	// pivot y (rotation offset)
-	@pivotY public var py:Int = 0;
-	
-	// color (RGBA)
-	@color public var c:Color = 0xff0000ff;
-	
-	// z-index
-	@zIndex public var z:Int = 0;	
-	
 	public function new() {}
 }
