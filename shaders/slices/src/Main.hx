@@ -38,13 +38,15 @@ class Main extends Application
 		
 		Loader.image ("assets/test0.png", true, function (image:Image) 
 		{
-			var texture = new Texture(image.width, image.height);
+			var texture = new Texture(image.width, image.height, 2);
 			
 			texture.setData(image);
 					
-			Default.init(display, texture);
+			Default.init(display, texture); new Default(0, 0, 150, 100);
 
-			new Default(0, 0, 200, 150);
+			HSlice.init(display, texture); new HSlice(0, 100, 250, 50);
+			HSlice.init(display, texture); new HSlice(0, 200, 400, 100);
+			HSlice.init(display, texture); new HSlice(0, 300, 300, 300);
 			
 		});
 		

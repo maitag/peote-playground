@@ -11,7 +11,9 @@ class Default implements Element
 	// size in pixel
 	@sizeX public var w:Int;
 	@sizeY public var h:Int;
-	
+
+	@texSlot public var slot:Int = 0;
+
 	// --------------------------------------------------------------------------
 	
 	static public var buffer:Buffer<Default>;
@@ -31,13 +33,8 @@ class Default implements Element
 			{				
 				vec4 col = vec4(0.0);
 				
-
+				// vec2 texRes = getTextureResolution( textureID );				
 				
-				// vec2 texRes = getTextureResolution( textureID );
-				// is 512 x 512 into this case
-				
-
-
 				// vTexCoord vec2 goes allways from 0.0 to 1.0 (in x and y):
 
 				col = getTextureColor( textureID, vTexCoord );
@@ -53,10 +50,7 @@ class Default implements Element
 		display.addProgram(program);
 	}
 	
-	
-	
-	public function new(x:Int, y:Int, w:Int, h:Int) 
-	{
+	public function new(x:Int, y:Int, w:Int, h:Int) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
