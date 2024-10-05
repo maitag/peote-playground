@@ -48,6 +48,8 @@ class Main extends Application
 			HSlice.init(display, texture); new HSlice(0, 200, 400, 100);
 			HSlice.init(display, texture); new HSlice(0, 300, 300, 300);
 			
+			HSliceRepeat.init(display, texture); new HSliceRepeat(400, 300, 310, 100);
+			
 		});
 		
 		

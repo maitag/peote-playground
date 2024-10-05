@@ -2,7 +2,7 @@ package;
 
 import peote.view.*;
 
-class HSlice implements Element
+class HSliceRepeat implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int;
@@ -19,12 +19,12 @@ class HSlice implements Element
 
 	// --------------------------------------------------------------------------
 	
-	static public var buffer:Buffer<HSlice>;
+	static public var buffer:Buffer<HSliceRepeat>;
 	static public var program:Program;
 	
 	static public function init(display:Display, texture:Texture)
 	{	
-		buffer = new Buffer<HSlice>(1, 1024, true);
+		buffer = new Buffer<HSliceRepeat>(1, 1024, true);
 		program = new Program(buffer);
 		
 		// creates a texture-layer named "base"
@@ -38,8 +38,15 @@ class HSlice implements Element
 				
 				if (vTexCoord.x < slicePositionX)
 				{
-					// scales the body of the arrow
-					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, vTexCoord.x / slicePositionX );
+					// repeats the body of the arrow (like an accordion at now ;)
+
+					// float a = (${texture.slotWidth}.0 - sliceX) / ${texture.slotHeight}.0 * vSize.y;
+					// float b = vTexCoord.x / slicePositionX;
+					// float c = (sliceX/${texture.slotHeight}.0) * vSize.y;					
+					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , slicePositionX )  ); // accordion
+					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , 1.0 )  );
+
+					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/(${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y, 1.0 )  );
 				}
 				else
 				{
