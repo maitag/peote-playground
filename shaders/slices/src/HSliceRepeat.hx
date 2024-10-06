@@ -36,24 +36,26 @@ class HSliceRepeat implements Element
 			{				
 				float slicePositionX = 1.0 - (sliceX/${texture.slotHeight}.0 * vSize.y) / vSize.x;
 				
-				if (vTexCoord.x < slicePositionX)
+				float x = vTexCoord.x;
+
+				if (x < slicePositionX)
 				{
 					// repeats the body of the arrow (like an accordion at now ;)
 
 					// float a = (${texture.slotWidth}.0 - sliceX) / ${texture.slotHeight}.0 * vSize.y;
-					// float b = vTexCoord.x / slicePositionX;
+					// float b = x / slicePositionX;
 					// float c = (sliceX/${texture.slotHeight}.0) * vSize.y;					
-					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , slicePositionX )  ); // accordion
-					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , 1.0 )  );
+					// x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , slicePositionX )  ); // accordion
+					// x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod( b * ( ( vSize.x - c  )/a )  , 1.0 )  );
 
 					// math term is long and unoptimized here:
-					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/(${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y, 1.0 )  );
+					// x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(x/slicePositionX * (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/(${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y, 1.0 )  );
 					
 					// optimized:
 
-					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * 
+					x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(x/slicePositionX * 
 					// repeat from the other side:
-					// vTexCoord.x = mix(1.0 - sliceX/${texture.slotWidth}.0, 0.0, mod((1.0-vTexCoord.x/slicePositionX) * 
+					// x = mix(1.0 - sliceX/${texture.slotWidth}.0, 0.0, mod((1.0-x/slicePositionX) * 
 					
 					// reducing the math-term in 3 steps:
 					// (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/ (${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y
@@ -66,10 +68,10 @@ class HSliceRepeat implements Element
 				else
 				{
 					// keeps head of the arrow into aspect ratio
-					vTexCoord.x = mix(1.0 - sliceX/${texture.slotWidth}.0, 1.0, (vTexCoord.x - slicePositionX) / (1.0 - slicePositionX) );
+					x = mix(1.0 - sliceX/${texture.slotWidth}.0, 1.0, (x - slicePositionX) / (1.0 - slicePositionX) );
 				}
 
-				return getTextureColor( textureID, vTexCoord );
+				return getTextureColor( textureID, vec2 (x, vTexCoord.y) );
 			}			
 		');
 		

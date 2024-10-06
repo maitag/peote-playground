@@ -35,19 +35,21 @@ class HSlice implements Element
 			vec4 slice( int textureID, float sliceX )
 			{				
 				float slicePositionX = 1.0 - (sliceX/${texture.slotHeight}.0 * vSize.y) / vSize.x;
+
+				float x = vTexCoord.x;
 				
-				if (vTexCoord.x < slicePositionX)
+				if (x < slicePositionX)
 				{
 					// scales the body of the arrow
-					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, vTexCoord.x / slicePositionX );
+					x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, x / slicePositionX );
 				}
 				else
 				{
 					// keeps head of the arrow into aspect ratio
-					vTexCoord.x = mix(1.0 - sliceX/${texture.slotWidth}.0, 1.0, (vTexCoord.x - slicePositionX) / (1.0 - slicePositionX) );
+					x = mix(1.0 - sliceX/${texture.slotWidth}.0, 1.0, (x - slicePositionX) / (1.0 - slicePositionX) );
 				}
 
-				return getTextureColor( textureID, vTexCoord );
+				return getTextureColor( textureID, vec2 (x, vTexCoord.y) );
 			}			
 		');
 		
