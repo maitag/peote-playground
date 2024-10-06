@@ -49,9 +49,13 @@ class HSliceRepeat implements Element
 					// math term is long and unoptimized here:
 					// vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/(${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y, 1.0 )  );
 					
-					// reducing the math-term in 3 steps:
-					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * 
+					// optimized:
 
+					vTexCoord.x = mix(0.0, 1.0 - sliceX/${texture.slotWidth}.0, mod(vTexCoord.x/slicePositionX * 
+					// repeat from the other side:
+					// vTexCoord.x = mix(1.0 - sliceX/${texture.slotWidth}.0, 0.0, mod((1.0-vTexCoord.x/slicePositionX) * 
+					
+					// reducing the math-term in 3 steps:
 					// (vSize.x - sliceX/${texture.slotHeight}.0 * vSize.y)/ (${texture.slotWidth}.0 - sliceX)/${texture.slotHeight}.0 * vSize.y
 					// (vSize.x/vSize.y * ${texture.slotHeight}.0/sliceX - 1.0) / (${texture.slotWidth}.0/sliceX - 1.0)
 					   (vSize.x/vSize.y * ${texture.slotHeight}.0 - sliceX) / (${texture.slotWidth}.0 - sliceX)
