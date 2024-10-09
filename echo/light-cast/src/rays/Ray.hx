@@ -1,3 +1,5 @@
+package rays;
+
 import peote.view.*;
 
 @:publicFields
@@ -31,7 +33,7 @@ class Ray implements Element {
 
 		rotate();
 	}
-
+	/*
 	inline function set_start(x:Float, y:Float) {
 		this.x_a = Std.int(x);
 		this.y_a = Std.int(y);
@@ -43,7 +45,7 @@ class Ray implements Element {
 		this.y_b = Std.int(y);
 		rotate();
 	}
-
+*/
 	inline private function rotate() {
 		var a = x_a - x_b;
 		var b = y_a - y_b;

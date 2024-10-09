@@ -1,3 +1,5 @@
+package;
+
 import peote.view.*;
 
 @:publicFields

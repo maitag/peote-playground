@@ -16,13 +16,13 @@ import haxe.CallStack;
 
 using echo.util.ext.FloatExt;
 
-import rays.Ray;
+import rays.RayCone;
 
-class Main extends Application {
+class MainSemmi extends Application {
 	var world:World;
 	var bodies:Array<Body> = [];
 
-	var ray_buffer:Buffer<Ray>;
+	var ray_buffer:Buffer<RayCone>;
 	var circle_buffer:Buffer<Shape>;
 	var rectangle_buffer:Buffer<Shape>;
 
@@ -184,7 +184,7 @@ class Main extends Application {
 		ray_count_maximum = ray_count * 4;
 		ray_thickness = 12;
 
-		ray_buffer = new Buffer<Ray>(ray_count_maximum * 2);
+		ray_buffer = new Buffer<RayCone>(ray_count_maximum * 2);
 		var ray_program = new Program(ray_buffer);
 		fbo_rays.display.addProgram(ray_program);
 
@@ -284,11 +284,11 @@ class Main extends Application {
 			// if there is intersection then the ray hit an obstacle (ray will be shorter)
 			if (intersection != null && intersection.closest != null) {
 				var data = intersection.closest;
-				ray_buffer.addElement(new Ray(data.line.start.x, data.line.start.y, data.hit.x, data.hit.y, ray_thickness, 0xffffffFF));
+				ray_buffer.addElement(new RayCone(data.line.start.x, data.line.start.y, data.hit.x, data.hit.y, ray_thickness, 0xffffffFF));
 			} 
 			// else ray can be full length
 			else {
-				ray_buffer.addElement(new Ray(line.start.x, line.start.y, line.end.x, line.end.y, ray_thickness, 0xffffffFF));
+				ray_buffer.addElement(new RayCone(line.start.x, line.start.y, line.end.x, line.end.y, ray_thickness, 0xffffffFF));
 			}
 		}
 
