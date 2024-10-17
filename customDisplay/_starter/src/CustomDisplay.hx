@@ -46,9 +46,9 @@ class CustomDisplay extends Display
 		}
 		else // ------------- simple uniforms (ES2) -------------
 		{
-			//gl.uniform2f (uRESOLUTION, peoteView.width, peoteView.height);
-			//gl.uniform2f (uZOOM, peoteView.xz * display.xz, peoteView.yz * display.yz);
-			//gl.uniform2f (uOFFSET, (display.x + display.xOffset + peoteView.xOffset) / display.xz, 
+			//gl.uniform2f (baseUniformLocations.uRESOLUTION, peoteView.width, peoteView.height);
+			//gl.uniform2f (baseUniformLocations.uZOOM, peoteView.xz * display.xz, peoteView.yz * display.yz);
+			//gl.uniform2f (baseUniformLocations.uOFFSET, (display.x + display.xOffset + peoteView.xOffset) / display.xz, 
 								   //(display.y + display.yOffset + peoteView.yOffset) / display.yz);
 		}
 		
