@@ -1,5 +1,7 @@
 package;
 
+import lime.media.AudioSource;
+import lime.media.AudioBuffer;
 import haxe.CallStack;
 import haxe.io.Bytes;
 
@@ -14,16 +16,19 @@ import peote.view.Color;
 
 import utils.Loader;
 
-class Main extends Application
-{
-	override function onWindowCreate():Void
-	{
-		switch (window.context.type)
-		{
+class Main extends Application {
+	var sources:Array<AudioSource>;
+	var isSourcesReady:Bool = false;
+
+	override function onWindowCreate():Void {
+		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
-				try startSample(window)
-				catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
-			default: throw("Sorry, only works with OpenGL.");
+				try
+					startSample(window)
+				catch (_)
+					trace(CallStack.toString(CallStack.exceptionStack()), _);
+			default:
+				throw("Sorry, only works with OpenGL.");
 		}
 	}
 	
@@ -50,15 +55,14 @@ class Main extends Application
 	}
 
 	// load multiple sound-waves
-	public function loadSound()
-	{
-		Loader.bytesArray(
-			[
-				// filenames here
-			],
-			false,
+	public function loadSound() {
+		var fileType = "ogg";
+		#if web
+		fileType = "mp3"; // blame apple ;-)
+		#end
 
-			// --------------------- progress handler ---------------------
+		Loader.bytesArray(['assets/test-bird' + '.$fileType'], false, // --------------------- progress handler ---------------------
+
 			function(index:Int, loaded:Int, size:Int) {
 				trace(' $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');
 			},
@@ -74,8 +78,22 @@ class Main extends Application
 
 			function(bytesArray:Array<Bytes>) {
 				trace(' --- all data loaded ---');
-			}			
-		);
+
+				sources = [
+					for (bytes in bytesArray) {
+						var buffer = AudioBuffer.fromBytes(bytes);
+						new AudioSource(buffer);
+					}
+				];
+
+				window.onMouseDown.add((x, y, button) -> playAll());
+			});
+	}
+
+	function playAll() {
+		for (source in sources) {
+			source.play();
+		}
 	}
 	
 	// after all sounds is loaded
