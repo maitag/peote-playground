@@ -93,6 +93,7 @@ class Main extends Application {
 
 				// window.onMouseDown.add((x, y, button) -> playAll());
 				window.onMouseDown.add((x, y, button) -> onAllSoundLoaded());
+				window.onMouseMove.add((x, y) -> onMouseMoved(x, y));
 			});
 	}
 
@@ -114,6 +115,16 @@ class Main extends Application {
 		// bird.play();
 		bird.playRepeated(2000);
 
+	}
+
+
+	function onMouseMoved(x:Float, y:Float) {
+		for(i in 0...buffer.length){
+			var bird = buffer.getElement(i);
+			var distance = Math.sqrt((bird.x - x) * (bird.x - x) + (bird.y - y) * (bird.y - y));
+			bird.setVolume(distance / window.height);
+		}
+		buffer.update();
 	}
 	
 

@@ -51,6 +51,7 @@ class Emitter implements Element
 			colorQuite.bF + (colorLoud.bF - colorQuite.bF)*volume,
 			colorQuite.aF + (colorLoud.aF - colorQuite.aF)*volume,
 		);
+		source.gain = volume;
 	}
 
 	public function play() {
