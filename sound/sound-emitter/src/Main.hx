@@ -113,7 +113,7 @@ class Main extends Application {
 		buffer.addElement(bird);
 
 		// bird.play();
-		bird.playRepeated(2000);
+		bird.playRepeated(2000, 1000);
 
 	}
 

@@ -57,11 +57,22 @@ class Emitter implements Element
 	public function play() {
 		source.play();
 	}
-
+	/*
 	public function playRepeated(waitAfterPlay:Int) {
 		play();
 		var timer = new haxe.Timer(source.length + waitAfterPlay); // all into MILLI-SECONDS 4sure ;)
 		timer.run = () -> play();		
+	}
+	*/
+
+	var multiplicator:Int = 0;
+	public function playRepeated(waitAfterPlay:Int=0, randomOffset:Int=0) { // all into MILLI-SECONDS 4sure ;)
+		play();
+		var timer = new haxe.Timer(source.length + waitAfterPlay - randomOffset);
+		timer.run = () -> {
+			var r:Int = Std.random(randomOffset * 2) + multiplicator++ * randomOffset * 2;
+			haxe.Timer.delay( ()->play(), r );
+		}
 	}
 
 }
