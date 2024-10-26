@@ -61,7 +61,14 @@ class Main extends Application {
 		fileType = "mp3"; // blame apple ;-)
 		#end
 
-		Loader.bytesArray(['assets/test-bird' + '.$fileType'], false, // --------------------- progress handler ---------------------
+		Loader.bytesArray([
+				'assets/01' + '.$fileType',
+				'assets/02' + '.$fileType',
+				'assets/04' + '.$fileType',
+				'assets/05' + '.$fileType',
+				'assets/06' + '.$fileType',
+				'assets/09' + '.$fileType',
+		], false, // --------------------- progress handler ---------------------
 
 			function(index:Int, loaded:Int, size:Int) {
 				trace(' $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');
@@ -104,16 +111,22 @@ class Main extends Application {
 		}
 	}
 	*/
+	
+	function randomise(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+  
 
 	// after all sounds is loaded
 	public function onAllSoundLoaded()
 	{
+		for (source in sources) {
+			var bird = new Emitter(source, randomise(20, window.width - 20), randomise(20, window.height - 20), 32, 32, Color.RED1, Color.random(), 0.9);
+			buffer.addElement(bird);
+			// bird.play();
+			bird.playRepeated(2000, 1000);
 
-		var bird = new Emitter(sources[0], 100, 100, 32, 32, Color.RED1, Color.GREEN3, 0.9);
-		buffer.addElement(bird);
-
-		// bird.play();
-		bird.playRepeated(2000, 1000);
+		}
 
 	}
 
