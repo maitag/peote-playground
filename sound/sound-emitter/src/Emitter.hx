@@ -1,5 +1,8 @@
 package;
 
+import lime.media.AudioSource;
+import lime.media.AudioBuffer;
+
 import peote.view.Element;
 import peote.view.Color;
 
@@ -21,11 +24,15 @@ class Emitter implements Element
 	public var colorQuite:Color; // color at the quietest volume
 	public var colorLoud:Color; // color at the loudest volume
 
+	public var source:AudioSource;
+
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
 
-	public function new(x:Int, y:Int, w:Int, h:Int, colorQuite:Color, colorLoud:Color, volume:Float ) {
+	public function new(source:AudioSource, x:Int, y:Int, w:Int, h:Int, colorQuite:Color, colorLoud:Color, volume:Float )
+	{
+		this.source = source;
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -46,5 +53,14 @@ class Emitter implements Element
 		);
 	}
 
-	// TODO: more helpers here (e.g. to get distance to some point to calculate the relative volume etc.)
+	public function play() {
+		source.play();
+	}
+
+	public function playRepeated(waitAfterPlay:Int) {
+		play();
+		var timer = new haxe.Timer(source.length + waitAfterPlay); // all into MILLI-SECONDS 4sure ;)
+		timer.run = () -> play();		
+	}
+
 }

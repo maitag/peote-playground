@@ -1,12 +1,12 @@
 package;
 
-import lime.media.AudioSource;
-import lime.media.AudioBuffer;
 import haxe.CallStack;
 import haxe.io.Bytes;
 
 import lime.app.Application;
 import lime.ui.Window;
+import lime.media.AudioSource;
+import lime.media.AudioBuffer;
 
 import peote.view.PeoteView;
 import peote.view.Buffer;
@@ -74,6 +74,11 @@ class Main extends Application {
 			// --------------------- load handler ---------------------
 			function(index:Int, bytes:Bytes) {
 				trace('$index loaded completely.');
+
+				// another way:
+				// sources[index] = new AudioSource(AudioBuffer.fromBytes(bytes));
+				// half, we can also shuffle the indizes here (^_^)
+				// sources.push(new AudioSource(AudioBuffer.fromBytes(bytes)));
 			},
 
 			function(bytesArray:Array<Bytes>) {
@@ -86,22 +91,28 @@ class Main extends Application {
 					}
 				];
 
-				window.onMouseDown.add((x, y, button) -> playAll());
+				// window.onMouseDown.add((x, y, button) -> playAll());
+				window.onMouseDown.add((x, y, button) -> onAllSoundLoaded());
 			});
 	}
 
+	/*
 	function playAll() {
 		for (source in sources) {
 			source.play();
 		}
 	}
-	
+	*/
+
 	// after all sounds is loaded
 	public function onAllSoundLoaded()
 	{
 
-		var bird = new Emitter(100, 100, 32, 32, Color.RED1, Color.GREEN3, 0.9);
+		var bird = new Emitter(sources[0], 100, 100, 32, 32, Color.RED1, Color.GREEN3, 0.9);
 		buffer.addElement(bird);
+
+		// bird.play();
+		bird.playRepeated(2000);
 
 	}
 	
@@ -111,13 +122,11 @@ class Main extends Application {
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
-	override function onPreloadComplete():Void {
-		// access embeded assets from here
-	}
+	// access embeded assets from here
+	// override function onPreloadComplete():Void {}
 
-	override function update(deltaTime:Int):Void {
-		// for game-logic update
-	}
+	// for game-logic update
+	// override function update(deltaTime:Int):Void {}
 
 	// override function render(context:lime.graphics.RenderContext):Void {}
 	// override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");		
