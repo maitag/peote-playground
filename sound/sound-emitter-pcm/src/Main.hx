@@ -1,5 +1,6 @@
 package;
 
+import peote.view.Texture;
 import peote.view.TextureFormat;
 import format.wav.Data.WAVE;
 import haxe.io.BytesInput;
@@ -21,10 +22,6 @@ import peote.view.Color;
 import utils.Loader;
 
 class Main extends Application {
-	var sources:Array<AudioSource>;
-	var isSourcesReady:Bool = false;
-	var textureDatas:Array<TextureData>;
-
 	override function onWindowCreate():Void {
 		switch (window.context.type) {
 			case WEBGL, OPENGL, OPENGLES:
@@ -41,15 +38,15 @@ class Main extends Application {
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
 	
-	public var peoteView:PeoteView;
-	public var buffer:Buffer<Emitter>;
-	public var display:Display;
-	public var program:Program;
+	var peoteView:PeoteView;
+	var buffer:Buffer<Emitter>;
+	var display:Display;
+	var program:Program;
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
-		display = new Display(10, 10, window.width - 20, window.height - 20, Color.BLACK);
+		display = new Display(0, 0, window.width, window.height, Color.BLACK);
 		peoteView.addDisplay(display);
 
 		buffer = new Buffer<Emitter>(4, 4, true);
@@ -59,94 +56,139 @@ class Main extends Application {
 		loadSound();
 	}
 
+	// ------------------------------------------------------------
+
+	 // all have samplingRate of 11025
+	var soundWaveFiles:Array<String> = [
+		'assets/sinus.wav',
+		// 'assets/01.wav',
+		// 'assets/02.wav',
+		// 'assets/04.wav',
+		// 'assets/05.wav',
+		// 'assets/06.wav',
+		// 'assets/09.wav',
+	];
+
 	// load multiple sound-waves
-	public function loadSound() {
-		var fileType = "wav";
-
-		Loader.bytesArray([
-				'assets/01' + '.$fileType',
-				'assets/02' + '.$fileType',
-				'assets/04' + '.$fileType',
-				'assets/05' + '.$fileType',
-				'assets/06' + '.$fileType',
-				'assets/09' + '.$fileType',
-		], false, // --------------------- progress handler ---------------------
-
+	function loadSound()
+	{
+		Loader.bytesArray( soundWaveFiles, false, // errorhandling/debug
+			// --------------------- progress handler ---------------------
 			function(index:Int, loaded:Int, size:Int) {
 				trace(' $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');
 			},
-
 			function(loaded:Int, size:Int) {
 				trace(' Progress overall: ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');
 			},
-
 			// --------------------- load handler ---------------------
-			function(index:Int, bytes:Bytes) {
-				trace('$index loaded completely.');
-
-				// another way:
-				// sources[index] = new AudioSource(AudioBuffer.fromBytes(bytes));
-				// half, we can also shuffle the indizes here (^_^)
-				// sources.push(new AudioSource(AudioBuffer.fromBytes(bytes)));
-			},
-
-			function(bytesArray:Array<Bytes>) {
-				trace(' --- all data loaded ---');
-
-				sources = [];
-				textureDatas = [];
-			
-				for (bytes in bytesArray) {
-					
-					var buffer = AudioBuffer.fromBytes(bytes);
-					sources.push(new AudioSource(buffer));
-
-					var wav:WAVE = readWAVE(bytes);
-					var width:Int = Math.ceil(wav.data.length / wav.header.channels / (wav.header.bitsPerSample / 8));
-					var height = 1;
-					textureDatas.push(new TextureData(width, height, TextureFormat.R, wav.data));
-				}
-
-				window.onMouseDown.add((x, y, button) -> onMouseClicked(x, y));
-				window.onMouseMove.add((x, y) -> onMouseMoved(x, y));
-			});
+			// function(index:Int, bytes:Bytes) {trace('$index loaded completely.');},
+			createSoundSources
+		);
 	}
 
-	function readWAVE(bytes:Bytes):WAVE {
-		var reader = new format.wav.Reader(new BytesInput(bytes));
-		return reader.read();
-	}
+	// ------------------------------------------------------------
 
-	/*
-	function playAll() {
-		for (source in sources) {
-			source.play();
-		}
-	}
-	*/
-	
-	function randomise(min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
-  
+	var sources:Array<AudioSource> = [];
 
-	// after all sounds is loaded
-	function onMouseClicked(x:Float, y:Float)
+	function createSoundSources(bytesArray:Array<Bytes>)
 	{
-		if(buffer.length > 0) return;
+		trace(' --- all data loaded ---');	
+		for (bytes in bytesArray) {			
+			var buffer = AudioBuffer.fromBytes(bytes);
+			sources.push(new AudioSource(buffer));
+		}
 
+		createTextureData(bytesArray);
+	}
+
+	// ------------------------------------------------------------
+
+	function createTextureData(bytesArray:Array<Bytes>)
+	{
+		var textureData = new TextureData(128,128, TextureFormat.RG);
+
+		for (bytes in bytesArray) {
+			
+			var wav:WAVE = new format.wav.Reader(new BytesInput(bytes)).read();
+			trace(wav.data.length , wav.header);
+			
+			// converting functions
+			inline function toInt16(v:Int):Int return (v > 32767 ? v - 65536 : v );
+			inline function toByte(v:Int):Int return Std.int( Math.round( (v/32767 + 1)/2 * 255) );
+			
+			// set textureData pixels (channel 1 -> left, channel 2 -> green)
+			var i:Int = 0;
+			var x:Int = 0;
+			var y:Int = 0;
+
+			while (i < wav.data.length) {
+				var left:Int = toInt16( wav.data.getUInt16(i) );
+				i+=2;
+				var right:Int = toInt16( wav.data.getUInt16(i) );
+				i+=2;
+
+				if (x < textureData.width) x++;
+				else {x = 0; y++;}
+
+				textureData.setRed(x, y, toByte(left) );
+				textureData.setGreen(x, y, toByte(right) );
+
+				// if (i<200) trace('left:$left <-> right: $right');
+				if (i<200) trace('left:${toByte(left)} <-> right: ${toByte(right)}');
+			}
+
+			// little BREAK HERE to TEST ONLY the FIRST one
+			break;
+		}
+
+		var texture:Texture = textureData.toTexture();
+		program.setTexture(texture, true);
+
+		#if html5
+		window.onMouseDown.add((x, y, button) -> { window.onMouseDown.removeAll(); spawnEmitters(); }); // webbrowser needs an initial click!!!
+		#else
+		spawnEmitters();
+		#end
+	}
+
+	
+	function spawnEmitters()
+	{
+		// spawn only the one for testing at now:
+		var bird = new Emitter(sources[0], window.height>>1, window.height>>1, window.height, window.height, Color.WHITE, Color.WHITE, 0.0);
+		buffer.addElement(bird);
+		peoteView.zoom = 6.0;
+
+		/*
 		for (source in sources) {
-			var bird = new Emitter(source, randomise(20, window.width - 20), randomise(20, window.height - 20), 32, 32, Color.RED1, Color.random(), 0.9);
+			var bird = new Emitter(source, randomise(16, window.width - 16 ), randomise(16, window.height - 16), 32, 32, Color.RED1, Color.random(), 0.9);
 			buffer.addElement(bird);
 			// bird.play();
-			setGain(bird, x, y);
+			setGain(bird, bird.x, bird.y);
 			buffer.update();
-			bird.playRepeated(2000, 1000);
+
+
+			// bird.playRepeated(0);
+			bird.playRepeatedRND(0, 0);
 
 		}
+		*/
 
+		window.onMouseMove.add(onMouseMoved);
 	}
 
+	function setGain(bird:Emitter, x:Float, y:Float){
+		var distance = Math.sqrt((bird.x - x) * (bird.x - x) + (bird.y - y) * (bird.y - y));
+		// todo : apply distance better
+		bird.setGain(distance / window.width);
+	}
+
+	function randomise(min, max):Int {
+		return Std.random(max - min + 1) + min;
+	}
+
+
+	// -------------- Interactive - Events -------------------
 
 	function onMouseMoved(x:Float, y:Float) {
 		for(i in 0...buffer.length){
@@ -155,12 +197,11 @@ class Main extends Application {
 		}
 		buffer.update();
 	}
+
 	
-	function setGain(bird:Emitter, x:Float, y:Float){
-		var distance = Math.sqrt((bird.x - x) * (bird.x - x) + (bird.y - y) * (bird.y - y));
-		// todo : apply distance better
-		bird.setGain(distance / window.width);
-	}
+
+
+
 
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
