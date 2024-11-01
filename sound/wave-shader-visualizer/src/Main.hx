@@ -14,9 +14,7 @@ import lime.media.AudioSource;
 import lime.media.AudioBuffer;
 
 import peote.view.PeoteView;
-import peote.view.Buffer;
 import peote.view.Display;
-import peote.view.Program;
 import peote.view.Color;
 
 import utils.Loader;
@@ -39,20 +37,13 @@ class Main extends Application {
 	// ------------------------------------------------------------	
 	
 	var peoteView:PeoteView;
-	var buffer:Buffer<Emitter>;
 	var display:Display;
-	var program:Program;
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
 		display = new Display(0, 0, window.width, window.height, Color.BLACK);
 		peoteView.addDisplay(display);
-
-		buffer = new Buffer<Emitter>(4, 4, true);
-		program = new Program(buffer);
-		display.addProgram(program);
-
 		loadSound();
 	}
 
@@ -61,7 +52,7 @@ class Main extends Application {
 	 // all have samplingRate of 11025
 	var soundWaveFiles:Array<String> = [
 		'assets/sinus.wav',
-		// 'assets/01.wav',
+		'assets/01.wav',
 		// 'assets/02.wav',
 		// 'assets/04.wav',
 		// 'assets/05.wav',
@@ -98,89 +89,115 @@ class Main extends Application {
 			sources.push(new AudioSource(buffer));
 		}
 
-		createTextureData(bytesArray);
+		createTexture(bytesArray);
 	}
 
 	// ------------------------------------------------------------
 
-	function createTextureData(bytesArray:Array<Bytes>)
+	var wavTexture:Texture;
+	var wavTexturePos = new Array<{start:Float, length:Float}>();
+
+	function createTexture(bytesArray:Array<Bytes>)
 	{
-		var textureData = new TextureData(128,128, TextureFormat.RG);
+		var textureData = new TextureData(1024, 1024, TextureFormat.RG);
+
+		var _start = 0.0;
+
+		var x:Int = 0;
+		var y:Int = 0;
 
 		for (bytes in bytesArray) {
 			
 			var wav:WAVE = new format.wav.Reader(new BytesInput(bytes)).read();
 			trace(wav.data.length , wav.header);
-			
+
 			// converting functions
 			inline function toInt16(v:Int):Int return (v > 32767 ? v - 65536 : v );
 			inline function toByte(v:Int):Int return Std.int( Math.round( (v/32767 + 1)/2 * 255) );
 			
 			// set textureData pixels (channel 1 -> left, channel 2 -> green)
 			var i:Int = 0;
-			var x:Int = 0;
-			var y:Int = 0;
 
 			while (i < wav.data.length) {
 				var left:Int = toInt16( wav.data.getUInt16(i) );
 				i+=2;
 				var right:Int = toInt16( wav.data.getUInt16(i) );
 				i+=2;
-
-				if (x < textureData.width) x++;
-				else {x = 0; y++;}
-
+				
 				textureData.setRed(x, y, toByte(left) );
 				textureData.setGreen(x, y, toByte(right) );
 
 				// if (i<200) trace('left:$left <-> right: $right');
-				if (i<200) trace('left:${toByte(left)} <-> right: ${toByte(right)}');
+				// if (i<200) trace('left:${toByte(left)} <-> right: ${toByte(right)}');
+
+				if (x < textureData.width) x++;
+				else {x = 0; y++;}
 			}
 
+			wavTexturePos.push({
+				start:_start,
+				length: (wav.data.length/4) / textureData.width
+			});
+
+			_start += (wav.data.length/4) / textureData.width;
+
 			// little BREAK HERE to TEST ONLY the FIRST one
-			break;
+			// break;
 		}
 
-		var texture:Texture = textureData.toTexture();
-		program.setTexture(texture, true);
+		wavTexture = textureData.toTexture();
+		// wavTexture = new Texture(textureData.width, textureData.height, 1, { format:textureData.format, powerOfTwo: false });
+		// wavTexture.setData(textureData);
+
+		// Interpolation NOT works IF:
+		// wavTexture.smoothExpand = true;
+		// wavTexture.smoothShrink = true;
 
 		#if html5
-		window.onMouseDown.add((x, y, button) -> { window.onMouseDown.removeAll(); spawnEmitters(); }); // webbrowser needs an initial click!!!
+		window.onMouseDown.add((x, y, button) -> { window.onMouseDown.removeAll(); spawnVisualizer(); }); // webbrowser needs an initial click!!!
 		#else
-		spawnEmitters();
+		spawnVisualizer();
 		#end
 	}
 
 	
-	function spawnEmitters()
+	function spawnVisualizer()
 	{
+		SoundBar.init(display, wavTexture);
+
 		// spawn only the one for testing at now:
-		var bird = new Emitter(sources[0], window.height>>1, window.height>>1, window.height, window.height, Color.WHITE, Color.WHITE, 0.0);
-		buffer.addElement(bird);
-		peoteView.zoom = 6.0;
+		var soundBar = new SoundBar(sources[0], wavTexturePos[0].start, wavTexturePos[0].length, window.width>>1, window.height>>1, window.width, window.height, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
+		soundBar.play();
+		// to test again:
+		window.onMouseDown.add((x, y, button) -> { 
+			var soundBar = new SoundBar(sources[1], wavTexturePos[1].start, wavTexturePos[1].length, window.width>>1, window.height>>1, window.width, window.height, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
+			soundBar.play();
+		});
+		// peoteView.zoom = 6.0;
 
 		/*
 		for (source in sources) {
-			var bird = new Emitter(source, randomise(16, window.width - 16 ), randomise(16, window.height - 16), 32, 32, Color.RED1, Color.random(), 0.9);
-			buffer.addElement(bird);
-			// bird.play();
-			setGain(bird, bird.x, bird.y);
-			buffer.update();
+			var elem = new SoundBar(source, randomise(16, window.width - 16 ), randomise(16, window.height - 16), 32, 32, Color.RED1, Color.random(), 0.9);
+			
+			// elem.play();
+			setGain(elem.x, elem.y, elem.x, elem.y);
+			SoundBar.buffer.update();
 
 
-			// bird.playRepeated(0);
-			bird.playRepeatedRND(0, 0);
+			// elem.playRepeated(0);
+			elem.playRepeatedRND(0, 0);
 
 		}
 		*/
 
-		window.onMouseMove.add(onMouseMoved);
+		peoteView.start();
+		// window.onMouseMove.add(onMouseMoved);
 	}
 
-	function setGain(bird:Emitter, x:Float, y:Float){
-		var distance = Math.sqrt((bird.x - x) * (bird.x - x) + (bird.y - y) * (bird.y - y));
+	function calculateGain(x:Float, y:Float, elemX:Int, elemY:Int):Float {
+		var distance = Math.sqrt((elemX - x) * (elemX - x) + (elemY - y) * (elemY - y));
 		// todo : apply distance better
-		bird.setGain(distance / window.width);
+		return distance / window.width;
 	}
 
 	function randomise(min, max):Int {
@@ -191,11 +208,13 @@ class Main extends Application {
 	// -------------- Interactive - Events -------------------
 
 	function onMouseMoved(x:Float, y:Float) {
-		for(i in 0...buffer.length){
-			var bird = buffer.getElement(i);
-			setGain(bird, x, y);
+		
+		for(i in 0...SoundBar.buffer.length){
+			var elem = SoundBar.buffer.getElement(i);
+			elem.setGain( calculateGain(x, y, elem.x, elem.y) );
 		}
-		buffer.update();
+		SoundBar.buffer.update();
+		
 	}
 
 	
