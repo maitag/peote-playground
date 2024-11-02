@@ -121,7 +121,7 @@ class SoundBar implements Element
 			colorQuite.rF + (colorLoud.rF - colorQuite.rF)*gain,
 			colorQuite.gF + (colorLoud.gF - colorQuite.gF)*gain,
 			colorQuite.bF + (colorLoud.bF - colorQuite.bF)*gain,
-			colorQuite.aF + (colorLoud.aF - colorQuite.aF)*gain,
+			colorQuite.aF + (colorLoud.aF - colorQuite.aF)*gain
 		);
 		source.gain = gain;
 	}

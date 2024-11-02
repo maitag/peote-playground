@@ -49,7 +49,7 @@ class Emitter implements Element
 			colorQuite.rF + (colorLoud.rF - colorQuite.rF)*volume,
 			colorQuite.gF + (colorLoud.gF - colorQuite.gF)*volume,
 			colorQuite.bF + (colorLoud.bF - colorQuite.bF)*volume,
-			colorQuite.aF + (colorLoud.aF - colorQuite.aF)*volume,
+			colorQuite.aF + (colorLoud.aF - colorQuite.aF)*volume
 		);
 		source.gain = volume;
 	}
