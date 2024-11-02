@@ -1,5 +1,7 @@
 package;
 
+import lime.media.AudioBuffer;
+
 import peote.view.intern.Util;
 import lime.media.AudioSource;
 // import lime.media.AudioBuffer;
@@ -59,7 +61,7 @@ class SoundBar implements Element
 				float currentPos = 11025.0 / ${wavTexture.slotWidth}.0 * currentTime;
 
 				// little hack if pos is not into range (clamp into posToTexCoord only put it to start/end!) 
-				if (currentPos < 0.0 || currentPos > wavLength) return vec4(0.0, 0.0, 0.0, 1.0);
+				if (currentPos < 0.0 || currentPos > wavLength) return vec4(0.0, 0.0, 0.0, 0.0);
 								
 				float peak = getTextureColor( textureID, posToTexCoord(currentPos, wavStart, wavLength) ).r;
 				
@@ -71,14 +73,15 @@ class SoundBar implements Element
 				// soundBARs:
 				if ( abs(0.5 - vTexCoord.y) < abs(0.5-peak) ) intensity = 1.0;
 
-				return vec4(intensity, 0.0, 0.0, 1.0);
+				return vec4(intensity, 0.0, 0.0, intensity);
 
 				// to test how the whole wavTexture is look like:
 				// return getTextureColor( textureID, vec2 (vTexCoord.x, vTexCoord.y) );
 			}			
-		', true);
+		', true, null, false);
 
-		program.setColorFormula( "soundBarVisualize(wavTexture_ID, timeStart, wavStart, wavLength)" );
+		program.setColorFormula( "soundBarVisualize(wavTexture_ID, timeStart, wavStart, wavLength)", true);
+		program.blendEnabled = true;
 	
 		display.addProgram(program);
 	}
@@ -92,14 +95,15 @@ class SoundBar implements Element
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
 	// ----------------------------------------------------------------------
-	public function new(source:AudioSource, wavStart:Float, wavLength:Float, x:Int, y:Int, w:Int, h:Int, colorQuite:Color, colorLoud:Color, gain:Float, timeStart:Float = 0.0 )
+	public function new(data:{buffer:AudioBuffer, start:Float, length:Float}, x:Int, y:Int, w:Int, h:Int, colorQuite:Color, colorLoud:Color, gain:Float, timeStart:Float = 0.0 )
 	{
 		// trace(wavStart, wavLength);
-		this.wavStart = wavStart;
-		this.wavLength = wavLength;
+		this.wavStart = data.start;
+		this.wavLength = data.length;
+
 		this.timeStart = timeStart;
 
-		this.source = source;
+		this.source = new AudioSource(data.buffer);
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -123,14 +127,14 @@ class SoundBar implements Element
 	}
 
 	public function play() {
-		source.play();
+		source.play();	
 	}
 	
 	public function playRepeated(waitAfterPlay:Int) {
 		play();
 		// not good into sync to sound-length after a while, so maybe better onUpdate or by onComplete here!
 		var timer = new haxe.Timer(source.length + waitAfterPlay);
-		timer.run = () -> play();		
+		timer.run = () -> play();
 	}
 	
 

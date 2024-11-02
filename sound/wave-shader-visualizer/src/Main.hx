@@ -53,11 +53,11 @@ class Main extends Application {
 	var soundWaveFiles:Array<String> = [
 		'assets/sinus.wav',
 		'assets/01.wav',
-		// 'assets/02.wav',
-		// 'assets/04.wav',
-		// 'assets/05.wav',
-		// 'assets/06.wav',
-		// 'assets/09.wav',
+		'assets/02.wav',
+		'assets/04.wav',
+		'assets/05.wav',
+		'assets/06.wav',
+		'assets/09.wav',
 	];
 
 	// load multiple sound-waves
@@ -73,33 +73,18 @@ class Main extends Application {
 			},
 			// --------------------- load handler ---------------------
 			// function(index:Int, bytes:Bytes) {trace('$index loaded completely.');},
-			createSoundSources
+			createSoundTexture
 		);
 	}
 
 	// ------------------------------------------------------------
 
-	var sources:Array<AudioSource> = [];
-
-	function createSoundSources(bytesArray:Array<Bytes>)
-	{
-		trace(' --- all data loaded ---');	
-		for (bytes in bytesArray) {			
-			var buffer = AudioBuffer.fromBytes(bytes);
-			sources.push(new AudioSource(buffer));
-		}
-
-		createTexture(bytesArray);
-	}
-
-	// ------------------------------------------------------------
-
 	var wavTexture:Texture;
-	var wavTexturePos = new Array<{start:Float, length:Float}>();
+	var wavTextureData = new Array<{buffer:AudioBuffer, start:Float, length:Float}>();
 
-	function createTexture(bytesArray:Array<Bytes>)
+	function createSoundTexture(bytesArray:Array<Bytes>)
 	{
-		var textureData = new TextureData(1024, 1024, TextureFormat.RG);
+		var textureData = new TextureData(2048, 2048, TextureFormat.RG);
 
 		var _start = 0.0;
 
@@ -127,15 +112,12 @@ class Main extends Application {
 				textureData.setRed(x, y, toByte(left) );
 				textureData.setGreen(x, y, toByte(right) );
 
-				// if (i<200) trace('left:$left <-> right: $right');
-				// if (i<200) trace('left:${toByte(left)} <-> right: ${toByte(right)}');
-
-				if (x < textureData.width) x++;
-				else {x = 0; y++;}
+				if (x < textureData.width) x++; else {x = 0; y++;}
 			}
 
-			wavTexturePos.push({
-				start:_start,
+			wavTextureData.push({
+				buffer: AudioBuffer.fromBytes(bytes),
+				start: _start,
 				length: (wav.data.length/4) / textureData.width
 			});
 
@@ -145,13 +127,7 @@ class Main extends Application {
 			// break;
 		}
 
-		wavTexture = textureData.toTexture();
-		// wavTexture = new Texture(textureData.width, textureData.height, 1, { format:textureData.format, powerOfTwo: false });
-		// wavTexture.setData(textureData);
-
-		// Interpolation NOT works IF:
-		// wavTexture.smoothExpand = true;
-		// wavTexture.smoothShrink = true;
+		wavTexture = textureData.toTexture(); // never use "smooth" Interpolation here!
 
 		#if html5
 		window.onMouseDown.add((x, y, button) -> { window.onMouseDown.removeAll(); spawnVisualizer(); }); // webbrowser needs an initial click!!!
@@ -166,18 +142,19 @@ class Main extends Application {
 		SoundBar.init(display, wavTexture);
 
 		// spawn only the one for testing at now:
-		var soundBar = new SoundBar(sources[0], wavTexturePos[0].start, wavTexturePos[0].length, window.width>>1, window.height>>1, window.width, window.height, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
-		soundBar.play();
-		// to test again:
+		//var soundBar = new SoundBar(wavTextureData[0], window.width>>1, window.height>>1, window.width, window.height, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
+		//soundBar.play();
+
+		// to test MULTIPLE:
 		window.onMouseDown.add((x, y, button) -> { 
-			var soundBar = new SoundBar(sources[1], wavTexturePos[1].start, wavTexturePos[1].length, window.width>>1, window.height>>1, window.width, window.height, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
+			var soundBar = new SoundBar(wavTextureData[rnd(1,6)], Std.int(x), Std.int(y) ,300, 300, Color.WHITE, Color.WHITE, 0.5, peoteView.time);
 			soundBar.play();
 		});
-		// peoteView.zoom = 6.0;
+		
 
 		/*
 		for (source in sources) {
-			var elem = new SoundBar(source, randomise(16, window.width - 16 ), randomise(16, window.height - 16), 32, 32, Color.RED1, Color.random(), 0.9);
+			var elem = new SoundBar(source, rnd(16, window.width - 16 ), rnd(16, window.height - 16), 32, 32, Color.RED1, Color.random(), 0.9);
 			
 			// elem.play();
 			setGain(elem.x, elem.y, elem.x, elem.y);
@@ -191,6 +168,8 @@ class Main extends Application {
 		*/
 
 		peoteView.start();
+
+		// volume-gain into distance to mouse-cursor:
 		// window.onMouseMove.add(onMouseMoved);
 	}
 
@@ -200,7 +179,7 @@ class Main extends Application {
 		return distance / window.width;
 	}
 
-	function randomise(min, max):Int {
+	function rnd(min, max):Int {
 		return Std.random(max - min + 1) + min;
 	}
 
