@@ -31,13 +31,19 @@ class Main extends Application {
 	public function startSample(window:Window)
 	{
 		var peoteView = new PeoteView(window);
-		var display = new Display(0, 0, window.width, window.height, Color.BLUE1);
+		var display = new Display(0, 0, window.width, window.height, Color.BLUE3);
 		peoteView.addDisplay(display);
 
-		// instantiate the font-data:   <<-------------- NOOOOOOOOOOOOOOOO
-		var bmFont = new BMFontData();
 
-		// create new fontprogram
+		// ------- create the font-(texture!)-data -------
+		var bmFont = new BMFontData(BMFontFull.data);
+
+		// the BMFontSimple contains lesser letter-data:
+		// var bmFont = new BMFontData(BMFontSimple.data, BMFontSimple.ranges);
+
+
+
+		// ------- create a new BMFontProgram ---------
 		var bmFontProgram = new BMFontProgram(bmFont, {
 			fgColor:Color.YELLOW,
 			bgColor:Color.RED1,
@@ -46,7 +52,30 @@ class Main extends Application {
 		});
 
 		display.addProgram(bmFontProgram);
+
+
+		// -------- FonT-Fun here -----------
+
+		// add some elements to test out:
+		bmFontProgram.buff.addElement( new BMFontProgram.Glyph(0  , 0, 100, 100, Color.YELLOW, 0, bmFont.getTile(65) ) );
+		bmFontProgram.buff.addElement( new BMFontProgram.Glyph(0  , 100, 100, 100, Color.YELLOW, 0, bmFont.getTile(53) ) );
+
+		// error -> out of charCode-range by using BMFontSimple
+		bmFontProgram.buff.addElement( new BMFontProgram.Glyph(100, 0, 100, 100, Color.YELLOW, Color.GREEN2, bmFont.getTile(127)) );
+
+		// error -> out of charCode-range
+		// bmFontProgram.buff.addElement( new BMFontProgram.Glyph(200, 0, 100, 100, Color.YELLOW, Color.RED2, bmFont.getTile(128)) );
 		
+
+
+
+
+
+
+
+		// TODO next Time:
+
+		/*
 		// create a text-instance
 		var text1:BMText = bmFontProgram.add(100, 10, "hello world\nHALLO WELT", {
 			fgColor:Color.GREEN3,
@@ -57,9 +86,19 @@ class Main extends Application {
 		haxe.Timer.delay( ()->{
 			bmFontProgram.remove(text1);
 		}, 3000);
-
+		*/
 
 	}
+
+
+
+
+
+
+
+
+
+
 
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
