@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="PeoteViewSamples" package="peote.view" version="0.0.1" company="Sylvio Sell - maitag" />
+	
+	<android target-sdk-version="26" />
+	<define name="stats" if="html5" />
+	
+	
+	<app main="ShowreelGrid" path="bin" file="ShowreelGrid" />
+	<!-- <app main="ShowreelZoom" path="bin" file="ShowreelZoom" /> -->
+	
+	
+	<!-- <window fps="60" width="800" height="600" vsync="true" antialiasing="4" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" /> -->
+	<!--<window fps="60" width="800" height="600" vsync="true" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" /> -->
+	<window width="800" height="600" fps="61" />
+	<window if="html5||android" width="0" height="0" />
+	<!--<set name="angle" if="windows" />-->
+	
+	<source path="src" />
+	
+	<haxelib name="lime" />
+	<haxelib name="json2object" />
+	<haxelib name="peote-view" />
+	<haxelib name="peote-text" />
+	
+	<!--<haxedef name="webgl" /> mhhmmm ... did i need this ? ;) -->
+	
+	<!-- force compiling for a special opengl-es version (only set one of them) -->
+	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
+	<!-- <haxedef name="peoteview_es3" if="html5" /> -->
+	<haxedef name="peoteview_es2" if="android" /> <!-- android autodetect es3 but did not work, so force to es2 -->
+	
+	<!-- use special gl-features for optimization (if supported by opengl-es version) -->
+	<haxedef name="peoteview_uniformbuffers" />
+	<haxedef name="peoteview_instancedrawing" />
+
+
+	<haxedef name="peoteview_debug_macro" />
+	<haxedef name="peoteview_debug_shader" />
+
+	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
+	<!-- <haxedef name="source-map-content" /> -->
+	<haxeflag name="-dce" value="full" />
+	<!-- <haxedef name="dump=pretty output" /> -->
+	
+	<!-- <haxedef name="HXCPP_M32" if="cpp" /> --> <!-- on windows 64 is default -->
+	
+	<!-- <haxedef name="HXCPP_MSVC_VER=120" if="cpp" /> -->
+	<!-- <haxedef name="HXCPP_MSVC_VER=140" if="cpp" /> -->
+	
+	<assets path="assets" exclude="lime.svg" embed="false" />
+	
+	<icon path="assets/lime.svg" />
+	
+</project>
