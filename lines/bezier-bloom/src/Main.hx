@@ -143,10 +143,11 @@ class Main extends Application {
 						item.follower.height = item.follower.width;
 					}
 				}
+
+				// be sure to update the element in the buffer so the changes are displayed
+				buffer.updateElement(item.follower);
 			}
 
-			// be sure to update the buffer so the changes are displayed
-			buffer.update();
 
 			// increment the index along the curve, wrapping when it reaches the end
 			index = (index + 1) % (curve.length - 1);
