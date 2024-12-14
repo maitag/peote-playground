@@ -20,7 +20,8 @@ class Circle implements Element
 	// color (RGBA)
 	@color public var color:Color = 0x000000ff;
 	
-	var DEFAULT_COLOR_FORMULA = "vec4(1, 0.1 + sin(uTime*2.0), 0.4 + cos(uTime*5.0), 1)*circle(radius)";
+	// var DEFAULT_COLOR_FORMULA = "vec4(1.0, 0.1 + sin(uTime*2.0), 0.4 + cos(uTime*5.0), 1)*circle(radius)";
+	var DEFAULT_COLOR_FORMULA = "vec4(1.0, 0.1 + sin(uTime*2.0), 0.4 + cos(uTime*5.0), circle(radius))";
 	var OPTIONS = { blend: true };
 
     public var vx:Float = 100; 
@@ -35,12 +36,20 @@ class Circle implements Element
 			float r = sqrt(x * x + y * y);
 			float c;
 			
-			if ( r <= 1.0) {
-				c = 1.0;
-			}
-			else {
-				c = 0.0;
-			}
+			// if ( r <= 1.0) c = 1.0; else c = 0.0;
+
+			// can be made more simple by using "step": https://thebookofshaders.com/glossary/?search=step
+			// c = step( r, 1.0);
+
+			// now "antialiasing" the outer range manual: https://thebookofshaders.com/glossary/?search=smoothstep
+			// if ( r < 0.5) c = 1.0; else c = smoothstep( 1.0, 0.0, (r-0.5)*2.0 );
+			// if ( r < 0.8) c = 1.0; else c = smoothstep( 1.0, 0.0, (r-0.8)*5.0 );
+
+			// or let calculate the falloff in depent of radius (e.g. 2 pixels)
+			float aaBorderSize = 2.0;
+			float falloffAt = (radius - aaBorderSize/2.0 ) / radius;
+			if ( r < falloffAt) c = 1.0; else c = smoothstep( 1.0, 0.0, (r-falloffAt)/(1.0-falloffAt) );
+
 			return c;
 		}
 	';
