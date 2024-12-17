@@ -1,7 +1,6 @@
 package;
 
 import haxe.CallStack;
-import haxe.Timer;
 import lime.app.Application;
 import lime.ui.Window;
 import peote.view.Buffer;
@@ -9,9 +8,6 @@ import peote.view.Display;
 import peote.view.Element;
 import peote.view.PeoteView;
 import peote.view.Program;
-import peote.view.element.Elem;
-
-using Lambda;
 
 class Main extends Application {
 	public function new() {
@@ -36,19 +32,25 @@ class Main extends Application {
 		
 		var buffer:Buffer<Canvas> = new Buffer<Canvas>(1, 1, true);
 		var display = new Display(0, 0, window.width, window.height);
+
+		peoteView.onResize = (width:Int, height:Int) -> {
+			display.width = width;
+			display.height = height;
+		}
+
 		var program = new Program(buffer);
 		
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
 		
-		var canvas = new Canvas(0, 0, window.width, window.height);
+		var canvas = new Canvas();
 		buffer.addElement(canvas);
 
 
 		program.injectIntoFragmentShader('
 			vec4 compose() {
-        vec2 uv = vTexCoord;
+				vec2 uv = vTexCoord;
 				uv -= 0.5;
 				uv.x *= vSize.x / vSize.y; 
 				float t = uTime;
@@ -107,22 +109,15 @@ class Main extends Application {
 	}
 }
 
-@:publicFields
+
 // Element to draw shader on
 class Canvas implements Element {
-	// position in pixel (relative to upper left corner of Display)
-	@posX var x:Int;
-	@posY var y:Int;
 
-	// size in pixel
-	@sizeX @varying var w:Int;
-	@sizeY @varying var h:Int;
+	// position in pixel (always topleft by @const)
+	@posX @const var x:Int = 0;
+	@posY @const var y:Int = 0;
 
-
-	function new(x:Int = 0, y:Int = 0, w:Int, h:Int) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = h;
-	}
+	// size in pixel (always full view size by @const and @formula)
+	@sizeX @varying @const @formula("uResolution.x") var w:Int;
+	@sizeY @varying @const @formula("uResolution.y") var h:Int;
 }
