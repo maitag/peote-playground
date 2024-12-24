@@ -38,7 +38,11 @@ class Main extends Application
 		
 		// electric bolt like shader
 		Water2D.init(display);
-		var water = new Water2D(0, 0, 800, 600, 0x194DB2FF);
+		new Water2D(0, 0, 300, 600, 0x194DB2FF);
+		new Water2D(300, 0, 200, 200, 0x194DB2FF);
+		new Water2D(300, 200, 100, 100, 0x194DB2FF);
+
+		// display.zoom = 0.5;
 		
 		peoteView.start();
 	}

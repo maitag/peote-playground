@@ -13,8 +13,11 @@ class Water2D implements Element
 	@posY public var y:Int;
 	
 	// size in pixel
-	@sizeX @varying public var w:Int;
-	@sizeY @varying public var h:Int;
+	// varying is need to use vSize in fragmentshader
+	// @sizeX @varying public var w:Int;
+	// @sizeY @varying public var h:Int;
+	@sizeX public var w:Int;
+	@sizeY public var h:Int;
 
 	// color (RGBA)
 	@color @varying public var color:Color = 0x1948B2FF;
@@ -31,6 +34,8 @@ class Water2D implements Element
 		
 		program.injectIntoFragmentShader(
 		"
+			uniform vec2 uZoom; // this is need if using gl_FragCoord to make a global pattern (but keep into zoom of the Display)
+
 			const float param_A = 0.87, param_B = 0.2223, param_C = -0.1843, param_D = 0.9126, param_E = 1.2;
 			const float param_INTERFERENCE = 0.3, param_INTERFERENCE_ZOOM = 1.8, param_INTERFERENCE_SHIFT = 0.14;
 			const float param_SPEED = 0.03, param_ASPECT = 0.4, param_ZOOM = 1.0;
@@ -61,7 +66,9 @@ class Water2D implements Element
 
 			vec4 water2D( vec4 c )
 			{
-				float waves = sineWaves( vec2(vTexCoord.x * vSize.x, (vTexCoord.y * vSize.y) / param_ASPECT) / (60.0 * param_ZOOM) );
+				// float waves = sineWaves( vec2(vTexCoord.x * vSize.x, (vTexCoord.y * vSize.y) / param_ASPECT) / (60.0 * param_ZOOM) );
+				float waves = sineWaves( vec2(gl_FragCoord.x / uZoom.x, (gl_FragCoord.y / uZoom.y) / param_ASPECT) / (60.0 * param_ZOOM) );
+				
 				waves *= waves;
 				return vec4( waves + vec3(c.r, c.g, c.b), c.a);
 			}			
