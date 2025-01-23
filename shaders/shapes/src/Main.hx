@@ -27,6 +27,7 @@ class Main extends Application
 	
 	var mouseX:UniformFloat;
 	var mouseY:UniformFloat;
+	var rotation:UniformFloat;
 		
 	public function startSample(window:Window)
 	{
@@ -38,6 +39,8 @@ class Main extends Application
 
 		mouseX = new UniformFloat("mouseX", 0.0);
 		mouseY = new UniformFloat("mouseY", 0.0);
+		rotation = new UniformFloat("rotation", 0.0);
+
 		
 		Triangle.init( [mouseX], display); 
 		var triangle = new Triangle(0, 0, 200, 200);
@@ -52,13 +55,22 @@ class Main extends Application
 		
 		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX, mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
 		var egg = new Egg(200, 0, 200, 200);
-	
 		
 		
-		Test.init( [mouseX, mouseY], display); 
+		
+		Test.init( [mouseX, mouseY, rotation], display); 
 		var test = new Test();
 		
 		
+
+		// Isoscales.init( [mouseX, mouseY, rotation], display); 
+		// var isoscales = new Isoscales();
+		
+		Fanblade.init( [rotation], display);
+		//                           x   y   len   h1   h2  p  r 
+		var fanblade = new Fanblade(400, 300, 400, 100, 360, 0, 0);
+		
+	
 		peoteView.start();
 	}
 	
@@ -76,17 +88,19 @@ class Main extends Application
 		mouseX.value = x / window.width;
 		mouseY.value = y / window.height;
 		
-		trace(mouseX.value);
-	}	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
-	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
-	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
+		// trace(mouseY.value);
+	}
 
-	// ----------------- TOUCH EVENTS ------------------------------
-	// override function onTouchStart (touch:lime.ui.Touch):Void {}
-	// override function onTouchMove (touch:lime.ui.Touch):Void	{}
-	// override function onTouchEnd (touch:lime.ui.Touch):Void {}
+	override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {
+		rotation.value += ((deltaY>0) ? 1 : -1 ) * 15.0;
+		trace(rotation.value);
+	}
+	
+	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
+	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
+	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
+		
+
 	
 	// ----------------- KEYBOARD EVENTS ---------------------------
 	// override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}	

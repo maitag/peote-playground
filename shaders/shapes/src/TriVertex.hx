@@ -10,12 +10,12 @@ class TriVertex implements Element
 	
 	//@custom public var tip:Float = 0.5; // mouseX-uniform can be replaced by custom attribute later
 	
-	//@posX @formula("x + (aSize.x - w)*((mouseX-0.5)*2.0+mouseX)") public var x:Float;
-	//@posX @formula("x + (aSize.x - w)*((2.0*mouseX-1.0)*2.0+mouseX)") public var x:Float;
+	// @posX @formula("x + (aSize.x - w)*((mouseX-0.5)*2.0+mouseX)") public var x:Float;
+	// @posX @formula("x + (aSize.x - w)*((2.0*mouseX-1.0)*2.0+mouseX)") public var x:Float;
 	@posX @formula("x + (aSize.x - w)*((2.0*mouseX-1.0)* 1.0 +mouseX)") public var x:Float;
 	
-	//@posX @formula("x + (aSize.x - w)*(mouseX-1.0/3.0)*3.0") public var x:Float;
-	//@posX @formula("x + (aSize.x - w)*(mouseX-1.0/2.7)*4.0") public var x:Float;
+	// @posX @formula("x + (aSize.x - w)*(mouseX-1.0/3.0)*3.0") public var x:Float;
+	// @posX @formula("x + (aSize.x - w)*(mouseX-1.0/2.7)*4.0") public var x:Float;
 	
 	@posY public var y:Float;
 	
@@ -23,7 +23,7 @@ class TriVertex implements Element
 	@sizeX @formula("aPosition.y * w") public var w:Float;
 	@sizeY public var h:Float;
 	
-	//@rotation public var r:Float = 45.0;
+	// @rotation public var r:Float = 45.0;
 	
 	static public var buffer:Buffer<TriVertex>;
 	static public var program:Program;
