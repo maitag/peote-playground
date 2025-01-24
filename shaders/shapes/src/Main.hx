@@ -66,9 +66,17 @@ class Main extends Application
 		// Isoscales.init( [mouseX, mouseY, rotation], display); 
 		// var isoscales = new Isoscales();
 		
+		TrapezoidSym.init([], display);
+		var trapezoidSym = new TrapezoidSym(600,30);
+
+		
+
+		// FanbladeDevelop.init( [rotation], display);
+		// var fanbladeDevelop = new FanbladeDevelop(400, 300, 400, 100, 400, 0, 0);
+		
 		Fanblade.init( [rotation], display);
 		//                           x   y   len   h1   h2  p  r 
-		var fanblade = new Fanblade(400, 300, 400, 100, 360, 0, 0);
+		var fanblade = new Fanblade(400, 300, 400, 100, 400, 0, 0);
 		
 	
 		peoteView.start();

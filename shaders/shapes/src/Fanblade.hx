@@ -14,12 +14,8 @@ class Fanblade implements Element
 	@custom public var hLeft:Int;
 	@sizeY @formula("hRight - (hRight-hLeft) * (1.0-aPosition.x)") public var hRight:Int;
 
-	// @custom @varying @const @formula("aPosition.y * size.y/aSize.y") var texCoordY:Float;
-	// @custom @varying @const @formula("aPosition.y * size.y/aShort0") var texCoordY:Float;
-	// @custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/(aShort0)+0.5") var texCoordY:Float;
-	// @custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/(aSize.y)+0.5") var texCoordY:Float;
-	@custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/(aShort0)+0.5") var texCoordY1:Float;
-	@custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/(aSize.y)+0.5") var texCoordY2:Float;
+	// REMAP the ORIGIN QUAD texture-COORDS:
+	@custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/aSize.y") var texCoordY:Float;
 
 	@pivotX public var px:Int = 0;
 	@pivotY @const @formula("hRight/2.0") var py:Int;
@@ -45,24 +41,16 @@ class Fanblade implements Element
 			program.setTexture(texture);
 
 			program.injectIntoFragmentShader("
-			vec4 transformTexture(int textureID, float texCoordY1, float texCoordY2) {
-
-				// return getTextureColor( textureID, vec2(vTexCoord.x, vTexCoord.y) );
-				// return getTextureColor( textureID, vec2(vTexCoord.x, texCoordY1 ));
-				// return getTextureColor( textureID, vec2(vTexCoord.x, texCoordY2 ));
-
-				// This did not work exactly cos of triangulation and texcoords
-				return getTextureColor( textureID, vec2(vTexCoord.x, mix(texCoordY1, texCoordY2, vTexCoord.x) ));
+			vec4 transformTexture(int textureID, float texCoordY) {				
+				// texCoordY = 1.0 / mix(0.25, 1.0, vTexCoord.x) * texCoordY + 0.5 ;
+				// texCoordY = 0.5 + texCoordY / (0.25 + (1.0 - 0.25)* vTexCoord.x);
 				
-
-				// TODO: try to check upper and lower triangle separate!
-				// return vec4(0.0, 0.0, sin(vTexCoord.x*100.0)*0.5+0.5, 1.0);
-				// return vec4(0.0, 0.0, sin(vTexCoord.y*100.0)*0.5+0.5, 1.0);
-				// return vec4(0.0, 0.0, sin(texCoordY2*100.0)*0.5+0.5, 1.0);
-				// return vec4(0.0, 0.0, texCoordY2, 1.0);
+				texCoordY = 0.5 + texCoordY / mix(0.25, 1.0, vTexCoord.x);
+				
+				return getTextureColor( textureID, vec2(vTexCoord.x, texCoordY ));
 			}
 			");
-			program.setColorFormula("transformTexture(default_ID, texCoordY1, texCoordY2)");
+			program.setColorFormula("transformTexture(default_ID, texCoordY)");
 
 		});
 
