@@ -78,7 +78,11 @@ class Main extends Application
 		//                           x   y   len   h1   h2  p  r 
 		var fanblade = new Fanblade(400, 300, 400, 100, 400, 0, 0);
 		
-	
+		
+
+		Perspective.init( [mouseX, mouseY], display);
+		var perspective = new Perspective(400, 500, 200, 200,  0.25);
+
 		peoteView.start();
 	}
 	
