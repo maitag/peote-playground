@@ -1,6 +1,10 @@
 package;
 
-import peote.view.*;
+import peote.view.PeoteGL;
+import peote.view.PeoteView;
+import peote.view.Display;
+import peote.view.Color;
+import peote.view.UniformFloat;
 import peote.view.PeoteGL.Version;
 import peote.view.PeoteGL.GLBuffer;
 import peote.view.PeoteGL.GLVertexArrayObject;
@@ -35,9 +39,9 @@ class CustomDisplay extends Display
 		// define vertexes for a triangle; x,y and rgba
 		var vertexData = [
 		//  x     y     r    g    b    a
-			-0.5, -0.5,  1.0, 0.0, 0.0, 1.0, // left
-			0.5, -0.5,  0.0, 1.0, 0.0, 1.0, // right
-			0.0,  0.5,  0.0, 0.0, 1.0, 0.5, // top
+			20, 580,  1.0, 0.0, 0.0, 1.0, // left
+			580,580,  0.0, 1.0, 0.0, 1.0, // right
+			270, 20,  0.0, 0.0, 1.0, 1.0, // top
 		];
 		
 		bufferBytes = BufferBytes.alloc(STRIDE * vertexData.length);
@@ -64,7 +68,7 @@ class CustomDisplay extends Display
 				trace("Display setNewGLContext");
 				#end
 				gl = newGl;			
-				if (PeoteGL.Version.isUBO) {
+				if (Version.isUBO) {
 					uniformBuffer.createGLBuffer(gl, x + xOffset, y + yOffset, xz, yz);
 					uniformBufferFB.createGLBuffer(gl, xOffset, yOffset - height, xz, yz);
 					uniformBufferViewFB.createGLBuffer(gl, width, -height, 0.0, 0.0, 1.0, 1.0);
@@ -75,7 +79,6 @@ class CustomDisplay extends Display
 				// if (fbTexture != null) fbTexture.setNewGLContext(newGl);	
 				
 				createBufferVAO();
-
 			}
 	}
 
@@ -140,19 +143,15 @@ class CustomDisplay extends Display
 		gl.bindAttribLocation(glProgram, aCOLOR, "aColor");
 	}
 	
-
-	/*
+	
 	var uRESOLUTION:GLUniformLocation;
 	var uZOOM:GLUniformLocation;
 	var uOFFSET:GLUniformLocation;
 	var uTIME:GLUniformLocation;
-
-	var uniformFloatsVertex:Array<UniformFloat> = null;
-	var uniformFloatsFragment:Array<UniformFloat> = null;
-	var uniformFloats:Array<UniformFloat> = new Array<UniformFloat>();
-	var uniformFloatLocations:Array<GLUniformLocation>;
-	var uniformFloatPickLocations:Array<GLUniformLocation>;
-	*/
+	
+	// var uniformFloats:Array<UniformFloat> = new Array<UniformFloat>();
+	// var uniformFloatLocations:Array<GLUniformLocation>;
+	
 	function createProg():Void
 	{
 		// -----------------------------------------------
@@ -161,6 +160,23 @@ class CustomDisplay extends Display
 
 		// vertex shader
 		var glsl_vertex = '${Version.isES3 ? "#version 300 es" : ""}
+			${Version.isUBO ? "
+				uniform uboView {
+					vec2 uResolution;
+					vec2 uViewOffset;
+					vec2 uViewZoom;
+				};
+				uniform uboDisplay {
+					vec2 uOffset;
+					vec2 uZoom;
+				};
+				":"
+				uniform vec2 uResolution;
+				uniform vec2 uOffset;
+				uniform vec2 uZoom;
+				"
+			}
+			
 			// attributes
 			${Version.isES3 ? "in" : "attribute"} vec2 aPos;
 			${Version.isES3 ? "in" : "attribute"} vec4 aColor;
@@ -171,10 +187,33 @@ class CustomDisplay extends Display
 			void main()
 			{   
 				vertexColor = aColor;
-				//                  x     y    z
-				gl_Position = vec4(aPos, 0.0, 1.0);
+
+				float width = uResolution.x;
+				float height = uResolution.y;
+
+				${Version.isUBO ? "
+				float deltaX = (uOffset.x  + uViewOffset.x) / uZoom.x;
+				float deltaY = (uOffset.y  + uViewOffset.y) / uZoom.y;
+				vec2 zoom = uZoom * uViewZoom;
+				" : "
+				float deltaX = uOffset.x;
+				float deltaY = uOffset.y;
+				vec2 zoom = uZoom;
+				"}
+
+				gl_Position = vec4 (
+					2.0 * zoom.x/width  * (aPos.x + deltaX) - 1.0,
+					-2.0 * zoom.y/height * (aPos.y + deltaY) + 1.0,
+					- 0.0, // Z-INDEX
+					1.0
+				);		
+
 			}
 		';
+
+		
+
+
 
 		// fragment shader
 		var glsl_fragment = '${Version.isES3 ? "#version 300 es" : ""}
@@ -205,11 +244,12 @@ class CustomDisplay extends Display
 
 		GLTool.linkGLProgram(gl, glProgram);
 
-		// gl.deleteShader(vertex_shader);
-		// gl.deleteShader(fragment_shader);
+		gl.deleteShader(vertex_shader);
+		gl.deleteShader(fragment_shader);
 
-		/*
-		if ( Version.isUBO) {
+		// ----- UNIFORMS -----
+
+		if (Version.isUBO) {
 			var index:Int = gl.getUniformBlockIndex(glProgram, "uboView");
 			if (index != gl.INVALID_INDEX) gl.uniformBlockBinding(glProgram, index, UniformBufferView.block);
 			index = gl.getUniformBlockIndex(glProgram, "uboDisplay");
@@ -221,13 +261,11 @@ class CustomDisplay extends Display
 			uOFFSET = gl.getUniformLocation(glProgram, "uOffset");
 		}
 		
-		uTIME = gl.getUniformLocation(glProg, "uTime");
-		uniformFloatLocations = new Array<GLUniformLocation>();
-		for (u in uniformFloats) uniformFloatLocations.push( gl.getUniformLocation(glProgram, u.name) );
-		*/
-
+		// uTIME = gl.getUniformLocation(glProgram, "uTime");
+		// uniformFloatLocations = new Array<GLUniformLocation>();
+		// for (u in uniformFloats) uniformFloatLocations.push( gl.getUniformLocation(glProgram, u.name) );
+		
 	}
-
 
 
 	// -----------------------------------------------------------------------
@@ -242,39 +280,32 @@ class CustomDisplay extends Display
 		
 		gl.useProgram(glProgram);
 
-		// -----------------------------------------------
-		// ------------------- UNIFORMS ------------------
-		// -----------------------------------------------
-		
+		// ------------------- UNIFORMS ------------------		
+
 		if (Version.isUBO) // ------------- uniform block (ES3) -------------
 		{
-			// gl.bindBufferBase(gl.UNIFORM_BUFFER, UniformBufferView.block, peoteView.uniformBuffer.uniformBuffer);
-			// gl.bindBufferBase(gl.UNIFORM_BUFFER, UniformBufferDisplay.block, uniformBuffer.uniformBuffer);
+			gl.bindBufferBase(gl.UNIFORM_BUFFER, UniformBufferView.block, peoteView.uniformBuffer.uniformBuffer);
+			gl.bindBufferBase(gl.UNIFORM_BUFFER, UniformBufferDisplay.block, uniformBuffer.uniformBuffer);
 		}
 		else // ------------- simple uniforms (ES2) -------------
 		{
-			//gl.uniform2f (uRESOLUTION, peoteView.width, peoteView.height);
-			//gl.uniform2f (uZOOM, peoteView.xz * display.xz, peoteView.yz * display.yz);
-			//gl.uniform2f (uOFFSET, (display.x + display.xOffset + peoteView.xOffset) / display.xz, 
-								   //(display.y + display.yOffset + peoteView.yOffset) / display.yz);
+			gl.uniform2f (uRESOLUTION, peoteView.width, peoteView.height);
+			gl.uniform2f (uZOOM, peoteView.xz * xz, peoteView.yz * yz);
+			gl.uniform2f (uOFFSET, (x + xOffset + peoteView.xOffset) / xz, 
+			                       (y + yOffset + peoteView.yOffset) / yz);
 		}
 		
 		// gl.uniform1f (uTIME, peoteView.time);
 		// for (i in 0...uniformFloats.length) gl.uniform1f (uniformFloatLocations[i], uniformFloats[i].value);
 		
-		// ---------------------------------------
-		// --------------- FLAGS -----------------
-		// ---------------------------------------
-		
+		// --------------- FLAGS -----------------		
 		//peoteView.setColor(colorEnabled);
 		//peoteView.setGLDepth(zIndexEnabled);
 		//peoteView.setGLBlend(blendEnabled, blendSeparate, glBlendSrc, glBlendDst, glBlendSrcAlpha, glBlendDstAlpha, blendFuncSeparate, glBlendFunc, glBlendFuncAlpha, blendColor, useBlendColor, useBlendColorSeparate, glBlendR, glBlendG, glBlendB, glBlendA);			
 		//peoteView.setMask(mask, clearMask);
 		
 		
-		// ---------------------------------------------
 		// -------------  RENDER BUFFER ----------------
-		// ---------------------------------------------
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer);
 
@@ -294,11 +325,8 @@ class CustomDisplay extends Display
 	
 	
 
-	
-	
 	// if Display is rendered into texture this is called instead:	
 	// override private function renderFramebufferProgram(peoteView:PeoteView):Void {}	
-	
 	
 	#end
 }

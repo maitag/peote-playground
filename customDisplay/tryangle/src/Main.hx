@@ -38,7 +38,7 @@ class Main extends Application
 		var backgroundBuffer = new Buffer<Sprite>(100);
 		var backgroundProgram = new Program(backgroundBuffer);
 		backgroundDisplay.addProgram(backgroundProgram);
-		backgroundBuffer.addElement( new Sprite(centerX - 125, 175, 100, 100, Color.BLUE) );
+		backgroundBuffer.addElement( new Sprite(125, 175, 100, 100, Color.BLUE) );
 
 		
 		// ---- foreground Display and a red Sprite ----
@@ -48,7 +48,7 @@ class Main extends Application
 		var foregroundBuffer = new Buffer<Sprite>(100);
 		var foregroundProgram = new Program(foregroundBuffer);
 		foregroundDisplay.addProgram(foregroundProgram);
-		foregroundBuffer.addElement( new Sprite(centerX + 25, 175, 100, 100, Color.RED ) );
+		foregroundBuffer.addElement( new Sprite(350, 175, 100, 100, Color.RED ) );
 
 		// ---- Display for custom opengl drawing commands inbetween ----
 		
