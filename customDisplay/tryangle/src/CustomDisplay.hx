@@ -18,7 +18,28 @@ class CustomDisplay extends Display
 	{
 		super(x, y, width, height, color);
 	}
-	
+
+	override private function setNewGLContext(newGl:PeoteGL)
+	{
+		super.setNewGLContext(newGl);
+		if (newGl != null && newGl != gl) // only if different GL - Context	
+		{
+			// clear old gl-context if there is one
+			if (gl != null) clear();
+			
+			// create buffer and program 
+
+		}
+	}
+
+	inline function clear() 
+	{
+		// gl.deleteBuffer(glBuffer);
+		
+		// if (peote.view.PeoteGL.Version.isINSTANCED)	gl.deleteBuffer(glInstanceBuffer);
+		// if (peote.view.PeoteGL.Version.isVAO) gl.deleteVertexArray(glVAO);
+	}
+
 	#if peoteview_customdisplay // needs compiler condition to enable override
 	
 	override private function renderProgram(peoteView:PeoteView):Void
@@ -28,42 +49,42 @@ class CustomDisplay extends Display
 		// super.renderProgram(peoteView);
 		
 		// -----------------------------------------------
-		// ----------- ---- SHADERPROGRAM ----------------
+		// ---------------- SHADERPROGRAM ----------------
 		// -----------------------------------------------
-		
-		/// vertex shader
-		///////////////
 
-		var glsl_vertex = '
-				#version 300 es
+		// vertex shader
+		var glsl_vertex = '${Version.isES3 ? "#version 300 es" : ""}
 
 				// attributes
-				layout (location = 0) in vec2 aPos;
-				layout (location = 1) in vec4 aColor;
+				${Version.isES3 ? "in" : "attribute"} vec2 aPos;
+				${Version.isES3 ? "in" : "attribute"} vec4 aColor;
 
-				// out to fragment shader
-				out vec4 vertexColor; 
+				// varyings out
+				${Version.isES3 ? "out" : "varying"} vec4 vertexColor; 
 
 				void main()
-				{  //                  x y  z    ???
-					gl_Position = vec4(aPos, 0.0, 1.0);
+				{   
 					vertexColor = aColor;
+					//                  x     y    z
+					gl_Position = vec4(aPos, 0.0, 1.0);
 				}
 		';
 
-		/// fragment shader
-		///////////////
-		
-		var glsl_fragment = '
-				#version 300 es
+		// fragment shader
+		var glsl_fragment = '${Version.isES3 ? "#version 300 es" : ""}
+
 				precision mediump float;
 
-				in vec4 vertexColor;
-				out vec4 fragColor;
+				${Version.isES3 ? "in" : "varying"} vec4 vertexColor;
+
+				${Version.isES3 ? "out vec4 Color;" : ""}
 
 				void main() 
 				{
-					fragColor = vertexColor;
+					vec4 col = vertexColor;
+
+					${Version.isES3 ? "Color" : "gl_FragColor"} = col;
+					
 				}
 		';
 		
@@ -179,10 +200,10 @@ class CustomDisplay extends Display
 
 		var attLocation = 0;
 		// use vertex array object or not into binding your shader-attributes
-		if (Version.isVAO) {
+		// if (Version.isVAO) {
 			// gl.bindVertexArray( ... );
-		}
-		else {
+		// }
+		// else {
 			// enable Vertex Attributes (specify the vertex attribute layout)
 			gl.bindAttribLocation(program, 0, "CustomProgram");
 
@@ -194,32 +215,28 @@ class CustomDisplay extends Display
 			attLocation++;
 			gl.vertexAttribPointer(attLocation, 4, gl.FLOAT, false, stride, 2 * FLOAT);
 			gl.enableVertexAttribArray(attLocation);
-		}
+		// }
 
 		// draw by instanced array (ES3) or without (ES2)
-		if (Version.isINSTANCED)
-		{
+		// if (Version.isINSTANCED) {
 			// gl.drawArraysInstanced ( ... );
-		}
-		else
-		{
+		// } else {
 			gl.drawArrays( gl.TRIANGLES, 0, vertexData.length );
-		}
+		// }
 		
 
 		// -----------------------------------------------------
 		// ---- cleaning up VAO, Buffer and shaderprogram ------
 		// -----------------------------------------------------
 		
-		if (Version.isVAO) {
+		// if (Version.isVAO) {
 			// gl.bindVertexArray(null);
-		}
-		else {
-			// disable Vertex Attributes
+		// }
+		// else {	
 			for(i in 0...attLocation){
 				gl.disableVertexAttribArray(i);
 			}
-		}
+		// }
 		
 		gl.bindBuffer (gl.ARRAY_BUFFER, null);		
 		gl.useProgram (null);
