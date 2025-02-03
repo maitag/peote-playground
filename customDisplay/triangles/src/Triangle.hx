@@ -31,11 +31,10 @@ class Triangle
 
 	static inline var VERTEX_COUNT:Int = 3;
 	static inline var BYTES_PER_VERTEX:Int = 12; // aPOS: 2*4 bytes, aCOLOR: 4*1 bytes
-	static inline var BUFF_SIZE:Int = VERTEX_COUNT * BYTES_PER_VERTEX;
-
+	
 	static inline var aPOS: Int = 0;
 	static inline var aCOLOR: Int = 1;
-	static inline var aZINDEX: Int = 2;
+	// static inline var aZINDEX: Int = 2;
 	
 	inline static function enableVertexAttrib(gl:PeoteGL) {
 		gl.enableVertexAttribArray(aPOS);
@@ -94,19 +93,18 @@ class Triangle
 	public var c3:Color = 0x0000ffff;
 	
 	// z-index
-	public var z:Int = 0;
+	// public var z:Int = 0;
 
 	// -------------------------------------------------
 	public function new(
 		x1:Float, y1:Float, c1:Color,
 		x2:Float, y2:Float, c2:Color,
-		x3:Float, y3:Float, c3:Color,
-		z:Int = 0
+		x3:Float, y3:Float, c3:Color //,z:Int = 0
 	)
 	{
 		this.x1 = x1; this.y1 = y1;	this.c1 = c1;
 		this.x2 = x2; this.y2 = y2;	this.c2 = c2;
 		this.x3 = x3; this.y3 = y3;	this.c3 = c3;
-		this.z = z;
+		//this.z = z;
 	}
 }

@@ -190,7 +190,7 @@ class CustomDisplay extends Display
 	static var STRIDE = FLOAT * VERTEX_STRIDE;
 
 	static inline var aPOS:Int = 0;
-	static inline var aCOLOR:Int = 2;
+	static inline var aCOLOR:Int = 1;
 
 	function enableVertexAttrib() {
 		gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer);

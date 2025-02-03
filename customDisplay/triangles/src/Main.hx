@@ -32,19 +32,32 @@ class Main extends Application
 		// ---- custom Display to draw opengl triangles ----
 		
 		var triangleDisplay = new TriangleDisplay(0, 0, window.width, window.height, 0, 1024);
+		
 		// triangleDisplay.blendEnabled = true;
-		// triangleDisplay.zoom = 2.0;
+		// triangleDisplay.zoom = 0.5;
 		
 		peoteView.addDisplay(triangleDisplay);
 		
-		var triangle = new Triangle(
-			20,580,Color.RED,
-			270,20,Color.GREEN,
+		var triangle1 = new Triangle(
+			 20,580,Color.RED,
+			270, 20,Color.GREEN,
 			580,580,Color.BLUE
 		);
-		triangleDisplay.add(triangle);
 
-		
+		triangleDisplay.addElement(triangle1);
+
+		var triangle2 = new Triangle(
+			 20,158,Color.RED,
+			90, 20,Color.GREEN,
+			158,158,Color.BLUE
+		);
+
+		triangleDisplay.addElement(triangle2);
+
+		haxe.Timer.delay(()->{
+			triangleDisplay.removeElement(triangle2);
+		}, 2000);
+
 	}
 
 	
