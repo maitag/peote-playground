@@ -59,6 +59,8 @@ class Main extends Application
 		
 		peoteView.addDisplay(backgroundDisplay);
 		peoteView.addDisplay(customDisplay);
+		customDisplay.blendEnabled = true;
+		// customDisplay.xOffset = -20;
 		peoteView.addDisplay(foregroundDisplay);
 		
 	}
