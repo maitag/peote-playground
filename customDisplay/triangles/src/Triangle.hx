@@ -26,7 +26,6 @@ class Triangle
 	
 	static var fragmentShaderMain = "
 	vec4 col = vertexColor;
-	// vec4 col = vec4(1.0,0.0,0.0,1.0);
 	";
 
 	static inline var VERTEX_COUNT:Int = 3;
