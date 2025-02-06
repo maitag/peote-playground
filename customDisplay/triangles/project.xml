@@ -13,6 +13,7 @@
 	<app main="Main" path="bin" file="Main" />
 	<!-- <app main="MainSierpinski" path="bin" file="MainSierpinski" /> -->
 	<!-- <app main="MainSierpinskiAnim" path="bin" file="MainSierpinskiAnim" /> -->
+	<!-- <app main="MainSierpinskiFull" path="bin" file="MainSierpinskiFull" /> -->
 
 	<define name="stats" if="html5" />
 	
