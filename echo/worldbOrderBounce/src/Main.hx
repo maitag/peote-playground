@@ -1,5 +1,6 @@
 package;
 
+import haxe.Timer;
 import haxe.CallStack;
 
 import lime.app.Application;
@@ -68,7 +69,7 @@ class Main extends Application
 				x: 150,
 				y: 100,
 				rotation: 45,
-				rotational_velocity:15,
+				rotational_velocity:55,
 				velocity_x:-100,
 				velocity_y:-90,
 				material: {
@@ -83,6 +84,7 @@ class Main extends Application
 			}
 		);
 
+		// Timer.delay(()->{red.body.x = 200;},1000);
 		
 		
 		var blue = new Rectangle(Color.BLUE,
@@ -91,6 +93,7 @@ class Main extends Application
 				x: 400,
 				y: 300,
 				rotation: 0,
+				rotational_velocity:55,
 				material: {
 					// elasticity: 0.5
 					elasticity: 1.0
@@ -112,6 +115,7 @@ class Main extends Application
 			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
 			exit: (a, b) -> trace("Collision Exited"), // at collision ends
 		});
+
 		
 	}
 	

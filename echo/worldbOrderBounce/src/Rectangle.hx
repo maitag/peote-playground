@@ -81,47 +81,51 @@ class Rectangle implements Element
 		
 		body = world.make(options);
 		
-		body.on_move = _onMove;
-		body.on_rotate = _onRotate;
-		
+		if (options.mass != 0) {
+			body.on_move = _onMove;
+			body.on_rotate = _onRotate;
+		}
+
 		buffer.addElement(this);
 	}
 	
 	function _onMove( x:Float, y:Float)
 	{
-		setPosition(x, y);
-		
+		if (x == body.last_x && y == body.last_y) return;
+		// trace("_onMove", x, y);
 
 		// --------------- bounce at border ----------------
 		if (body.velocity.x < 0) {
-			if (body.x - body.bounds().width/2.0 < 0) {
+			if (x - body.bounds().width/2.0 < 0) {
 				body.velocity = new Vector2(-body.velocity.x, body.velocity.y);
-				body.x = body.bounds().width/2.0;
+				// body.x = body.bounds().width/2.0;
 			}
 		}
-		else if (body.x + body.bounds().width/2.0 > borderWidth) {
+		else if (x + body.bounds().width/2.0 > borderWidth) {
 			body.velocity = new Vector2(-body.velocity.x, body.velocity.y);
-			body.x = borderWidth - body.bounds().width/2.0;
+			// body.x = borderWidth - body.bounds().width/2.0;
 		}
 
 		if (body.velocity.y < 0) {
-			if (body.y - body.bounds().height/2.0 < 0) {
+			if (y - body.bounds().height/2.0 < 0) {
 				body.velocity = new Vector2(body.velocity.x, -body.velocity.y);
-				body.y = body.bounds().height/2.0;
+				// body.y = body.bounds().height/2.0;
 			}
 		}
-		else if (body.y + body.bounds().height/2.0 > borderHeight) {
+		else if (y + body.bounds().height/2.0 > borderHeight) {
 			body.velocity = new Vector2(body.velocity.x, -body.velocity.y);
-			body.y = borderHeight - body.bounds().height/2.0;
+			// body.y = borderHeight - body.bounds().height/2.0;
 		}
 
-
+		setPosition(body.x, body.y);
+		
 		buffer.updateElement(this);
 	}
 	
 	function _onRotate(rotation:Float) 
 	{
-		//trace("onRotate", rotation);
+		if (rotation == body.last_rotation) return;
+		// trace("onRotate", rotation);
 		this.rotation = rotation;
 		buffer.updateElement(this);
 	}
