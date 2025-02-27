@@ -35,15 +35,21 @@ class Main extends Application
 
 	var peoteView:PeoteView;
 	var display:Display;
+
+	var rectProgram:RectProgram;
 	var circleProgram:CircleProgram;
 	
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
 
-		display = new Display(0, 0, window.width, window.height, Color.GREEN);
+		display = new Display(0, 0, window.width, window.height);
 		peoteView.addDisplay(display);
+
 		
+		rectProgram = new RectProgram();
+		display.addProgram(rectProgram);
+
 		circleProgram = new CircleProgram();
 		display.addProgram(circleProgram);
 
@@ -59,12 +65,11 @@ class Main extends Application
 		});
 		
 
-		// ---- ECHO BODIES ------		
+		// ---- CREATE ELEMENTS ----		
 		//        \o/
-		var body = world.make({
+
+		var red = rectProgram.createElement(world, 150, 100, 100, 100, Color.RED3, onMove, onRotate, {
 			//mass: 4,
-			x: 150,
-			y: 100,
 			rotation: 15,
 			rotational_velocity:55,
 			velocity_x:-100,
@@ -72,84 +77,59 @@ class Main extends Application
 			material: {
 				// elasticity: 0.5
 				elasticity: 1.0
-			},
-			shape: {
-				type: RECT,
-				width: 100,
-				height: 100
 			}
 		});
 
-		var red = new Circle(body, 100, 100, Color.RED);
-		circleProgram.addElement(red);
-
-		if (body.mass != 0) {
-			body.on_move = onMove.bind(body, red);
-			body.on_rotate = onRotate.bind(body, red);
-		}
-
-		body = world.make({
+		var orange = circleProgram.createElement(world, 350, 100, 150, Color.ORANGE, onMove, onRotate, {
 			//mass: 4,
-			x: 350,
-			y: 100,
-			rotation: 15,
-			rotational_velocity:55,
 			velocity_x:-100,
 			velocity_y:-90,
 			material: {
 				// elasticity: 0.5
 				elasticity: 1.0
-			},
-			shape: {
-				type: RECT,
-				width: 100,
-				height: 100
 			}
 		});
 
-		var orange = new Circle(body, 100, 100, Color.ORANGE);
-		circleProgram.addElement(orange);
+		var yellow = rectProgram.createElement(world, 400, 300, 30, 30, Color.YELLOW, onMove);
 
-		if (body.mass != 0) {
-			body.on_move = onMove.bind(body, orange);
-			body.on_rotate = onRotate.bind(body, orange);
-		}
-
-
-		// Timer.delay(()->{red.body.x = 200;},1000);
-
-		
 		
 		// let them collide
-		/*
-		world.listen(red.body, blue.body, {
+		
+		world.listen(red.body, orange.body, {
 			separate: true, // red and blue collides
 			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
 			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
 			exit: (a, b) -> trace("Collision Exited"), // at collision ends
 		});
 
-		*/
+		world.listen(red.body, yellow.body, {
+			separate: true, // red and blue collides
+			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
+			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
+			exit: (a, b) -> trace("Collision Exited"), // at collision ends
+		});
+
+		world.listen(yellow.body, orange.body, {
+			separate: true, // red and blue collides
+			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
+			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
+			exit: (a, b) -> trace("Collision Exited"), // at collision ends
+		});
+
+		
 	}
 
-	function onMove(body:Body, element:XYR_Interface, x:Float, y:Float)
+	function onMove(body:Body, x:Float, y:Float)
 	{	
 		if (x == body.last_x && y == body.last_y) return;
-
 		// trace("_onMove", x, y);
 		worldBorderorderBOUNCINGCheck(body, x, y);
-
-		// update element position
-		element.x = body.x;
-		element.y = body.y;
 	}
 	
-	function onRotate(body:Body, element:XYR_Interface, rotation:Float)
+	function onRotate(body:Body, rotation:Float)
 	{
 		if (rotation == body.last_rotation) return;
-
 		// trace("onRotate", rotation);
-		element.r = rotation;
 	}
 
 	function worldBorderorderBOUNCINGCheck(body:Body, x:Float, y:Float) {
@@ -182,6 +162,7 @@ class Main extends Application
 	public override function update(deltaTime:Int):Void
 	{
 		world.step(deltaTime / 1000);
+		rectProgram.update();
 		circleProgram.update();
 	}
 

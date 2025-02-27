@@ -9,14 +9,18 @@ class Circle implements Element implements XYR_Interface
 {
 	@posX @set("Position") public var x:Float = 0.0;
 	@posY @set("Position") public var y:Float = 0.0;
-	
-	@sizeX public var width:Float;
-	@sizeY public var height:Float;
-	
+		
 	@rotation public var r:Float = 0.0;
 	
-	@pivotX public var pivotX:Float = 0.0;
-	@pivotY public var pivotY:Float = 0.0;
+	@custom @varying public var radius:Float = 50.0;
+	
+	// size calculation by radius
+	@sizeX @const @formula("radius * 2.0") var width:Float;
+	@sizeY @const @formula("radius * 2.0") var height:Float;
+	
+	// pivot calculation by radius
+	@pivotX @const @formula("radius") var px:Float;
+	@pivotY @const @formula("radius") var py:Float;
 	
 	@color public var color:Color = 0x000000ff;
 	
@@ -27,16 +31,12 @@ class Circle implements Element implements XYR_Interface
 	// -------------------------------------------------------
 	public var body:Body; // <- bridge to the echo-physic body
 	
-	public function new(body:Body, width:Float, height:Float, color:Color)
+	public function new(body:Body, radius:Float, color:Color)
 	{
-		this.width = width;
-		this.height = height;
+		this.radius = radius;
 		this.body = body;
 		this.color = color;
-				
-		pivotX = width / 2;
-		pivotY = height / 2;
-
+		
 		x = body.x;// - pivotX;
 		y = body.y;// - pivotY;
 		
