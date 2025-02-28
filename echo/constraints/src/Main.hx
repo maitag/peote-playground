@@ -1,5 +1,7 @@
 package;
 
+import echo.util.verlet.Constraints.DistanceConstraint;
+import echo.util.verlet.Composite;
 import haxe.Timer;
 import haxe.CallStack;
 
@@ -9,10 +11,13 @@ import lime.ui.Window;
 import peote.view.*;
 
 import echo.Echo;
-import echo.math.Vector2;
 import echo.World;
 import echo.Body;
-import echo.data.Options;
+import echo.math.Vector2;
+import echo.data.Types.ForceType;
+import echo.util.verlet.Verlet;
+
+using echo.util.ext.FloatExt;
 
 class Main extends Application
 {
@@ -32,6 +37,7 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	
 	var world:World;
+	var verlet:Verlet;
 
 	var peoteView:PeoteView;
 	var display:Display;
@@ -65,70 +71,128 @@ class Main extends Application
 		});
 		
 
-		// ---- CREATE ELEMENTS ----		
+		// ---- CREATE ELEMENTS ----
 		//        \o/
 
+		
 		var red = rectProgram.createElement(world, 150, 100, 100, 100, Color.RED3, onMove, onRotate, {
 			//mass: 4,
 			rotation: 15,
 			rotational_velocity:55,
 			velocity_x:-100,
 			velocity_y:-90,
-			material: {
-				// elasticity: 0.5
-				elasticity: 1.0
-			}
+			material: {elasticity: 1.1}
 		});
 
 		var orange = circleProgram.createElement(world, 350, 100, 150, Color.ORANGE, onMove, onRotate, {
 			//mass: 4,
 			velocity_x:-100,
 			velocity_y:-90,
-			material: {
-				// elasticity: 0.5
-				elasticity: 1.0
-			}
+			material: {elasticity: 1.0}
 		});
 
-		var yellow = rectProgram.createElement(world, 400, 300, 30, 30, Color.YELLOW, onMove);
+		var yellow = rectProgram.createElement(world, 400, 300, 30, 30, Color.YELLOW, onMove, {material: {elasticity: 0.5}});
 
 		
-		// let them collide
-		
+		// let them collide		
 		world.listen(red.body, orange.body, {
 			separate: true, // red and blue collides
-			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
+			// enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
 			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
-			exit: (a, b) -> trace("Collision Exited"), // at collision ends
+			// exit: (a, b) -> trace("Collision Exited"), // at collision ends
 		});
-
-		world.listen(red.body, yellow.body, {
-			separate: true, // red and blue collides
-			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
-			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
-			exit: (a, b) -> trace("Collision Exited"), // at collision ends
-		});
-
-		world.listen(yellow.body, orange.body, {
-			separate: true, // red and blue collides
-			enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
-			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
-			exit: (a, b) -> trace("Collision Exited"), // at collision ends
-		});
-
+		world.listen(red.body, yellow.body, {separate: true});
+		world.listen(yellow.body, orange.body, {separate: true});
 		
+
+		// ---- CREATE some Verlet ----	
+		verlet = new Verlet({
+			width: 64,
+			height: 64,
+			gravity_x: 0,
+			gravity_y: 0,
+			iterations: 2
+		  });
+		
+		
+		test0 = circleProgram.createElement(world, 510, 200, 30, Color.GREEN2, onMove, {drag_length:0, material: {elasticity: 0.1}, velocity_x:-100});
+		test1 = circleProgram.createElement(world, 500, 300, 30, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.1} });
+
+		composite = new Composite();
+		composite.add_dot(test0.x, test0.y);
+		composite.add_dot(test1.x, test1.y);
+		composite.add_constraint(new DistanceConstraint(composite.dots[0], composite.dots[1], 0.98, 120));
+		verlet.add(composite);
+
+		// let them collide to all others	
+		world.listen(test0.body, orange.body, {separate: true});
+		world.listen(test1.body, orange.body, {separate: true});
+		world.listen(test0.body, red.body, {separate: true});
+		world.listen(test1.body, red.body, {separate: true});
+		world.listen(test0.body, orange.body, {separate: true});
+		world.listen(test1.body, orange.body, {separate: true});
+		world.listen(test0.body, yellow.body, {separate: true});
+		world.listen(test1.body, yellow.body, {separate: true});
 	}
 
+	var composite:Composite;
+	var test0:Circle;
+	var test1:Circle;
+
+	public override function update(deltaTime:Int):Void
+	{
+		// ---- use verlet to calculate constraints ------
+		composite.dots[0].x = test0.body.x;
+		composite.dots[0].y = test0.body.y;
+		composite.dots[1].x = test1.body.x;
+		composite.dots[1].y = test1.body.y;
+
+		var iterations:Int = 3;
+		for (i in 0...iterations) {
+			for (c in composite.constraints) {
+				if (c.active) c.step(1/iterations);
+			}
+		}
+
+		// var normal = test0.body.get_position() -  test1.body.get_position(); // Math.abs(120 - normal.length);
+
+		// add constraint velocity
+		var m:Float = 20;
+		var x0=(composite.dots[0].x-test0.body.x)*m;
+		var y0=(composite.dots[0].y-test0.body.y)*m;
+		var x1=(composite.dots[1].x-test1.body.x)*m;
+		var y1=(composite.dots[1].y-test1.body.y)*m;
+		test0.body.push(x0, y0, ForceType.VELOCITY);
+		test1.body.push(x1, y1, ForceType.VELOCITY);
+
+
+		// -------- collosion world step -----------
+		
+		world.step(deltaTime / 1000);
+
+		// ---- remove a part of the constraint velocity ----
+		var n:Float = 0.25;
+		test0.body.push(-x0 * n, -y0 * n, ForceType.VELOCITY);
+		test1.body.push(-x1 * n, -y1 * n, ForceType.VELOCITY);
+
+		// ---- update all graphic elements -----
+		rectProgram.update();
+		circleProgram.update();
+	}
+	
+	
 	function onMove(body:Body, x:Float, y:Float)
 	{	
-		if (x == body.last_x && y == body.last_y) return;
+		// if (x == body.last_x && y == body.last_y) return;
+		if (!body.moved()) return;
 		// trace("_onMove", x, y);
 		worldBorderorderBOUNCINGCheck(body, x, y);
 	}
 	
 	function onRotate(body:Body, rotation:Float)
 	{
-		if (rotation == body.last_rotation) return;
+		// if (rotation == body.last_rotation) return;
+		if (body.rotation.equals(body.last_rotation, 0.001)) return;
 		// trace("onRotate", rotation);
 	}
 
@@ -137,19 +201,23 @@ class Main extends Application
 		if (body.velocity.x < 0) {
 			if (x - body.bounds().width/2.0 < 0) {
 				body.velocity = new Vector2(-body.velocity.x, body.velocity.y);
+				body.x = body.bounds().width/2.0;
 			}
 		}
 		else if (x + body.bounds().width/2.0 > window.width) {
 			body.velocity = new Vector2(-body.velocity.x, body.velocity.y);
+			body.x = window.width - body.bounds().width/2.0;
 		}
 
 		if (body.velocity.y < 0) {
 			if (y - body.bounds().height/2.0 < 0) {
 				body.velocity = new Vector2(body.velocity.x, -body.velocity.y);
+				body.y = body.bounds().height/2.0;
 			}
 		}
 		else if (y + body.bounds().height/2.0 > window.height) {
 			body.velocity = new Vector2(body.velocity.x, -body.velocity.y);
+			body.y = window.height - body.bounds().height/2.0;
 		}		
 	}
 
@@ -158,13 +226,6 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
-
-	public override function update(deltaTime:Int):Void
-	{
-		world.step(deltaTime / 1000);
-		rectProgram.update();
-		circleProgram.update();
-	}
 
 	// public override function render(context:lime.graphics.RenderContext):Void {}
 	// public override function onRenderContextLost ():Void trace(" --- WARNING: LOST RENDERCONTEXT --- ");
