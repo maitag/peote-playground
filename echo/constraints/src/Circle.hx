@@ -40,7 +40,7 @@ class Circle implements Element implements XYR_Interface
 		x = body.x;// - pivotX;
 		y = body.y;// - pivotY;
 		
-		if (body.rotation != null) r = body.rotation;
+		r = body.rotation;
 	}
 	
 }

@@ -15,7 +15,6 @@ import echo.World;
 import echo.Body;
 import echo.math.Vector2;
 import echo.data.Types.ForceType;
-import echo.util.verlet.Verlet;
 
 using echo.util.ext.FloatExt;
 
@@ -37,7 +36,6 @@ class Main extends Application
 	// ------------------------------------------------------------	
 	
 	var world:World;
-	var verlet:Verlet;
 
 	var peoteView:PeoteView;
 	var display:Display;
@@ -104,16 +102,10 @@ class Main extends Application
 		world.listen(red.body, yellow.body, {separate: true});
 		world.listen(yellow.body, orange.body, {separate: true});
 		
+		// WHY THIS NOT WORKS instead ?
+		// world.listen([red.body, yellow.body, orange.body], {separate: true});
 
-		// ---- CREATE some Verlet ----	
-		verlet = new Verlet({
-			width: 64,
-			height: 64,
-			gravity_x: 0,
-			gravity_y: 0,
-			iterations: 2
-		  });
-		
+		// ---- CREATE CONSTRAINTS ----	
 		
 		test0 = circleProgram.createElement(world, 510, 200, 30, Color.GREEN2, onMove, {drag_length:0, material: {elasticity: 0.1}, velocity_x:-100});
 		test1 = circleProgram.createElement(world, 500, 300, 30, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.1} });
@@ -122,7 +114,6 @@ class Main extends Application
 		composite.add_dot(test0.x, test0.y);
 		composite.add_dot(test1.x, test1.y);
 		composite.add_constraint(new DistanceConstraint(composite.dots[0], composite.dots[1], 0.98, 120));
-		verlet.add(composite);
 
 		// let them collide to all others	
 		world.listen(test0.body, orange.body, {separate: true});
@@ -141,7 +132,7 @@ class Main extends Application
 
 	public override function update(deltaTime:Int):Void
 	{
-		// ---- use verlet to calculate constraints ------
+		// ---- calculate constraints ------
 		composite.dots[0].x = test0.body.x;
 		composite.dots[0].y = test0.body.y;
 		composite.dots[1].x = test1.body.x;
