@@ -12,14 +12,13 @@ import echo.Echo;
 import echo.World;
 import echo.Body;
 import echo.math.Vector2;
-
-import echo.BodyConstraints;
-import echo.BodyConstraints.DistanceElastic;
-import echo.BodyConstraints.PinElastic;
+import echo.data.Types.ForceType;
+import echo.util.verlet.Constraints.DistanceConstraint;
+import echo.util.verlet.Composite;
 
 using echo.util.ext.FloatExt;
 
-class Main extends Application
+class MainComposite extends Application
 {
 	override function onWindowCreate():Void
 	{
@@ -43,8 +42,6 @@ class Main extends Application
 
 	var rectProgram:RectProgram;
 	var circleProgram:CircleProgram;
-
-	var mousePin:PinElastic = null;
 	
 	public function startSample(window:Window)
 	{
@@ -76,67 +73,98 @@ class Main extends Application
 		//        \o/
 
 		
-		var orange = circleProgram.createElement(world, 250, 100, 50, Color.ORANGE, onMove, onRotate, {
+		var red = rectProgram.createElement(world, 150, 100, 100, 100, Color.RED3, onMove, onRotate, {
 			//mass: 4,
-			velocity_x:-70,
-			velocity_y:-30,
+			rotation: 15,
+			rotational_velocity:55,
+			velocity_x:-100,
+			velocity_y:-90,
+			material: {elasticity: 1.1}
+		});
+
+		var orange = circleProgram.createElement(world, 350, 100, 150, Color.ORANGE, onMove, onRotate, {
+			//mass: 4,
+			velocity_x:-100,
+			velocity_y:-90,
 			material: {elasticity: 1.0}
 		});
+
+		var yellow = rectProgram.createElement(world, 400, 300, 30, 30, Color.YELLOW, onMove, {material: {elasticity: 0.5}});
+
 		
+		// let them collide		
+		world.listen(red.body, orange.body, {
+			separate: true, // red and blue collides
+			// enter: (a, b, c) -> trace("Collision Entered"), // at first frame that a collision starts
+			//stay: (a, b, c) -> trace("Collision Stayed"), // at frames when the two Bodies are continuing to collide
+			// exit: (a, b) -> trace("Collision Exited"), // at collision ends
+		});
+		world.listen(red.body, yellow.body, {separate: true});
+		world.listen(yellow.body, orange.body, {separate: true});
+		
+		// WHY THIS NOT WORKS instead ?
+		// world.listen([red.body, yellow.body, orange.body], {separate: true});
 
 		// ---- CREATE CONSTRAINTS ----	
-		bodyConstraints = new BodyConstraints();
 		
-		var green0 = rectProgram.createElement(world, 300,300, 50,50, Color.GREEN2, onMove, {drag_length:0, material: {elasticity: 0.9, gravity_scale:1} });
-		var green1 = rectProgram.createElement(world, 300,400, 50,50, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.9, gravity_scale:1} });
-		bodyConstraints.add(new DistanceElastic(green0.body, green1.body, 0.3, 0.5));
+		test0 = circleProgram.createElement(world, 510, 200, 30, Color.GREEN2, onMove, {drag_length:0, material: {elasticity: 0.1}, velocity_x:-100});
+		test1 = circleProgram.createElement(world, 500, 300, 30, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.1} });
 
-		var blue = circleProgram.createElement(world, 500, 250, 25, Color.BLUE2, onMove, {drag_length:0, velocity_x:-100, material: {elasticity: 0.9, gravity_scale:35} });
-		bodyConstraints.add(new PinElastic(400, 0, blue.body, 0.95, 0.5));
-		
+		composite = new Composite();
+		composite.add_dot(test0.x, test0.y);
+		composite.add_dot(test1.x, test1.y);
+		composite.add_constraint(new DistanceConstraint(composite.dots[0], composite.dots[1], 0.98, 120));
 
-		// let them collide
-		world.listen(green0.body, orange.body, {separate: true});
-		world.listen(green1.body, orange.body, {separate: true});
-		world.listen(blue.body, orange.body, {separate: true});
-		world.listen(blue.body, green0.body, {separate: true});
-		world.listen(blue.body, green1.body, {separate: true});
-		
-		var tri0 = circleProgram.createElement(world, 700, 70, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		var tri1 = circleProgram.createElement(world, 650, 50, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		var tri2 = circleProgram.createElement(world, 750, 50, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		bodyConstraints.add(new DistanceElastic(tri0.body, tri1.body, 0.8, 0.7, 50));
-		bodyConstraints.add(new DistanceElastic(tri1.body, tri2.body, 0.8, 0.7, 50));
-		bodyConstraints.add(new DistanceElastic(tri2.body, tri0.body, 0.8, 0.7, 50));
-
-		// let them collide
-		world.listen(tri0.body, orange.body, {separate: true});
-		world.listen(tri1.body, orange.body, {separate: true});
-		world.listen(tri2.body, orange.body, {separate: true});
-
-
-		// controlled by mouse
-		var red = circleProgram.createElement(world, 500, 250, 20, Color.RED2, onMove, {drag_length:0, material: {elasticity: 0.5, gravity_scale:0} });
-		mousePin = new PinElastic(100, 100, red.body, 0.9, 0.9, 0.01);
-		bodyConstraints.add(mousePin);
-		// let them collide
-		world.listen(red.body, orange.body, {separate: true});
-		world.listen(red.body, green0.body, {separate: true});
-		world.listen(red.body, green1.body, {separate: true});
-		world.listen(red.body, blue.body, {separate: true});
-		world.listen(red.body, tri0.body, {separate: true});
-		world.listen(red.body, tri1.body, {separate: true});
-		world.listen(red.body, tri2.body, {separate: true});
-
-		
+		// let them collide to all others	
+		world.listen(test0.body, orange.body, {separate: true});
+		world.listen(test1.body, orange.body, {separate: true});
+		world.listen(test0.body, red.body, {separate: true});
+		world.listen(test1.body, red.body, {separate: true});
+		world.listen(test0.body, orange.body, {separate: true});
+		world.listen(test1.body, orange.body, {separate: true});
+		world.listen(test0.body, yellow.body, {separate: true});
+		world.listen(test1.body, yellow.body, {separate: true});
 	}
 
-	var bodyConstraints:BodyConstraints;
-	
+	var composite:Composite;
+	var test0:Circle;
+	var test1:Circle;
+
 	public override function update(deltaTime:Int):Void
 	{
-		// -------- collosion world step -----------	
-		world.step(deltaTime / 1000, bodyConstraints);
+		// ---- calculate constraints ------
+		composite.dots[0].x = test0.body.x;
+		composite.dots[0].y = test0.body.y;
+		composite.dots[1].x = test1.body.x;
+		composite.dots[1].y = test1.body.y;
+
+		var iterations:Int = 3;
+		for (i in 0...iterations) {
+			for (c in composite.constraints) {
+				if (c.active) c.step(1/iterations);
+			}
+		}
+
+		// var normal = test0.body.get_position() -  test1.body.get_position(); // Math.abs(120 - normal.length);
+
+		// add constraint velocity
+		var m:Float = 20;
+		var x0=(composite.dots[0].x-test0.body.x)*m;
+		var y0=(composite.dots[0].y-test0.body.y)*m;
+		var x1=(composite.dots[1].x-test1.body.x)*m;
+		var y1=(composite.dots[1].y-test1.body.y)*m;
+		test0.body.push(x0, y0, ForceType.VELOCITY);
+		test1.body.push(x1, y1, ForceType.VELOCITY);
+
+
+		// -------- collosion world step -----------
+		
+		world.step(deltaTime / 1000);
+
+		// ---- remove a part of the constraint velocity ----
+		var n:Float = 0.25;
+		test0.body.push(-x0 * n, -y0 * n, ForceType.VELOCITY);
+		test1.body.push(-x1 * n, -y1 * n, ForceType.VELOCITY);
 
 		// ---- update all graphic elements -----
 		rectProgram.update();
@@ -195,12 +223,7 @@ class Main extends Application
 	// public override function onRenderContextRestored (context:lime.graphics.RenderContext):Void trace(" --- onRenderContextRestored --- ");	
 
 	// ----------------- MOUSE EVENTS ------------------------------
-	public override function onMouseMove (x:Float, y:Float):Void {
-		if (mousePin!=null) {
-			mousePin.bp.x = x;
-			mousePin.bp.y = y;
-		}
-	}
+	// public override function onMouseMove (x:Float, y:Float):Void {}
 	// public override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// public override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}
 	// public override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
