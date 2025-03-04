@@ -4,6 +4,8 @@ import echo.math.Vector2;
 import echo.Body;
 import echo.data.Types.ForceType; 
 
+using echo.util.ext.FloatExt;
+
 class BodyConstraints {
 	public var constraints:Array<BodyConstraint> = [];
 
@@ -64,6 +66,7 @@ class DistanceElastic extends BodyConstraint {
 	public function step(fdt:Float) {
 		var ap:Vector2 = a.get_position();
 		var bp:Vector2 = b.get_position();
+		if (ap == bp) return;
 		var normal = ap - bp;
 		var m = normal.length_sq;
 		var n = normal * (((distance * distance - m) / m) * stiffness * fdt);
@@ -116,9 +119,10 @@ class PinElastic extends BodyConstraint {
 
 	public function step(fdt:Float) {
 		var ap:Vector2 = a.get_position();
+		if (ap == bp) return;
 		var normal = ap - bp;
 		var m = normal.length_sq;
-		var n = normal * (((distance * distance - m) / m) * stiffness * fdt);		
+		var n = normal * (((distance * distance - m) / m) * stiffness * fdt);
 		old_n *= swingdamping;
 		a.push(n.x - old_n.x, n.y - old_n.y, ForceType.VELOCITY);
 		old_n = n;

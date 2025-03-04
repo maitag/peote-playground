@@ -19,7 +19,7 @@ import echo.BodyConstraints.PinElastic;
 
 using echo.util.ext.FloatExt;
 
-class Main extends Application
+class MainWormWasher extends Application
 {
 	override function onWindowCreate():Void
 	{
@@ -45,6 +45,7 @@ class Main extends Application
 	var circleProgram:CircleProgram;
 
 	var mousePin:PinElastic = null;
+	var rotatorPin:PinElastic = null;
 	
 	public function startSample(window:Window)
 	{
@@ -67,7 +68,7 @@ class Main extends Application
 		world = Echo.start({
 			width: window.width, // Affects the bounds for collision checks.
 			height: window.height, // Affects the bounds for collision checks.
-			gravity_y: 40, // Force of Gravity on the Y axis. Also available for the X axis.
+			gravity_y: 10, // Force of Gravity on the Y axis. Also available for the X axis.
 			iterations: 2 // Sets the number of Physics iterations that will occur each time the World steps.
 		});
 		
@@ -75,38 +76,53 @@ class Main extends Application
 		// ---- CREATE ELEMENTS ----
 		//        \o/
 
-		
-		var orange = circleProgram.createElement(world, 250, 100, 50, Color.ORANGE, onMove, onRotate, {
-			//mass: 4,
-			velocity_x:-70,
-			velocity_y:-30,
-			material: {elasticity: 1.0}
-		});
-		
-
 		// ---- CREATE CONSTRAINTS ----	
 		bodyConstraints = new BodyConstraints();
 		
-		var green0 = rectProgram.createElement(world, 300,300, 50,50, Color.GREEN2, onMove, {drag_length:0, material: {elasticity: 0.9, gravity_scale:1} });
-		var green1 = rectProgram.createElement(world, 300,400, 50,50, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.9, gravity_scale:1} });
-		bodyConstraints.add(new DistanceElastic(green0.body, green1.body, 0.3, 0.5));
+		var rotator = rectProgram.createElement(world, window.width/2, window.height/2, Math.min(window.width,window.height)-30, 30, Color.ORANGE, onMove, onRotate, {
+			// mass: 0,
+			rotational_velocity:-50,
+			material: {
+				gravity_scale:0,
+				elasticity: 0.2
+			}
+		});
+		rotatorPin = new PinElastic(  window.width/2, window.height/2, rotator.body, 0.9, 0.9, 0);
+		bodyConstraints.add(rotatorPin);
 
-		var blue = circleProgram.createElement(world, 500, 250, 25, Color.BLUE2, onMove, {drag_length:0, velocity_x:-100, material: {elasticity: 0.9, gravity_scale:35} });
-		bodyConstraints.add(new PinElastic(400, 0, blue.body, 0.95, 0.5));
+		for (j in 0...9) { var y = 20 + j * 30;
+			for (i in 0...5) { var x = 10 + i * 140;
+				var color = Color.random(255);
+				var w0 = circleProgram.createElement(world,     x, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w1 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w2 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w3 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w4 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w5 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w6 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				var w7 = circleProgram.createElement(world, x+=15, y, 10, color, onMove, {max_velocity_x:800, max_velocity_y:800,drag_length:0, material: {elasticity: 0.2, gravity_scale:1} });
+				w0.body.layer_mask = w2.body.layer_mask = w4.body.layer_mask = w6.body.layer_mask = 1;
+				w1.body.layer_mask = w3.body.layer_mask = w5.body.layer_mask = w7.body.layer_mask = 2;
+				w0.body.layers = w2.body.layers = w4.body.layers = w6.body.layers = 1;
+				w1.body.layers = w3.body.layers = w5.body.layers = w7.body.layers = 2;
+				bodyConstraints.add(new DistanceElastic(w0.body, w1.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w1.body, w2.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w2.body, w3.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w3.body, w4.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w4.body, w5.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w5.body, w6.body, 0.7, 0.8));
+				bodyConstraints.add(new DistanceElastic(w6.body, w7.body, 0.7, 0.8));
+			}
+		}
+
+		var green = circleProgram.createElement(world, 90, window.height-100, 70, Color.GREEN3, onMove, {drag_length:0, material: {elasticity: 0.1, gravity_scale:0} });
+		var blue = circleProgram.createElement(world, window.width-100, window.height-100, 70, Color.BLUE3, onMove, {drag_length:0, material: {elasticity: 0.1, gravity_scale:0} });
 		
-		
-		var tri0 = circleProgram.createElement(world, 700, 70, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		var tri1 = circleProgram.createElement(world, 650, 50, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		var tri2 = circleProgram.createElement(world, 750, 50, 25, Color.YELLOW, onMove, {drag_length:0, velocity_x:-200, material: {elasticity: 1.0, gravity_scale:1} });
-		bodyConstraints.add(new DistanceElastic(tri0.body, tri1.body, 0.8, 0.7, 50));
-		bodyConstraints.add(new DistanceElastic(tri1.body, tri2.body, 0.8, 0.7, 50));
-		bodyConstraints.add(new DistanceElastic(tri2.body, tri0.body, 0.8, 0.7, 50));
-
-
-
 		// controlled by mouse
-		var red = circleProgram.createElement(world, 500, 250, 20, Color.RED2, onMove, {drag_length:0, material: {elasticity: 0.5, gravity_scale:0} });
-		mousePin = new PinElastic(100, 100, red.body, 0.9, 0.9, 0.01);
+		var red = circleProgram.createElement(world, 700, 100, 20, Color.RED2, onMove, {drag_length:0, material: {elasticity: 0.1, gravity_scale:0} });
+		// red.body.layer_mask = 3;
+		// red.body.layers = 3;
+		mousePin = new PinElastic(100, 100, red.body, 0.9, 0.9, 0);
 		bodyConstraints.add(mousePin);
 
 		// let them ALL collide
@@ -208,6 +224,7 @@ class Main extends Application
 	// public override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}
 
 	// -------------- other WINDOWS EVENTS ----------------------------
+	/*
 	public override function onWindowResize (width:Int, height:Int):Void {
 		display.width = width;
 		display.height = height;
@@ -225,7 +242,7 @@ class Main extends Application
 		
 		// prevents the update deltaTime to be such as large as it needs to resize the Window!!!!!
 		Timer.delay(()->{isUpdate=true;},10);
-	}
+	}*/
 	// public override function onWindowLeave():Void { trace("onWindowLeave"); }
 	// public override function onWindowActivate():Void { trace("onWindowActivate"); }
 	// public override function onWindowClose():Void { trace("onWindowClose"); }
