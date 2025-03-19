@@ -1,6 +1,7 @@
 package;
 
 import haxe.CallStack;
+import haxe.Resource; // to include "shaderPasses.glsl" file
 
 import lime.app.Application;
 import lime.ui.Window;
@@ -34,31 +35,22 @@ class Main extends Application
 	{
 		peoteView = new PeoteView(window);
 
-
-
 		// initial texture data
 		var startTextureData = new TextureData(128, 128, TextureFormat.RGBA);
 		for (y in 32...96) for (x in 32...96) startTextureData.setColor_RGBA(x, y, 0x010099ff);
-
-
 
 		// initial texture
 		var fbTexture = new Texture(128, 128, 1, {format:TextureFormat.RGBA} );
 		fbTexture.setData(startTextureData);
 		
-
 		// inits Displays and Programs into Multipass->Shader-QUEUE:
+		var fallingSand = new Multipass( peoteView, fbTexture, Resource.getString("shaderPasses.glsl") );
 
-		new Multipass( peoteView, fbTexture );
+		// fallingSand.renderStart();
+		new haxe.Timer(50).run = () -> fallingSand.renderStep();
 
-
-
-		
-		// zoom in:
-		peoteView.zoom = 4.0;
-
-		// let the uTime uniform rotate :) 
-		peoteView.start();
+		// let the uTime uniform rotate to get a better random seed :)
+		// peoteView.start();
 	}
 	
 	
