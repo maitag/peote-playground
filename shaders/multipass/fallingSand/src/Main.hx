@@ -33,24 +33,24 @@ class Main extends Application
 		
 	public function startSample(window:Window)
 	{
-		peoteView = new PeoteView(window);
+		peoteView = new PeoteView(window, Color.GREY2);
 
 		// initial texture data
 		var startTextureData = new TextureData(128, 128, TextureFormat.RGBA);
-		for (y in 32...96) for (x in 32...96) startTextureData.setColor_RGBA(x, y, 0x010099ff);
+		for (y in 32...96) for (x in 54...74) startTextureData.setColor_RGBA(x, y, 0x010099ff);
 
 		// initial texture
-		var fbTexture = new Texture(128, 128, 1, {format:TextureFormat.RGBA} );
+		var fbTexture = new Texture(128, 128, 1, {format:TextureFormat.RGBA, powerOfTwo:false} );
 		fbTexture.setData(startTextureData);
 		
 		// inits Displays and Programs into Multipass->Shader-QUEUE:
 		var fallingSand = new Multipass( peoteView, fbTexture, Resource.getString("shaderPasses.glsl") );
 
-		// fallingSand.renderStart();
-		new haxe.Timer(50).run = () -> fallingSand.renderStep();
+		fallingSand.renderStart();
+		// new haxe.Timer(500).run = () -> fallingSand.renderStep();		
 
 		// let the uTime uniform rotate to get a better random seed :)
-		// peoteView.start();
+		peoteView.start();
 	}
 	
 	

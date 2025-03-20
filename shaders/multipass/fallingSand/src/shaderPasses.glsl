@@ -9,7 +9,7 @@ float rand() {
 	return float((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 2147483647.0;
 }
 
-#define INIT_SEED() seed = int(uTime * vTexCoord.x + vTexCoord.y * texRes.x); seed = int(rand() * 2147483647.0) + iFrame;
+#define INIT_SEED() seed = int(uTime * vTexCoord.x * texRes.x + vTexCoord.y * texRes.x * texRes.x); seed = int(rand() * 2147483647.0) + iFrame;
 
 const int AIR  = 0;
 const int SAND = 1;
@@ -47,25 +47,17 @@ vec4 cellToCol(Cell cell) {
 // ------------------------------------------------------------------------------------------
 vec4 pass1( int textureID )
 {
-	vec2 texRes = getTextureResolution(textureID);
-	
-	INIT_SEED();
-	
+	vec2 texRes = getTextureResolution(textureID);	
 	Cell self = getCellAt(textureID, vTexCoord);
 
-	switch (self.type)
-	{
-		case SAND:
-		{	
+	switch (self.type) {
+		case SAND: {	
 			Cell below = getCellAt(textureID, vTexCoord + vec2(0.0, 1.0) / texRes);
 			if (below.type == AIR) {
 				return cellToCol( Cell(AIR, true, 0.0) );
-				// return cellToCol( Cell(AIR, false, 0.0) );
 			}
-		} break;
-		
-		case AIR:
-		{	
+		} break;		
+		case AIR: {	
 			Cell above = getCellAt(textureID, vTexCoord + vec2(0.0, -1.0) / texRes);
 			if (above.type == SAND) {
 				above.passed = true;
@@ -85,37 +77,22 @@ vec4 pass2( int textureID )
 	// passthrought for testing:
 	// return getTextureColor( textureID, vTexCoord );
 
-	vec2 texRes = getTextureResolution(textureID);
-	
-	INIT_SEED();
-
-	float xOffset = (rand() >= 0.5) ? 1.0 : -1.0;
-	
+	vec2 texRes = getTextureResolution(textureID);	
 	Cell self = getCellAt(textureID, vTexCoord);
+	if (self.passed) return cellToCol(self);
 
-	if (self.passed) {
-		return cellToCol(self);
-	}
-
-	switch (self.type)
-	{
-		case SAND:
-		{
-			Cell below = getCellAt(textureID, vTexCoord + vec2(xOffset, 1.0) / texRes );
-
-			if (!below.passed && below.type == AIR)
-			{
-				return cellToCol(Cell(AIR, true, 0.0));
-			}
+	INIT_SEED();
+	float xOffset = (rand() < 0.5) ? 1.0 : -1.0;
+	
+	switch (self.type) {
+		case SAND: {
+			Cell below = getCellAt(textureID, vTexCoord + vec2(xOffset, 1.0) / texRes );			
+			if (!below.passed && below.type == AIR) return cellToCol(Cell(AIR, true, 0.0));
 		}
-		break;
-		
-		case AIR:
-		{
-			Cell above = getCellAt(textureID, vTexCoord + vec2(-xOffset, -1.0) / texRes );
-
-			if (!above.passed && above.type == SAND)
-			{
+		break;		
+		case AIR: {
+			Cell above = getCellAt(textureID, vTexCoord + vec2(-xOffset, -1.0) / texRes );			
+			if (!above.passed && above.type == SAND) {
 				above.passed = true;
 				return cellToCol(above);
 			}
@@ -130,12 +107,43 @@ vec4 pass2( int textureID )
 // ----------------------------------- PASS 3 -----------------------------------------------
 // ------------------------------------------------------------------------------------------
 
-// ... T O D O
+vec4 pass3( int textureID )
+{
+	// passthrought for testing:
+	// return getTextureColor( textureID, vTexCoord );
+
+	vec2 texRes = getTextureResolution(textureID);	
+	Cell self = getCellAt(textureID, vTexCoord);
+	if (self.passed) return cellToCol(self);
+
+	INIT_SEED(); rand();
+	float xOffset = (rand() >= 0.5) ? 1.0 : -1.0;
+	
+	switch (self.type) {
+		case SAND: {
+			Cell below = getCellAt(textureID, vTexCoord + vec2(xOffset, 1.0) / texRes );			
+			if (!below.passed && below.type == AIR) return cellToCol(Cell(AIR, true, 0.0));
+		}
+		break;		
+		case AIR: {
+			Cell above = getCellAt(textureID, vTexCoord + vec2(-xOffset, -1.0) / texRes );			
+			if (!above.passed && above.type == SAND) {
+				above.passed = true;
+				return cellToCol(above);
+			}
+		}
+		break;
+	}
+
+	return cellToCol(self);
+}
+
 
 
 // ------------------------------------------------------------------------------------------
 // ----------------------- VIEW the CELLSTATE into its colors -------------------------------
 // ------------------------------------------------------------------------------------------
+
 vec4 view( int textureID )
 {
 	// passthrought for testing:
