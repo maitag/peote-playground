@@ -20,14 +20,14 @@ class Multipass
 {
 	var peoteView:PeoteView;
 
-	var displayPass1:Display;
-	var displayPass2:Display;
-	var displayPass3:Display;
+	public var displayPass1:Display;
+	public var displayPass2:Display;
+	public var displayPass3:Display;
 
-	var displayView:Display;
-	var programView1:Program;
-	var programView2:Program;
-	var programView3:Program;
+	public var displayView:Display;
+	public var programView1:Program;
+	public var programView2:Program;
+	public var programView3:Program;
 
 	public function new(peoteView:PeoteView, fbTexturePass1:Texture, shader:String)
 	{	
@@ -93,7 +93,6 @@ class Multipass
 
 		// displayView = new Display(0, 0, w, h);
 		displayView = new Display(0, 0, 800, 600);
-		displayView.zoom = 4.69;
 
 		programView1 = new Program(buffer);
 		programView1.setTexture(fbTexturePass3, "base", false); // use fbTexture where DisplayPass1 is render into

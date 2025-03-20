@@ -10,8 +10,10 @@
 	<window width="800" height="600" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<app main="Main" path="bin" file="Main" />
-	<!-- <define name="stats" if="html5" /> -->
+	<!-- <app main="Main" path="bin" file="Main" /> -->
+	<app main="MainPaint" path="bin" file="MainPaint" />
+
+	<define name="stats" if="html5" />
 	
 	<source path="src" />
 
