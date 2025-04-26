@@ -1,9 +1,10 @@
 package;
 
-import peote.net.Reason;
-import ui.UI;
 import peote.net.PeoteClient;
+import peote.net.Reason;
 import peote.net.Remote;
+
+import ui.UI;
 
 import Server.User; // needs for RemoteGeneration
 
@@ -37,12 +38,12 @@ class Client implements Remote {
 				}
 			},
 			
-			onDisconnect: function(client:PeoteClient, reason:Int)
+			onDisconnect: function(client:PeoteClient, reason:Reason)
 			{
-				trace('onDisconnect: jointNr=${client.jointNr}');
+				trace('onDisconnect: jointNr=${client.jointNr}, reason:$reason');
 			},
 			
-			onError: function(client:PeoteClient, reason:Int)
+			onError: function(client:PeoteClient, reason:Reason)
 			{
 				if (onMissingServer != null && reason == Reason.ID) onMissingServer();
 				else trace('onEnterJointError:$reason');

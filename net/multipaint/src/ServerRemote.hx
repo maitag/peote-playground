@@ -81,7 +81,7 @@ class ServerRemote implements Remote {
 		}
 	}
 
-	@:remote public function penDraw(drawQueue:Array<UInt16>):Void {
+	@:remote public function penDraw(drawQueue:Array<peote.io.UInt16>):Void {
 		// trace('Server: penDraw - userNr:$userNr');		
 		// send to all clients
 		for (serverRemote in server.serverRemoteArray) {

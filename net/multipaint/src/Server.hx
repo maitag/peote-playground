@@ -1,7 +1,9 @@
 package;
 
 import haxe.ds.IntMap;
+
 import peote.net.PeoteServer;
+import peote.net.Reason;
 
 class Server {
 	
@@ -43,12 +45,12 @@ class Server {
 				trace('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
 				serverRemoteMap.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
 			},
-			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
+			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
-				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
+				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr, reason:$reason');
 				removeServerRemote(userNr);
 			},
-			onError: function(server:PeoteServer, userNr:Int, reason:Int)
+			onError: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
 				trace('onCreateJointError:$reason, userNr:$userNr');
 				removeServerRemote(userNr);

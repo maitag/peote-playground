@@ -1,10 +1,12 @@
 package;
 
 import haxe.ds.IntMap;
-import peote.net.PeoteServer;
-import peote.net.Remote;
-import ui.UI;
 
+import peote.net.PeoteServer;
+import peote.net.Reason;
+import peote.net.Remote;
+
+import ui.UI;
 
 import Client; // needs for RemoteGeneration
 
@@ -33,7 +35,7 @@ class Server
 			
 			onUserConnect: function(server:PeoteServer, userNr:Int)
 			{
-				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');			
+				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
 			},
 			
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
@@ -50,15 +52,15 @@ class Server
 				
 			},
 			
-			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
+			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
-				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
+				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr, reason:$reason');
 				users.remove(userNr);
 			},
 			
-			onError: function(server:PeoteServer, userNr:Int, reason:Int)
+			onError: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
-				trace('onCreateJointError:$reason, userNr:$userNr');
+				trace('onCreateJointError:$reason, userNr:$userNr, reason:$reason');
 			}
 			
 		});

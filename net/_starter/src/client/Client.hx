@@ -2,6 +2,7 @@ package client;
 
 import lime.ui.Window;
 import peote.net.PeoteClient;
+import peote.net.Reason;
 
 class Client {
 	
@@ -25,12 +26,12 @@ class Client {
 				view.remoteIsReady(client, remoteId);
 			},
 			
-			onDisconnect: function(client:PeoteClient, reason:Int)
+			onDisconnect: function(client:PeoteClient, reason:Reason)
 			{
-				trace('onDisconnect: jointNr=${client.jointNr}');
+				trace('onDisconnect: jointNr=${client.jointNr}, reason:$reason');
 			},
 			
-			onError: function(client:PeoteClient, reason:Int)
+			onError: function(client:PeoteClient, reason:Reason)
 			{
 				trace('onEnterJointError:$reason');
 			}
