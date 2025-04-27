@@ -1,5 +1,6 @@
 package;
 
+import peote.view.TextureData;
 import peote.net.Remote;
 import ServerRemote;
 
@@ -84,7 +85,11 @@ class ClientRemote implements Remote {
 
 		// --- texture to render into ---		
 		textureCanvas = new Texture(width, height);
-		// do not clear the texture before rendering into (only color, depth and stencil is cleaned)
+
+		// init by empty TextureData to not get a random memory-dump as canvas-background ;)
+		textureCanvas.setData(new TextureData(width, height, Color.BLACK));
+
+		// do not clear the texture before rendering into (normally the color, depth and stencil is cleaned)
 		textureCanvas.clearOnRenderInto = false;
 		
 
