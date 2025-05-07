@@ -1,6 +1,5 @@
 package;
 
-import peote.view.TextureData;
 import peote.net.Remote;
 import ServerRemote;
 
@@ -22,6 +21,7 @@ import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Texture;
+import peote.view.TextureData;
 import peote.view.Color;
 
 
