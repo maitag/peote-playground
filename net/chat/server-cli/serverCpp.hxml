@@ -1,0 +1,7 @@
+-cp src
+-cp ../src
+-main Haxemud
+-lib peote-net tink_cli
+-dce full
+
+-cpp build/cpp
