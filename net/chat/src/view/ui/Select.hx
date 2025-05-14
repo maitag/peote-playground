@@ -1,8 +1,9 @@
-package ui;
+package view.ui;
 
-class UISelect
+// TODO: make all child of uitextline!!!
+
+class Select
 {
-
     public function new(x:Int, y:Int, width:Int, itemHeight:Int, itemGap:Int, border:Int, zIndex:Int = 0,
 		items:Array<String>, defaultItem:Int = 0
     ) 
@@ -74,18 +75,12 @@ class UISelectArea extends UIArea implements peote.ui.interactive.interfaces.Par
 
 	var textLines = new Array<TextLine>();
 
-	var itemHeight:Int;
-	var itemGap:Int;
-
 	public function new(x:Int, y:Int, width:Int, itemHeight:Int, itemGap:Int, border:Int, zIndex:Int = 0,
 		items:Array<String>, defaultItem:Int = 0,
         ?config:AreaConfig
 	) 
 	{
 		super(x-border, y-border, width+border+border, border+border + (itemHeight + itemGap)*items.length - itemGap, zIndex, config);
-		
-		this.itemHeight = itemHeight;
-		this.itemGap = itemGap;
 		
 		selected = defaultItem;
 		
@@ -150,7 +145,7 @@ class UISelectArea extends UIArea implements peote.ui.interactive.interfaces.Par
 			for (i in indices) {
 				textLines[i].y = yPos;
 				textLines[i].updateVisibleLayout();
-				yPos += itemHeight+itemGap;
+				yPos += textLines[i].height;
 			}
 
 			onSelect(this, index, t.text);

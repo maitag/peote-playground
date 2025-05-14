@@ -1,8 +1,8 @@
 -cp src
 -cp ../src
--main Haxemud
+-main PeoteChatServer
 -lib peote-net tink_cli
 -dce full
 
--neko build/neko/haxemud.n
+-neko build/neko/peotechatserver.n
 

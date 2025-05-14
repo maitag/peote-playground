@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="PeoteViewSamples" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
+	<meta title="PeoteChatSample" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
@@ -11,8 +11,12 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="OfflineTest" path="bin" file="OfflineTest" />
-	<!-- <app main="PeoteChatClient" path="bin" file="PeoteChatClient" /> -->
-	<!-- <app main="PeoteChatServer" path="bin" file="PeoteChatServer" /> -->
+	<app main="PeoteChatServer" path="bin" file="PeoteChatServer" if="server" />
+	<app main="PeoteChatClient" path="bin" file="PeoteChatClient" if="client" />
+
+	<haxedef name="host" value="localhost" />
+	<haxedef name="port" value="7680" />
+	<haxedef name="channel" value="peotechat" />
 	
 	<source path="src" />
 	

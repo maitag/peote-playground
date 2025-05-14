@@ -10,7 +10,7 @@ import tink.Cli;
 
 import net.Server;
 
-class Haxemud
+class PeoteChatServer
 {
 	
 	static function main()

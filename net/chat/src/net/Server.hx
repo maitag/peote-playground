@@ -8,8 +8,12 @@ class Server
 	var peoteServer:PeoteServer;
 	var serverRemote = new IntMap<ServerRemote>();
 
-	public function new(host:String, port:Int, channelName:String, offline:Bool = false) 
+	public var log:String->?Bool->Void;	
+
+	public function new(host:String, port:Int, channelName:String, log:String->?Bool->Void, offline:Bool = false) 
 	{
+		this.log = log;
+
 		peoteServer = new PeoteServer(
 		{
 			// bandwith simmulation if there is local testing
@@ -19,12 +23,12 @@ class Server
 			
 			onCreate: function(server:PeoteServer)
 			{
-				trace('onCreateJoint: Channel ${server.jointNr} created.');
+				log('onCreateJoint: Channel ${server.jointNr} created.');
 			},
 			
 			onUserConnect: function(server:PeoteServer, userNr:Int)
 			{
-				trace('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
+				log('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
 				
 				// store a new ServerRemote for each user into Map
 				var _serverRemote = new ServerRemote(this, userNr);
@@ -35,19 +39,19 @@ class Server
 			
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
 			{
-				trace('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
+				log('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
 				serverRemote.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
 			},
 			
 			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
-				trace('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
+				log('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
 				//serverRemote.get(userNr) = null;
 			},
 			
 			onError: function(server:PeoteServer, userNr:Int, reason:Int)
 			{
-				trace('onCreateJointError:$reason, userNr:$userNr');
+				log('onCreateJointError:$reason, userNr:$userNr');
 				//serverRemote.get(userNr) = null;
 			}
 			

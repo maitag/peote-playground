@@ -5,7 +5,6 @@ import peote.view.PeoteView;
 import view.ui.Ui;
 import view.ClientView;
 
-
 class PeoteChatClient extends lime.app.Application
 {
 	var clientView:ClientView;
@@ -22,16 +21,17 @@ class PeoteChatClient extends lime.app.Application
 	
 	public function onUIInit() 
 	{
-		trace("onUiInit");
-
 		var peoteView = new PeoteView(window);
 
-		// -------- create gui client --------
-		clientView = new ClientView(peoteView, 0, 0, 800, 600);
-
+		// ------- create gui client -------
+		clientView = new ClientView(peoteView, 0, 0, window.width, window.height);
+		
+		Ui.registerEvents(window);
 	}	
 
+	override function onWindowResize(w:Int, h:Int) 
+	{
+		clientView.resize ( 0, 0, w, h ); 
+	}
 
-	// TODO: resize handler !
-	
 }

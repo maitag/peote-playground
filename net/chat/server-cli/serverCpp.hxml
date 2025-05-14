@@ -1,6 +1,6 @@
 -cp src
 -cp ../src
--main Haxemud
+-main PeoteChatServer
 -lib peote-net tink_cli
 -dce full
 

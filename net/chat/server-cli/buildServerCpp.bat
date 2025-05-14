@@ -4,14 +4,14 @@ haxe serverCpp.hxml
 if not exist bin mkdir bin
 @echo on
 
-copy build\cpp\Haxemud.exe bin\haxemud.exe
+copy build\cpp\PeoteChatServer.exe bin\peotechatserver.exe
 
 @echo off
 REM creates (clickable;) batch files for cpp server and client
-if not exist bin\haxemudCpp.bat (
-  echo haxemud.exe
+if not exist bin\peotechatserverCpp.bat (
+  echo peotechatserver.exe
   echo pause
-) > bin\haxemudCpp.bat
+) > bin\peotechatserverCpp.bat
 
 
 if "%~1"=="" pause

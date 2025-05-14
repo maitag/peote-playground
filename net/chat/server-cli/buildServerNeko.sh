@@ -4,8 +4,8 @@ haxe serverNeko.hxml
 
 test -d "bin" || mkdir -p "bin"
 
-cp build/neko/haxemud.n bin/haxemud.n
+cp build/neko/peotechatserver.n bin/peotechatserver.n
 
-echo '#!/bin/bash\nneko haxemud.n "$@"' >bin/haxemud
-chmod +x bin/haxemud
+echo '#!/bin/bash\nneko peotechatserver.n "$@"' >bin/peotechatserver
+chmod +x bin/peotechatserver
 

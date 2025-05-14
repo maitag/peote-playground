@@ -1,4 +1,4 @@
-package ui;
+package view.ui;
 
 import peote.view.Color;
 
@@ -12,15 +12,12 @@ import peote.ui.interactive.*;
 import peote.ui.config.*;
 import peote.ui.style.*;
 
-import script.HscriptFarm;
-import script.HscriptObject;
-import script.HscriptFunction;
 
 class CodeArea extends UIArea
 {
 	public var onRun:Void->Void;
-	public var textPage:UITextPage<UiFontStyle>;
-	public var header:UITextLine<UiFontStyle>;
+	public var textPage:TextPage;
+	public var header:TextLine;
 
 	public function new(onRun:Void->Void)
 	{
@@ -50,7 +47,7 @@ class CodeArea extends UIArea
 		// ---- header textline -----		
 		// --------------------------
 		
-		header = new UITextLine<UiFontStyle>(gap, gap,
+		header = new TextLine<UiFontStyle>(gap, gap,
 			0, headerSize, 
 			"funky", Ui.font, Ui.fontStyleFG, { backgroundStyle:Ui.styleBG }
 		);
@@ -59,7 +56,7 @@ class CodeArea extends UIArea
 		header.onPointerUp = (_, e:PointerEvent)-> stopDragging(e);
 		add(header);
 		
-		var runButton = new UITextLine<UiFontStyle>(0, gap,
+		var runButton = new TextLine<UiFontStyle>(0, gap,
 			0, headerSize, 
 			"run", Ui.font, Ui.fontStyleFG, { backgroundStyle:Ui.styleBG }
 		);
@@ -89,7 +86,7 @@ class CodeArea extends UIArea
 			undoBufferSize:100
 		}
 		
-		textPage = new UITextPage<UiFontStyle>(gap, headerSize + gap + 1,
+		textPage = new TextPage(gap, headerSize + gap + 1,
 			width - sliderSize - gap - gap - 1,
 			height - headerSize - sliderSize - 2 - gap - gap,
 			"",

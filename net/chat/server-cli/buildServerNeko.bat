@@ -4,14 +4,14 @@ haxe serverNeko.hxml
 if not exist bin mkdir bin
 @echo on
 
-copy build\neko\haxemud.n bin\haxemud.n
+copy build\neko\peotechatserver.n bin\peotechatserver.n
 
 @echo off
 REM creates (clickable;) batch files for neko server and client
-if not exist bin\haxemudNeko.bat (
-  echo neko haxemud.n
+if not exist bin\peotechatserverNeko.bat (
+  echo neko peotechatserver.n
   echo pause
-) > bin\haxemudNeko.bat
+) > bin\peotechatserverNeko.bat
 
 
 

@@ -8,7 +8,7 @@ class ServerRemote implements Remote {
 	
 	var server:Server;
 	var userNr:Int;
-	
+
 	//var client:ClientRemoteRemoteServer = null;	
 	// needs hack here because the type "ClientRemoteRemoteServer" could not be generated at this time
 	var client = (null : ClientRemoteRemoteServer);
@@ -26,18 +26,20 @@ class ServerRemote implements Remote {
 		this.userNr = userNr;
 	}
 	
+	inline function log(s:String, ?clear:Bool) server.log(s, clear);
+	
 	
 	// ------------------------------------------------------------
 	// ----- Functions that run on Server and called by Client ----
 	// ------------------------------------------------------------
 	
 	@:remote public function hello():Void {
-		trace('Hello from client $userNr');		
+		log('Hello from client $userNr');		
 		if (client != null) client.message("good morning client");
 	}
 
 	@:remote public function message(msg:String):Void {
-		trace('Message from client $userNr: $msg');
+		log('Message from client $userNr: $msg');
 	}
 
 }

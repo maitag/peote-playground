@@ -5,7 +5,6 @@ import peote.view.PeoteView;
 import view.ui.Ui;
 import view.ServerView;
 
-
 class PeoteChatServer extends lime.app.Application
 {
 	var serverView:ServerView;
@@ -22,16 +21,17 @@ class PeoteChatServer extends lime.app.Application
 	
 	public function onUIInit() 
 	{
-		trace("onUiInit");
-
 		var peoteView = new PeoteView(window);
 
-		// -------- create gui server -----
-		serverView = new ServerView(peoteView, 0, 300, 800, 300, true);
+		// ------- create gui server ------
+		serverView = new ServerView(peoteView, 0, 0, window.width, window.height);
 
+		Ui.registerEvents(window);
 	}	
 
+	override function onWindowResize(w:Int, h:Int) 
+	{
+		serverView.resize ( 0, 0, w, h );
+	}
 
-	// TODO: resize handler !
-	
 }
