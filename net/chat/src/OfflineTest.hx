@@ -34,12 +34,14 @@ class OfflineTest extends lime.app.Application
 		clientViewRight = new ClientView(peoteView, (window.width>>1) + 2, 0,  (window.width>>1) - 6, getServerYPos(window.height));
 
 		Ui.registerEvents(window);
+
+		window.onResize.add(resize);
 	}
 
 	function getServerYPos(h:Int):Int return h-Std.int(h * 0.28);
 	function getServerHeight(h:Int):Int return Std.int(h * 0.28);
 
-	override function onWindowResize(w:Int, h:Int) 
+	function resize(w:Int, h:Int) 
 	{
 		serverView.resize( 4, getServerYPos(h)+4, w-8, getServerHeight(h)-8 );
 

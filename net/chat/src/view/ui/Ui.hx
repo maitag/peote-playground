@@ -1,6 +1,7 @@
 package view.ui;
 
-@:publicFields @:forward @:forwardStatics
+@:allow(view.ui)
+@:forward @:forwardStatics
 abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 {
 	static var font:Fnt;
@@ -65,7 +66,7 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 	// -------------------------------------------------------
 	// ------------- static INIT to load font ---------------- 
 	// -------------------------------------------------------
-	static function init(onInit:Void->Void)
+	public static function init(onInit:Void->Void)
 	{
 		new Fnt("assets/fonts/tiled/hack_ascii_small.json").load( 
 			(f:Fnt) -> {

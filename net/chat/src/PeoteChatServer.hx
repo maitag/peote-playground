@@ -27,9 +27,11 @@ class PeoteChatServer extends lime.app.Application
 		serverView = new ServerView(peoteView, 0, 0, window.width, window.height);
 
 		Ui.registerEvents(window);
+
+		window.onResize.add(resize);
 	}	
 
-	override function onWindowResize(w:Int, h:Int) 
+	function resize(w:Int, h:Int) 
 	{
 		serverView.resize ( 0, 0, w, h );
 	}
