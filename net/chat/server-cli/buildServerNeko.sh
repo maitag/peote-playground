@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cp -r ../src/net src/
+
 haxe serverNeko.hxml
 
 test -d "bin" || mkdir -p "bin"

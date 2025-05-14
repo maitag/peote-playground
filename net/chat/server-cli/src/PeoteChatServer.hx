@@ -11,8 +11,7 @@ import tink.Cli;
 import net.Server;
 
 class PeoteChatServer
-{
-	
+{	
 	static function main()
 	{
 		var command = new Command();
@@ -57,7 +56,7 @@ class Command {
 		*
 	**/
 	@:flag('--channelName', '-n') @:alias(false)
-	public var channelName:String = "haxemud";
+	public var channelName:String = "peotechat";
 	
 	/**
 		 prints out more informations for logging 
@@ -76,7 +75,7 @@ class Command {
 	public function new() {}
 
 	/**
-		Dedicated Server for haxemud.
+		Dedicated Server for peotechat proto.
 
 		Before get starting you need to run a peote-server. 
 		(https://github.com/maitag/peote-server)
@@ -88,12 +87,14 @@ class Command {
 			Sys.println('channelName: $channelName');
 			//Sys.println('rest: $rest');
 			
-			var server = new Server( host, port, channelName);// , log );
+			// TODO: use of "verbose"
+			var server = new Server( host, port, channelName, log );
 
 		}
 	}
 	
-	public function log(s:String, type:Int, nr:Int):Void {
+	// public function log(s:String, type:Int, nr:Int):Void {
+	public inline function log(s:String, ?clear:Bool):Void {
 		Sys.println('$s');
 		// TODO: using good lib for colored output here
 	}

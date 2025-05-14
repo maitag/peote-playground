@@ -1,3 +1,8 @@
+@echo off
+if not exist src\net mkdir src\net
+copy ..\src\net src\net
+@echo on
+
 haxe serverNeko.hxml
 
 @echo off

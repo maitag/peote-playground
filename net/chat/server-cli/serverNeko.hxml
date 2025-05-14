@@ -1,5 +1,4 @@
 -cp src
--cp ../src
 -main PeoteChatServer
 -lib peote-net tink_cli
 -dce full
