@@ -1,5 +1,8 @@
-# TODO: little fractalish chat-ENV ;)
+simple chat prototype that lets you create into:
 
-1) lyapunov fractals into background
-2) chat-LOG
-3) interactive chat-letter-experience
+- an offline mode what include the server and two clients for testing
+
+- a gui server: `-D server`
+- a gui client: `-D client`
+
+you can also create a dedicated server as commandline tool
