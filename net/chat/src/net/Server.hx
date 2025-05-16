@@ -2,6 +2,7 @@ package net;
 
 import haxe.ds.IntMap;
 import peote.net.PeoteServer;
+import peote.net.Reason;
 
 class Server
 {
@@ -10,7 +11,7 @@ class Server
 
 	public var log:String->?Bool->Void;	
 
-	public function new(host:String, port:Int, channelName:String, log:String->?Bool->Void, offline:Bool = false) 
+	public function new(host:String, port:Int, channel:String, log:String->?Bool->Void, offline:Bool = false) 
 	{
 		this.log = log;
 
@@ -23,12 +24,12 @@ class Server
 			
 			onCreate: function(server:PeoteServer)
 			{
-				log('onCreateJoint: Channel ${server.jointNr} created.');
+				log('Channel number ${server.jointNr} created.');
 			},
 			
 			onUserConnect: function(server:PeoteServer, userNr:Int)
 			{
-				log('onUserConnect: jointNr:${server.jointNr}, userNr:$userNr');
+				log('User Connect: channel number:${server.jointNr}, userNr:$userNr');
 				
 				// store a new ServerRemote for each user into Map
 				var _serverRemote = new ServerRemote(this, userNr);
@@ -39,26 +40,27 @@ class Server
 			
 			onRemote: function(server:PeoteServer, userNr:Int, remoteId:Int)
 			{
-				log('Server onRemote: jointNr:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
+				log('Server remote: channel number:${server.jointNr}, userNr:$userNr, remoteId:$remoteId');
 				serverRemote.get(userNr).clientRemoteIsReady( ClientRemote.getRemoteServer(server, userNr, remoteId) );
 			},
 			
-			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Int)
+			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
-				log('onUserDisconnect: jointNr:${server.jointNr}, userNr:$userNr');
+				log('User Disconnect: channel number:${server.jointNr}, userNr:$userNr');
 				//serverRemote.get(userNr) = null;
 			},
 			
-			onError: function(server:PeoteServer, userNr:Int, reason:Int)
+			onError: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
-				log('onCreateJointError:$reason, userNr:$userNr');
+				log('Error:$reason, userNr:$userNr');
 				//serverRemote.get(userNr) = null;
 			}
 			
 		});
 				
 		// create server
-		peoteServer.create(host, port, channelName);		
+		log('try to connect to $host:$port\ncreate channel "$channel" ...');
+		peoteServer.create(host, port, channel);		
 	}	
 
 }

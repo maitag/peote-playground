@@ -7,16 +7,19 @@
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
 	
 	<!-- <window fps="60" width="800" height="600" vsync="true" antialiasing="4" resizable="true" depth-buffer="true" stencil-buffer="false" /> -->
-	<window width="800" height="600" fps="61" allowHighDPI="false" />
+	<window width="1024" height="960" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
+
 	
 	<app main="OfflineTest" path="bin" file="OfflineTest" />
 	<app main="PeoteChatServer" path="bin" file="PeoteChatServer" if="server" />
 	<app main="PeoteChatClient" path="bin" file="PeoteChatClient" if="client" />
 
-	<haxedef name="host" value="localhost" />
-	<haxedef name="port" value="7680" />
-	<haxedef name="channel" value="peotechat" />
+	<!-- <haxedef name="host" value="localhost" /> -->
+	<!-- <haxedef name="host" value="127.0.0.1" /> -->
+	<!-- <haxedef name="port" value="7681" /> -->
+	<!-- <haxedef name="channel" value="chatplayground" /> -->
+
 	
 	<source path="src" />
 	

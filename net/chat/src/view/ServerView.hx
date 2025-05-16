@@ -31,16 +31,8 @@ class ServerView {
 		// --------------------------------
 		// ---------- network -------------
 		// --------------------------------
-
-		var host:String = haxe.macro.Compiler.getDefine("host");
-		if (host == null) host = "localhost";
-		var port:Null<Int> = Std.parseInt(haxe.macro.Compiler.getDefine("port"));
-		if (port==null) port = 7680;
-		var channel:String = haxe.macro.Compiler.getDefine("channel");
-		if (channel == null) channel = "peotechat";
 		
-		logArea.log('try to connect to $host:$port\ncreate channel "$channel" ...');
-		new Server(host, port, channel, logArea.log, offline);
+		new Server(Config.host, Config.port, Config.channel, logArea.log, offline);
 		
 	}
 
