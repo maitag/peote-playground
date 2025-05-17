@@ -33,3 +33,7 @@ import peote.ui.config.VAlign;
 import peote.ui.event.PointerEvent;
 import peote.ui.event.WheelEvent;
 
+// --- peote-ui-extra lib ----
+// import peote.ui.extra.LogArea;
+// import peote.ui.extra.LogAreaConfig;
+

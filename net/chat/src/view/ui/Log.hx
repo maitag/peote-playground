@@ -1,6 +1,6 @@
 package view.ui;
 
-class LogArea extends UIArea implements ParentElement
+class Log extends UIArea implements ParentElement
 {
 	public var textPage:TextPage;
 
@@ -191,7 +191,7 @@ class LogArea extends UIArea implements ParentElement
 
 	// logging function
 	var isFirstLog = true;
-	public function log(s:String, clear = false)
+	public function say(s:String, clear = false)
 	{
 		if (clear) {
 			textPage.text = s;

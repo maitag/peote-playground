@@ -3,7 +3,7 @@ package view;
 import peote.view.PeoteView;
 
 import view.ui.Ui;
-import view.ui.LogArea;
+import view.ui.Log;
 
 import net.Client;
 
@@ -12,7 +12,7 @@ class ClientView {
 	var peoteView:PeoteView;
 	var ui:Ui;
 
-	var logArea:LogArea;
+	var log:Log;
 
 	public function new(peoteView:PeoteView, x:Int, y:Int, width:Int, height:Int)
 	{
@@ -24,17 +24,17 @@ class ClientView {
 		
 		// --------- logger ----------
 		
-		logArea = new LogArea(0, getLogYPos(), width, getLogHeight());
-		// logArea = new LogArea(0, getLogYPos(), width, getLogHeight(), "=== client logger ===");
-		ui.add(logArea);
+		log = new Log(0, getLogYPos(), width, getLogHeight());
+		// log = new Log(0, getLogYPos(), width, getLogHeight(), "=== client logger ===");
+		ui.add(log);
 		
-		
+		// log.say("OK");
 		
 		// --------------------------------
 		// ---------- network -------------
 		// --------------------------------
 
-		new Client(Config.host, Config.port, Config.channel, logArea.log);
+		new Client(Config.host, Config.port, Config.channel, log.say);
 
 	}
 
@@ -48,10 +48,10 @@ class ClientView {
 			ui.width = w;
 			ui.height = h;
 			
-			logArea.y = getLogYPos();
-			logArea.width = w;
-			logArea.height = getLogHeight();
-			logArea.updateLayout();
+			log.y = getLogYPos();
+			log.width = w;
+			log.height = getLogHeight();
+			log.updateLayout();
 		}
 	}
 

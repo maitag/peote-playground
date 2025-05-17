@@ -1,6 +1,7 @@
 package view.ui;
 
-@:allow(view.ui)
+@:publicFields
+@:allow(view, view.ui)
 @:forward @:forwardStatics
 abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 {

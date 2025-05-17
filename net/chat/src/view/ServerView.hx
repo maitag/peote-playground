@@ -3,7 +3,7 @@ package view;
 import peote.view.PeoteView;
 
 import view.ui.Ui;
-import view.ui.LogArea;
+import view.ui.Log;
 
 import net.Server;
 
@@ -12,7 +12,7 @@ class ServerView {
 	var peoteView:PeoteView;
 	var ui:Ui;
 	
-	var logArea:LogArea;
+	var log:Log;
 
 	public function new(peoteView:PeoteView, x:Int, y:Int, width:Int, height:Int, offline:Bool = false)
 	{
@@ -24,15 +24,15 @@ class ServerView {
 
 		// --------- logger ----------
 		
-		logArea = new LogArea(0, 0, width, height);
-		ui.add(logArea);		
+		log = new Log(0, 0, width, height);
+		ui.add(log);		
 		
 
 		// --------------------------------
 		// ---------- network -------------
 		// --------------------------------
 		
-		new Server(Config.host, Config.port, Config.channel, logArea.log, offline);
+		new Server(Config.host, Config.port, Config.channel, log.say, offline);
 		
 	}
 
@@ -43,9 +43,9 @@ class ServerView {
 			ui.width = w;
 			ui.height = h;
 
-			logArea.width = w;
-			logArea.height = h;
-			logArea.updateLayout();
+			log.width = w;
+			log.height = h;
+			log.updateLayout();
 		}
 	}
 } 
