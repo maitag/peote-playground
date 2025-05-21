@@ -1,6 +1,7 @@
-import haxe.Timer;
 import haxe.CallStack;
+import haxe.Timer;
 import lime.app.Application;
+import lime.ui.KeyCode;
 import peote.view.*;
 import peote.view.text.*;
 import Segment;
@@ -15,9 +16,11 @@ class Main extends Application
 {
 	var resWidth:Int = 896;
 	var resHeight:Int = 504;
+	var margin:Int = 32;
 
 	var peoteView:PeoteView;
 	var display:Display;
+	var hudDisplay:Display;
 	var buffer:SegmentBuffer;
 	var textProgram:TextProgram;
 
@@ -32,6 +35,8 @@ class Main extends Application
 	var durationMs:Int = 0;
 	var minimumDurationMs:Int;
 	var isGameEnded:Bool = false;
+
+	var keyDownQueue:Array<KeyCode> = [];
 
 	override function onWindowCreate():Void
 	{
@@ -61,7 +66,6 @@ class Main extends Application
 
 		// set up the snake options
 		var gridQuantise = 24;
-		var margin = 32;
 		var playWidth = resWidth - (margin * 2);
 		var playHeight = resHeight - (margin * 2);
 		snakeOptions = {
@@ -80,7 +84,7 @@ class Main extends Application
 		buffer.addToDisplay(display);
 
 		// init graphics for text
-		var hudDisplay = new Display(0, 0, resWidth, resHeight);
+		hudDisplay = new Display(0, 0, resWidth, resHeight);
 		peoteView.addDisplay(hudDisplay);
 		var textColor:RGB = 0xf0f080;
 		var textOptions:TextOptions = {
@@ -93,12 +97,12 @@ class Main extends Application
 		scoreText = textProgram.add(new Text(8, 8, score + ""));
 
 		// scale the game size and position to the window
-		fitToWindow(window.width, window.height, hudDisplay, margin);
+		fitToWindow(window.width, window.height);
 
 		// register call back to fit window when it is resized
 		window.onResize.add((windowWidth, windowHeight) ->
 		{
-			fitToWindow(windowWidth, windowHeight, hudDisplay, margin);
+			fitToWindow(windowWidth, windowHeight);
 		});
 
 		// init controls
@@ -108,10 +112,12 @@ class Main extends Application
 			{
 				switch code
 				{
-					case RIGHT: snake.steerHead(RIGHT);
-					case LEFT: snake.steerHead(LEFT);
-					case DOWN: snake.steerHead(DOWN);
-					case UP: snake.steerHead(UP);
+					// if it's a valid key, store that it was pressed
+					case RIGHT | LEFT | DOWN | UP:
+						if (!keyDownQueue.contains(code))
+						{
+							keyDownQueue.push(code);
+						}
 					case _: return;
 				}
 			}
@@ -123,13 +129,11 @@ class Main extends Application
 	}
 
 	/**
-	 * [Description]
-	 * @param windowWidth 
-	 * @param windowHeight 
-	 * @param hudDisplay 
-	 * @param margin 
+	 * Scale peote view zoom to fit the window
+	 * @param windowWidth
+	 * @param windowHeight
 	 */
-	function fitToWindow(windowWidth:Int, windowHeight:Int, hudDisplay:Display, margin:Int):Void
+	function fitToWindow(windowWidth:Int, windowHeight:Int):Void
 	{
 		// determine scale factors for x and y
 		var scaleX = windowWidth / resWidth;
@@ -167,7 +171,7 @@ class Main extends Application
 
 		// time between snake updates
 		durationMs = 208;
-		minimumDurationMs = Std.int(1 / window.frameRate) * 1000;
+		minimumDurationMs = Std.int(1 / window.frameRate * 1000);
 
 		// init fruit off screen (will be positioned later)
 		var fruitColor:RGB = 0xf06060;
@@ -195,6 +199,23 @@ class Main extends Application
 			countDownMs -= deltaTime;
 			if (countDownMs <= 0)
 			{
+				// check input queue and steer snake 
+				if (keyDownQueue.length > 0)
+				{
+					switch keyDownQueue.shift()
+					{
+						case RIGHT:
+							snake.steerHead(RIGHT);
+						case LEFT:
+							snake.steerHead(LEFT);
+						case DOWN:
+							snake.steerHead(DOWN);
+						case UP:
+							snake.steerHead(UP);
+						case _:
+					}
+				}
+
 				snake.move();
 
 				if (fruit != null)
