@@ -4,12 +4,14 @@ import haxe.ds.IntMap;
 import peote.net.PeoteServer;
 import peote.net.Reason;
 
+@:publicFields
 class Server
 {
 	var peoteServer:PeoteServer;
 	var serverRemote = new IntMap<ServerRemote>();
 
-	public var log:String->?Bool->Void;	
+	// callbacks:
+	var log:String->?Bool->Void;	
 
 	public function new(host:String, port:Int, channel:String, log:String->?Bool->Void, offline:Bool = false) 
 	{
@@ -47,13 +49,13 @@ class Server
 			onUserDisconnect: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
 				log('User Disconnect: channel number:${server.jointNr}, userNr:$userNr');
-				//serverRemote.get(userNr) = null;
+				serverRemote.remove(userNr);
 			},
 			
 			onError: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
 				log('Error:$reason, userNr:$userNr');
-				//serverRemote.get(userNr) = null;
+				serverRemote.remove(userNr);
 			}
 			
 		});

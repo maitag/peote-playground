@@ -160,7 +160,7 @@ class Log extends UIArea implements ParentElement
 			vSlider.height = textPage.height;
 
 			if (vSliderIsVisible) {
-				vSlider.right = last_x + width - gap; // using last_x here to avoid glitch while change the y position (not update) and resizing afterwards 
+				vSlider.right = last_x + width - gap; // using last_x here to avoid glitch while change the y position (not update) and resizing afterwards (or use deltaWidth instead!)
 				textPage.rightSize = vSlider.left - 1;
 			}
 			else {
@@ -191,6 +191,7 @@ class Log extends UIArea implements ParentElement
 
 	// logging function
 	var isFirstLog = true;
+	// @:access(peote.ui.interactive.UITextPageT)
 	public function say(s:String, clear = false)
 	{
 		if (clear) {
@@ -201,6 +202,8 @@ class Log extends UIArea implements ParentElement
 			textPage.appendChars(s);
 		}
 		isFirstLog = false;
+
+		// textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length, true);
 
 		textPage.cursorPageEnd();
 	}

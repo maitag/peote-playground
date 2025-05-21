@@ -33,7 +33,15 @@ import peote.ui.config.VAlign;
 import peote.ui.event.PointerEvent;
 import peote.ui.event.WheelEvent;
 
+import input2action.Input2Action;
+import input2action.ActionConfig;
+import input2action.ActionMap;
+import input2action.KeyboardAction;
+import peote.ui.interactive.input2action.InputTextLine;
+import lime.ui.KeyCode;
+
 // --- peote-ui-extra lib ----
+import peote.ui.extra.UIAreaList;
 // import peote.ui.extra.LogArea;
 // import peote.ui.extra.LogAreaConfig;
 

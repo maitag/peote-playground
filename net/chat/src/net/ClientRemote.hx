@@ -15,7 +15,6 @@ class ClientRemote implements Remote {
 	public inline function serverRemoteIsReady( server ) {
 		//trace(Type.typeof(server));
 		this.server = server;
-		server.hello();
 	}
 	
 	// ------------------------------------------------------------
@@ -30,11 +29,6 @@ class ClientRemote implements Remote {
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
-	@:remote public function hello():Void {
-		log('Hello from server');		
-		if (server != null) server.message("good morning server");
-	}
-
 	@:remote public function message(msg:String):Void {
 		log('Message from server: $msg');
 	}

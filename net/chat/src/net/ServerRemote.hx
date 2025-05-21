@@ -8,6 +8,7 @@ class ServerRemote implements Remote {
 	
 	var server:Server;
 	var userNr:Int;
+	var nick:String = "";
 
 	//var client:ClientRemoteRemoteServer = null;	
 	// needs hack here because the type "ClientRemoteRemoteServer" could not be generated at this time
@@ -16,7 +17,6 @@ class ServerRemote implements Remote {
 	public inline function clientRemoteIsReady( client ) {
 		//trace(Type.typeof(client));
 		this.client = client;
-		client.hello();
 	}
 	
 	// ------------------------------------------------------------
@@ -32,14 +32,22 @@ class ServerRemote implements Remote {
 	// ------------------------------------------------------------
 	// ----- Functions that run on Server and called by Client ----
 	// ------------------------------------------------------------
-	
-	@:remote public function hello():Void {
-		log('Hello from client $userNr');		
-		if (client != null) client.message("good morning client");
-	}
 
 	@:remote public function message(msg:String):Void {
-		log('Message from client $userNr: $msg');
+		log('Message from ${server.serverRemote.get(userNr).nick} ($userNr): $msg');
+		for (serverRemote in server.serverRemote)
+		{
+			if (serverRemote.client != null && serverRemote.userNr != userNr) {
+				log('send to client: ${serverRemote.nick}');
+				serverRemote.client.message(nick + ":" + msg);
+			}
+		}
+
+	}
+
+	@:remote public function setNickName(s:String):Void {
+		log('client $userNr tryes to change nickname into -> $s');
+		nick = s;
 	}
 
 }
