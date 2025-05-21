@@ -41,7 +41,7 @@ import peote.ui.interactive.input2action.InputTextLine;
 import lime.ui.KeyCode;
 
 // --- peote-ui-extra lib ----
-import peote.ui.extra.UIAreaList;
+// import peote.ui.extra.UIAreaList;
 // import peote.ui.extra.LogArea;
 // import peote.ui.extra.LogAreaConfig;
 
