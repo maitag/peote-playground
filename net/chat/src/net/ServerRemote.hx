@@ -57,7 +57,11 @@ class ServerRemote implements Remote {
 
 	@:remote public function setNickName(nick:String):Void {
 		log('client "${this.nick}" ($userNr) tryes to change nickname into -> $nick');
-	
+		
+		// TODO: if that nickname is wrong or still exists
+		// put a postfix on it or call a "wrongNick()" back to the client!
+
+
 		// call userSetNickName on all clients (excluding the sender)
 		for (remote in server.serverRemote)
 		{
