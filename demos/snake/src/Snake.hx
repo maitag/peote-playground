@@ -23,7 +23,7 @@ class SnakeOptions
 	var rows:Int;
 
 	/**
-	 * hoiw many body segments the snake starts with
+	 * how many body segments the snake starts with
 	 */
 	var initialSegments:Int;
 
