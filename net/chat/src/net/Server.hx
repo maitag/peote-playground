@@ -4,7 +4,6 @@ import haxe.ds.IntMap;
 import peote.net.PeoteServer;
 import peote.net.Reason;
 
-@:publicFields
 class Server
 {
 	var peoteServer:PeoteServer;

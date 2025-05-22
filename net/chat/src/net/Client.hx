@@ -1,9 +1,9 @@
 package net;
 
+import haxe.ds.IntMap;
 import peote.net.PeoteClient;
 import peote.net.Reason;
 
-@:publicFields
 class Client {
 	
 	var peoteClient:PeoteClient;
@@ -14,7 +14,9 @@ class Client {
 	var channel:String;
 	
 	// callbacks:
+	var msg:String->Void;
 	var log:String->?Bool->Void;
+	
 	var onRemoteReady:Void->Void;
 	var onDisconnect:Void->Void;
 	
@@ -22,12 +24,15 @@ class Client {
 	var onClientMessage:String->?Bool->Void;
 
 
-	public function new(host:String, port:Int, channel:String, log:String->?Bool->Void) 
+	var userNick = new IntMap<String>();
+
+	public function new(host:String, port:Int, channel:String, msg:String->Void, log:String->?Bool->Void) 
 	{
 		this.host = host;
 		this.port = port;
 		this.channel = channel;
 
+		this.msg = msg;
 		this.log = log;
 		
 		peoteClient = new PeoteClient(
@@ -73,13 +78,53 @@ class Client {
 		peoteClient.enter(host, port, channel);
 	}
 
-	public function setNickName(s:String) {
-		clientRemote.server.setNickName(s);
+
+	// --- these functions are called by the ClientView ----
+
+	public function setNickName(nickName:String) {
+		clientRemote.server.setNickName(nickName);
 	}
 
-	public function send(msg:String) {
-		clientRemote.server.message(msg);
+	public function send(m:String) {
+		clientRemote.server.message(m);
 	}
+
+
+	// --- these functions are called back by ClientRemote ----
+
+	function userList(nickNames:Map<Int,String>):Void {
+		var users = "";
+		for ( k=>v in nickNames ) {
+			userNick.set(k, v);
+			users += v + "\n";
+		}
+		if (users == "") msg("No other user logged in yet.");
+		else msg(users + "are logged in.");
+	}
+
+	function userMessage(userNr:Int, message:String):Void
+	{
+		msg(userNick.get(userNr) + ":" + message);
+	}
+
+	function userEnter(userNr:Int, nick:String):Void
+	{
+		msg('User "$nick" enters');
+		userNick.set(userNr, nick);
+	}
+
+	function userLeave(userNr:Int):Void
+	{
+		msg('User "${userNick.get(userNr)}" leaves');
+		userNick.remove(userNr);
+	}
+
+	function userSetNickName(userNr:Int, nick:String):Void 
+	{
+		msg('User "${userNick.get(userNr)}" changes nickname to: "$nick"');
+		userNick.set(userNr, nick);
+	}
+
 }
 
 

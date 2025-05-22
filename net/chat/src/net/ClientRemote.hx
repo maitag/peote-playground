@@ -4,6 +4,7 @@ import peote.net.Remote;
 
 import net.ServerRemote; // needs hack here (see below)
 
+@:access(net.Client)
 class ClientRemote implements Remote {
 	
 	var client:Client;	
@@ -29,8 +30,29 @@ class ClientRemote implements Remote {
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
-	@:remote public function message(msg:String):Void {
-		log('Message from server: $msg');
+	@:remote public function userList(nickNames:Map<Int,String>):Void {
+		log('client gets user list');
+		client.userList(nickNames);
+	}
+	
+	@:remote public function userMessage(userNr:Int, msg:String):Void {
+		// log('Message from server: $msg');
+		client.userMessage(userNr, msg);
+	}
+
+	@:remote public function userEnter(userNr:Int, nick:String):Void {
+		log('new user "$nick" ($userNr) enters server');
+		client.userEnter(userNr, nick);
+	}
+
+	@:remote public function userLeave(userNr:Int):Void {
+		log('user $userNr leaves server');
+		client.userLeave(userNr);
+	}
+
+	@:remote public function userSetNickName(userNr:Int, nick:String):Void {
+		log('client "$nick" ($userNr) changes nickname into -> $nick');
+		client.userSetNickName(userNr, nick);
 	}
 
 }

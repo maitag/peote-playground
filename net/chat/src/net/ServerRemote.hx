@@ -4,19 +4,27 @@ import peote.net.Remote;
 
 import net.ClientRemote; // needs hack here (see below)
 
+@:access(net.Server)
 class ServerRemote implements Remote {
 	
 	var server:Server;
-	var userNr:Int;
-	var nick:String = "";
+	public var userNr(default, null):Int;
+	public var nick(default, null):String = "";
 
 	//var client:ClientRemoteRemoteServer = null;	
 	// needs hack here because the type "ClientRemoteRemoteServer" could not be generated at this time
-	var client = (null : ClientRemoteRemoteServer);
+	public var client(default, null) = (null : ClientRemoteRemoteServer);
 	
 	public inline function clientRemoteIsReady( client ) {
 		//trace(Type.typeof(client));
 		this.client = client;
+
+		// send map of all connected users and its nicknames:
+		var nickNames = new Map<Int,String>();
+		for ( remote in server.serverRemote) 
+			if (remote.userNr != userNr) nickNames.set(remote.userNr, remote.nick);
+		log('call "userList()" of client: $userNr');
+		client.userList(nickNames);
 	}
 	
 	// ------------------------------------------------------------
@@ -35,20 +43,39 @@ class ServerRemote implements Remote {
 
 	@:remote public function message(msg:String):Void {
 		log('Message from ${server.serverRemote.get(userNr).nick} ($userNr): $msg');
-		for (serverRemote in server.serverRemote)
+
+		// call userMessage on all clients (excluding the sender)
+		for (remote in server.serverRemote)
 		{
-			if (serverRemote.client != null && serverRemote.userNr != userNr) {
-				log('send to client: ${serverRemote.nick}');
-				serverRemote.client.message(nick + ":" + msg);
+			if (remote.client != null && remote.userNr != userNr) {
+				log('call "userMessage()" of client: "${remote.nick}" ($userNr)');
+				remote.client.userMessage(userNr, msg);
 			}
 		}
 
 	}
 
-	@:remote public function setNickName(s:String):Void {
-		log('client $userNr tryes to change nickname into -> $s');
-		nick = s;
+	@:remote public function setNickName(nick:String):Void {
+		log('client "${this.nick}" ($userNr) tryes to change nickname into -> $nick');
+	
+		// call userSetNickName on all clients (excluding the sender)
+		for (remote in server.serverRemote)
+		{
+			if (remote.client != null && remote.userNr != userNr) {
+				if (this.nick == "") {		
+					log('call "userEnter()" of client: "${remote.nick}" ($userNr)');
+					remote.client.userEnter(userNr, nick);
+				}
+				else {
+					log('call "userSetNickName()" of client: "${remote.nick}" ($userNr)');
+					remote.client.userSetNickName(userNr, nick);
+				}
+			}
+		}
+
+		this.nick = nick;
 	}
 
 }
+
 

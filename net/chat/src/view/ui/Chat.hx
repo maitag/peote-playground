@@ -10,8 +10,8 @@ class Chat extends UIArea implements ParentElement {
 		super(x, y, width, height, 0, Ui.logAreaConfig);		
 	}
 
-	var chatPage = TextPage;
-	var inputLine = TextLine;
+	var textPage:TextPage;
+	var inputLine:TextLine;
 
 	override function onAddUIElementToDisplay()
 	{
@@ -19,14 +19,14 @@ class Chat extends UIArea implements ParentElement {
 
 		// ---- chat OUTPUT  ----
 
-		var chatPage = new TextPage(0, 0, 200, height-30, 1, "chat\nOUTPUT\nhere\n\n....\n......", Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig);
-		chatPage.onPointerDown = function(t:TextPage, e:PointerEvent) { t.startSelection(e); }
-		chatPage.onPointerUp = function(t:TextPage, e:PointerEvent) { t.stopSelection(e); }
-		add(chatPage);
+		textPage = new TextPage(0, 0, width, height-30, 1, "Welcome to chat sample into peote playground \\o/\n\n", Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig);
+		textPage.onPointerDown = function(t:TextPage, e:PointerEvent) { t.startSelection(e); }
+		textPage.onPointerUp = function(t:TextPage, e:PointerEvent) { t.stopSelection(e); }
+		add(textPage);
 
 		// --- chat INPUT ----
 
-		var inputLine = new TextLine(0, height-30, width, 20, 1, "INPUTLINE", Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig);
+		inputLine = new TextLine(0, height-30, width, 20, 1, "INPUTLINE", Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig);
 		inputLine.onPointerDown = function(t:TextLine, e:PointerEvent) { t.setInputFocus(e); t.startSelection(e); }
 		inputLine.onPointerUp = function(t:TextLine, e:PointerEvent) { t.stopSelection(e); }
 		add(inputLine);
@@ -56,6 +56,11 @@ class Chat extends UIArea implements ParentElement {
 		// ------------------------------------
 		
 		this.onResizeWidth = (_, width:Int, deltaWidth:Int) -> {
+			textPage.width += deltaWidth;
+			textPage.updateLayout();
+
+			inputLine.width += deltaWidth;
+			inputLine.updateLayout();
 		}
 
 		this.onResizeHeight = (_, height:Int, deltaHeight:Int) -> {
@@ -67,4 +72,18 @@ class Chat extends UIArea implements ParentElement {
 
 	}
 
+	// logging function
+	var isFirstMsg = true;
+	// @:access(peote.ui.interactive.UITextPageT)
+	public function say(s:String)
+	{
+		if (!isFirstMsg) s = "\n" + s;
+		isFirstMsg = false;
+		
+		textPage.appendChars(s);
+
+		// textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length, true);
+
+		textPage.cursorPageEnd();
+	}
 }

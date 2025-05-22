@@ -47,7 +47,7 @@ class ClientView {
 		// ----- peote-net client ------
 		// -----------------------------
 
-		client = new Client(Config.host, Config.port, Config.channel, log.say);
+		client = new Client(Config.host, Config.port, Config.channel, chat.say, log.say);
 	}
 
 	public function connect(nickName:String)
