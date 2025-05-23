@@ -120,18 +120,16 @@ class Chat extends UIArea implements ParentElement {
 
 	}
 
-	// logging function
-	var isFirstMsg = true;
-	// @:access(peote.ui.interactive.UITextPageT)
+	// ----- C H A T (^_^) o u t -----
+	@:access(peote.ui.interactive.UITextPageT) // <- problem here if using other FNT
 	public function say(s:String)
-	{
-		if (!isFirstMsg) s = "\n" + s;
-		isFirstMsg = false;
-		
+	{		
 		textPage.appendChars(s);
 
-		// textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length, true);
-
-		textPage.cursorPageEnd();
+		// little hâck only here until not interated into peote-ui (sry~_->)
+		textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length-1, true);
+		
+		// textPage.cursorPageEnd();
+		textPage.cursorPageDown();
 	}
 }
