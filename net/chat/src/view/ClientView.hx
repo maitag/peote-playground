@@ -26,26 +26,28 @@ class ClientView {
 	{
 		this.peoteView = peoteView;
 
-		// ----- peote-ui -------
+		// ---------------------------
+		// -------- peote-ui ---------
+		// ---------------------------
 
 		ui = new Ui(x, y, width, height);
 		peoteView.addDisplay(ui);
 		
-		// --------- add logger ----------		
+		// --------- logger ----------
 		log = new Log(0, 4, width, getLogHeight());
 		ui.add(log);		
 
-		// --------- add login area (enter name) ----------
+		// ------- login area --------
 		nameInput = new NameInput(0, getLogHeight()+8, width, height, connect);
 		ui.add(nameInput);		
 
-		// ---------- chat -----------
+		// -------- chat area ---------
 		chat = new Chat(0, getLogHeight()+8, width, height-getLogHeight(), onChatInput);
 
 
-		// -----------------------------
-		// ----- peote-net client ------
-		// -----------------------------
+		// ----------------------------
+		// ----- peote-net client -----
+		// ----------------------------
 
 		client = new Client(Config.host, Config.port, Config.channel, chat.say, log.say);
 	}
@@ -60,9 +62,7 @@ class ClientView {
 	{	
 		ui.remove(nameInput);
 		log.say("connection established \\o/");
-
 		client.setNickName(nickName);
-
 		ui.add(chat);
 	}
 
@@ -81,6 +81,7 @@ class ClientView {
 		chat.say(msg,nickName);
 	}
 	
+
 
 	// ---------------------------------------------------------
 	// ---------------- resizing window ------------------------

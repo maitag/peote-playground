@@ -18,25 +18,26 @@ class ServerView {
 	{
 		this.peoteView = peoteView;
 		
+		// ---------------------------
+		// -------- peote-ui ---------
+		// ---------------------------
+
 		ui = new Ui(x, y, width, height);
 		peoteView.addDisplay(ui);
 		
-
 		// --------- logger ----------
 		
 		log = new Log(0, 0, width, height);
 		ui.add(log);		
 		
-
-		// --------------------------------
-		// ---------- network -------------
-		// --------------------------------
+		// ---------------------------
+		// ---- peote-net server -----
+		// ---------------------------
 		
-		new Server(Config.host, Config.port, Config.channel, log.say, offline);
-		
+		new Server(Config.host, Config.port, Config.channel, log.say, offline);		
 	}
 
-	
+
 	// ---------------------------------------------------------
 	// ---------------- resizing window ------------------------
 	// ---------------------------------------------------------
