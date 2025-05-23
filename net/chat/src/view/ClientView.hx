@@ -78,7 +78,7 @@ class ClientView {
 		client.send(msg);
 
 		// put it into own chat-output also ! ( syncORDER can diff to what others sees !!! :)
-		chat.say(nickName + ": " + msg);
+		chat.say(msg,nickName);
 	}
 	
 

@@ -14,7 +14,7 @@ class Client {
 	var channel:String;
 	
 	// callbacks:
-	var msg:String->Void;
+	var msg:String->?String->Void;
 	var log:String->?Bool->Void;
 	
 	var onRemoteReady:Void->Void;
@@ -26,7 +26,7 @@ class Client {
 
 	var userNick = new IntMap<String>();
 
-	public function new(host:String, port:Int, channel:String, msg:String->Void, log:String->?Bool->Void) 
+	public function new(host:String, port:Int, channel:String, msg:String->?String->Void, log:String->?Bool->Void) 
 	{
 		this.host = host;
 		this.port = port;
@@ -104,7 +104,7 @@ class Client {
 
 	function userMessage(userNr:Int, message:String):Void
 	{
-		msg(userNick.get(userNr) + ": " + message);
+		msg(message, userNick.get(userNr));
 	}
 
 	function userEnter(userNr:Int, nick:String):Void
