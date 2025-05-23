@@ -27,21 +27,78 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 	// -------------------------------------------------------
 	// ----- styles and configs for specific ui elements -----
 	// -------------------------------------------------------
+
+	// ---------- CHAT AREA -------------------
+
 	static var logAreaConfig:AreaConfig = {
 		backgroundStyle: styleLayer_0.copy(0x0a230cff, null, 0, 11),
 		// maskSpace:Space = {},
 	}
 
-	static var logAreaFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+	static var logFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
 
-	static var logAreaTextConfig:TextConfig = {
+	static var logTextConfig:TextConfig = {
 		backgroundStyle: null,
 		selectionStyle: styleLayer_1.copy(0x104127ff),
 		cursorStyle: styleLayer_1.copy(Color.RED2),
 		textSpace: { left:5, right:3, top:3, bottom:3 }
 	}
 
-	static var logAreaSliderConfig:SliderConfig = {
+	static var logSliderConfig:SliderConfig = {
+		backgroundStyle: styleLayer_0.copy(0x071808ff, 0x071808ff, 0, 16),
+		draggerStyle: styleLayer_0.copy(0x16321aff, 0, 0),
+		draggerSize: 12,
+		draggSpace: 1,
+	};
+
+	// ---------- LOGIN and NAME INPUT ---------------
+
+	static var nameAreaConfig:AreaConfig = {
+		backgroundStyle: styleLayer_0.copy(0x0a230cff, null, 0, 11),
+		// maskSpace:Space = {},
+	}
+
+	static var nameLabelFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+	static var nameInputFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+
+	static var nameLabelTextConfig:TextConfig = {
+		backgroundStyle: null,
+		selectionStyle: styleLayer_1.copy(0x104127ff),
+		cursorStyle: styleLayer_1.copy(Color.RED2),
+		textSpace: { left:5, right:3, top:3, bottom:3 }
+	}
+
+	static var nameInputTextConfig:TextConfig = {
+		backgroundStyle: styleLayer_1.copy(0x103117ff),
+		selectionStyle: styleLayer_1.copy(0x104127ff),
+		cursorStyle: styleLayer_1.copy(Color.RED2),
+		textSpace: { left:5, right:3, top:3, bottom:3 }
+	}
+
+	// ---------- CHAT AREA -------------------
+
+	static var chatAreaConfig:AreaConfig = {
+		backgroundStyle: styleLayer_0.copy(0x0a230cff, null, 0, 11),
+		// maskSpace:Space = {},
+	}
+
+	static var chatFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+
+	static var chatTextConfig:TextConfig = {
+		backgroundStyle: styleLayer_0.copy(0x0a230cff, 0x0a230cff, 0, 11),
+		selectionStyle: styleLayer_1.copy(0x104127ff),
+		cursorStyle: styleLayer_1.copy(Color.RED2),
+		textSpace: { left:5, right:3, top:3, bottom:3 }
+	}
+
+	static var chatInputTextConfig:TextConfig = {
+		backgroundStyle: styleLayer_1.copy(0x103117ff),
+		selectionStyle: styleLayer_1.copy(0x104127ff),
+		cursorStyle: styleLayer_1.copy(Color.RED2),
+		textSpace: { left:5, right:3, top:3, bottom:3 }
+	}
+
+	static var chatSliderConfig:SliderConfig = {
 		backgroundStyle: styleLayer_0.copy(0x071808ff, 0x071808ff, 0, 16),
 		draggerStyle: styleLayer_0.copy(0x16321aff, 0, 0),
 		draggerSize: 12,

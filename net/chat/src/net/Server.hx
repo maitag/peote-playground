@@ -49,16 +49,15 @@ class Server
 			{
 				log('User Disconnect: channel number:${server.jointNr}, userNr:$userNr');
 				serverRemote.remove(userNr);
-				
+
 				// call userLeave on all clients
-				for (remote in serverRemote)
-					{
-						if (remote.client != null && remote.userNr != userNr) {
-							log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
-							remote.client.userLeave(userNr);
-						}
+				for (remote in serverRemote) {
+					if (remote.client != null && remote.userNr != userNr) {
+						log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
+						remote.client.userLeave(userNr);
 					}
-				},
+				}
+			},
 			
 			onError: function(server:PeoteServer, userNr:Int, reason:Reason)
 			{
@@ -66,15 +65,13 @@ class Server
 				serverRemote.remove(userNr);
 
 				// call userLeave on all clients
-				for (remote in serverRemote)
-					{
-						if (remote.client != null && remote.userNr != userNr) {
-							log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
-							remote.client.userLeave(userNr);
-						}
+				for (remote in serverRemote) {
+					if (remote.client != null && remote.userNr != userNr) {
+						log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
+						remote.client.userLeave(userNr);
 					}
 				}
-			
+			}			
 		});
 				
 		// create server

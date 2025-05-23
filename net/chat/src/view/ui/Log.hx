@@ -20,8 +20,6 @@ class Log extends UIArea implements ParentElement
 		// add only at the first time
 		
 		// -----------------------------------------------------------
-		// ---- creating an Area, header and Content-Area ------------
-		// -----------------------------------------------------------
 		
 		var sliderSize:Int = 16;
 		var headerSize:Int = 0;
@@ -37,7 +35,7 @@ class Log extends UIArea implements ParentElement
 			
 			header = new TextLine(gap, gap,
 				width - gap - gap, headerSize, 
-				headerText, Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig 
+				headerText, Ui.font, Ui.logFontStyle, Ui.logTextConfig 
 			);
 			// start/stop area-dragging
 			header.onPointerDown = (_, e:PointerEvent)-> startDragging(e);
@@ -52,7 +50,7 @@ class Log extends UIArea implements ParentElement
 		textPage = new TextPage(gap, headerSize + gap + 1,
 			width - sliderSize - gap - gap - 1,
 			height - headerSize - sliderSize - 2 - gap - gap,
-			"", Ui.font, Ui.logAreaFontStyle, Ui.logAreaTextConfig
+			"", Ui.font, Ui.logFontStyle, Ui.logTextConfig
 		);
 		
 		textPage.onPointerDown = function(t, e) {
@@ -70,8 +68,8 @@ class Log extends UIArea implements ParentElement
 		// ---- sliders to scroll textPage ----		
 		// ------------------------------------		
 		
-		var hSlider = new UISlider(gap, height-sliderSize-gap, textPage.width, sliderSize, Ui.logAreaSliderConfig);
-		var vSlider = new UISlider(width-sliderSize-gap, headerSize + gap + 1, sliderSize, textPage.height, Ui.logAreaSliderConfig);
+		var hSlider = new UISlider(gap, height-sliderSize-gap, textPage.width, sliderSize, Ui.logSliderConfig);
+		var vSlider = new UISlider(width-sliderSize-gap, headerSize + gap + 1, sliderSize, textPage.height, Ui.logSliderConfig);
 		
 		hSlider.onMouseWheel = (_, e:WheelEvent) -> hSlider.setDelta( e.deltaY * 18);
 		

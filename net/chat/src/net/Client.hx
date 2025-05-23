@@ -98,13 +98,13 @@ class Client {
 			userNick.set(k, v);
 			users += v + "\n";
 		}
-		if (users == "") msg("No other user logged in yet.");
-		else msg(users + "are logged in.");
+		if (users == "") msg("No other user logged in yet.\n");
+		else msg(users + "are logged in.\n");
 	}
 
 	function userMessage(userNr:Int, message:String):Void
 	{
-		msg(userNick.get(userNr) + ":" + message);
+		msg(userNick.get(userNr) + ": " + message);
 	}
 
 	function userEnter(userNr:Int, nick:String):Void

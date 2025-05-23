@@ -76,9 +76,16 @@ class ClientView {
 	public function onChatInput(msg:String)
 	{	
 		client.send(msg);
+
+		// put it into own chat-output also ! ( syncORDER can diff to what others sees !!! :)
+		chat.say(nickName + ": " + msg);
 	}
 	
-	
+
+	// ---------------------------------------------------------
+	// ---------------- resizing window ------------------------
+	// ---------------------------------------------------------
+
 	function getLogHeight():Int return Std.int(ui.height * 0.2);
 
 	public function resize(x:Int, y:Int, w:Int, h:Int) {
