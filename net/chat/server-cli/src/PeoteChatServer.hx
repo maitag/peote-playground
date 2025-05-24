@@ -56,7 +56,7 @@ class Command {
 		*
 	**/
 	@:flag('--channelName', '-n') @:alias(false)
-	public var channelName:String = "peotechat";
+	public var channelName:String = "chatplayground";
 	
 	/**
 		 prints out more informations for logging 
