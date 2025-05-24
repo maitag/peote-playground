@@ -34,3 +34,5 @@ use the scripts into server-cli/ folder to build it.
 - let Client automatic try to connect again (after little timeout) if the connection gets lost
 - another Client/Server Constellation where the server is opened on demand (if the "channel" is free, otherwise it only "enters" the client)
 - a simple "enter" button while login and "send" button beside the chat input TextLine
+- if a new user enters there should be transmitted the informations about the haxe-version and target
+- one simple `/who` command to let the server transmit who is logged on
