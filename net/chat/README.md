@@ -27,6 +27,7 @@ use the scripts into server-cli/ folder to build it.
 - wordwrapping in clientViews chat-output textpage
 - servercheck that new nickname not already exists -> have to call a client remote function into this case
 - copy paste and other keyboard events for the chat-output textpage
+- glitch: chat output page scrolls back if there something is "selected" ?
 - give the username into chat-output a more fresh green color
 - ctrl-a to select all into input-textline have a glitch (thx to logo to find!)
 - automatic input focus if chat starts
