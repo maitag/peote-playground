@@ -188,21 +188,22 @@ class Log extends UIArea implements ParentElement
 
 
 	// logging function
+	
 	var isFirstLog = true;
-	// @:access(peote.ui.interactive.UITextPageT)
 	public function say(s:String, clear = false)
 	{
 		if (clear) {
 			textPage.text = s;
 		}
 		else {
+			// remove from top
+			if (textPage.length > 5000) textPage.deleteChars(0, 50, 0, 100000);
+
 			if (!isFirstLog) s = "\n" + s;
 			textPage.appendChars(s);
 		}
 		isFirstLog = false;
 
-		// textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length, true);
-
-		textPage.cursorPageEnd();
+		textPage.setCursorLine(textPage.length-1);
 	}
 }

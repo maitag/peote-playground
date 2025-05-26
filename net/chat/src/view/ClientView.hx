@@ -39,7 +39,8 @@ class ClientView {
 
 		// ------- login area --------
 		nameInput = new NameInput(0, getLogHeight()+8, width, height, connect);
-		ui.add(nameInput);		
+		ui.add(nameInput);
+		nameInput.setInputFocus();	
 
 		// -------- chat area ---------
 		chat = new Chat(0, getLogHeight()+8, width, height-getLogHeight(), onChatInput);
@@ -64,6 +65,7 @@ class ClientView {
 		log.say("connection established \\o/");
 		client.setNickName(nickName);
 		ui.add(chat);
+		chat.setInputFocus();
 	}
 
 	public function onDisconnect()

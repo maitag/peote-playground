@@ -43,12 +43,7 @@ class Chat extends UIArea implements ParentElement {
 		inputLine.onPointerUp = function(t:TextLine, e:PointerEvent) { t.stopSelection(e); }
 		add(inputLine);
 		
-		// TODO: new peote-ui feature to set the input-focus automatically to some x or xy position!
-		// inputLine.setInputFocusAt(0);
-
-		// ----------------------------------------
-		// custom keyboard-control via input2action
-		// ----------------------------------------
+		// --- custom keyboard-control via input2action ---
 
 		var actionConfig:ActionConfig = [
 			{ action: "enter" , keyboard: [KeyCode.RETURN, KeyCode.NUMPAD_ENTER], single:true },
@@ -120,11 +115,17 @@ class Chat extends UIArea implements ParentElement {
 
 	}
 
+	public function setInputFocus() inputLine.setInputFocusAt(0);
+
 	// ----- C H A T (^_^) o u t -----
+
 	var lastNick = "";
-	@:access(peote.ui.interactive.UITextPageT) // <- problem here if using other FNT
+	
 	public function say(s:String, ?nick:String)
 	{	
+		// remove from top
+		if (textPage.length > 5000) textPage.deleteChars(0, 50, 0, 100000);
+
 		textPage.appendChars("\n");
 		if (nick == null || lastNick == nick) textPage.appendChars(s);
 		else {
@@ -134,11 +135,9 @@ class Chat extends UIArea implements ParentElement {
 		}
 
 		// little hâck only here until not interated into peote-ui (sry~_->)
-		textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length-1, true, false);
+		textPage.fontProgram.pageWrapLine(textPage.page, textPage.length-1, true, false);
 		
-		// textPage.cursorPageEnd();
-		// textPage.cursorShow();
-		textPage.setCursorLine(textPage.page.length-1);
-		textPage.updateTextOnly(true);
+		textPage.setCursorLine(textPage.length-1);
+		textPage.updateLayout();
 	}
 }

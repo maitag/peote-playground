@@ -5,15 +5,13 @@ class NameInput extends UIArea implements ParentElement {
 	// callbacks
 	var onConnect:String->Void;
 
+	var inputLine:TextLine;
 
 	public function new(x:Int, y:Int, width:Int, height:Int, onConnect:String->Void)
 	{
 		this.onConnect = onConnect;
-
 		super(x, y, width, height, 0, Ui.nameAreaConfig);		
 	}
-
-	var inputLine = TextLine;
 
 	override function onAddUIElementToDisplay()
 	{
@@ -22,8 +20,7 @@ class NameInput extends UIArea implements ParentElement {
 		// ---- enter name ----
 		add(new TextLine(20, 30, 0, 30, 1, "nick name:", Ui.font, Ui.nameLabelFontStyle, Ui.nameLabelTextConfig));
 
-
-		var inputLine = new TextLine(120, 30, 100, 30, 1, "", Ui.font, Ui.nameInputFontStyle, Ui.nameInputTextConfig);
+		inputLine = new TextLine(120, 30, 100, 30, 1, "", Ui.font, Ui.nameInputFontStyle, Ui.nameInputTextConfig);
 		inputLine.onPointerDown = function(t:TextLine, e:PointerEvent) { t.setInputFocus(e); t.startSelection(e); }
 		inputLine.onPointerUp = function(t:TextLine, e:PointerEvent) { t.stopSelection(e); }
 		add(inputLine);
@@ -61,5 +58,7 @@ class NameInput extends UIArea implements ParentElement {
 		}
 
 	}
+
+	public function setInputFocus() inputLine.setInputFocusAt(inputLine.length);
 
 }
