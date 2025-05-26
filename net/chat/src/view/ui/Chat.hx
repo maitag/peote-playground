@@ -125,16 +125,20 @@ class Chat extends UIArea implements ParentElement {
 	@:access(peote.ui.interactive.UITextPageT) // <- problem here if using other FNT
 	public function say(s:String, ?nick:String)
 	{	
-		if (nick == null || lastNick == nick) textPage.appendChars(s + "\n");
+		textPage.appendChars("\n");
+		if (nick == null || lastNick == nick) textPage.appendChars(s);
 		else {
 			lastNick = nick;
-			textPage.appendChars(nick + ": " + s + "\n");
+			textPage.appendChars(nick + ": ", Ui.chatNameFontStyle);
+			textPage.appendChars(s);
 		}
 
 		// little hâck only here until not interated into peote-ui (sry~_->)
-		textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length-1, true);
+		textPage.fontProgram.pageWrapLine(textPage.page, textPage.page.length-1, true, false);
 		
 		// textPage.cursorPageEnd();
-		textPage.cursorPageDown();
+		// textPage.cursorShow();
+		textPage.setCursorLine(textPage.page.length-1);
+		textPage.updateTextOnly(true);
 	}
 }

@@ -82,7 +82,8 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 		// maskSpace:Space = {},
 	}
 
-	static var chatFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+	static var chatFontStyle = fontstyleLayer_0.copy(0x69a33fff, 9, 16);
+	static var chatNameFontStyle = fontstyleLayer_0.copy(0xaadf53ff, 9, 16);
 
 	static var chatTextConfig:TextConfig = {
 		backgroundStyle: styleLayer_0.copy(0x0a230cff, 0x0a230cff, 0, 11),
