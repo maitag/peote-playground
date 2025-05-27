@@ -31,9 +31,9 @@ use the scripts into server-cli/ folder to build it.
 - [x] automatic input focus if chat starts
 - [x] prevent double spaces and take care on min/max-length for the nickname (also while editing!)
 - [x] a simple "enter" button while login and "send" button beside the chat input TextLine
+- [x] let the log-field for the client easy en/disable by compilerdefine
 - [ ] servercheck that new nickname not already exists -> have to call a client remote function into this case
 - [ ] copy paste and other keyboard events for the chat-output textpage
-- [ ] let the log-field for the client easy en/disable
 - [ ] simple "who" button in client to show who is logged on
 - [ ] let Client automatic try to connect again (after little timeout) if the connection gets lost
 - [ ] for web-clients the "channel" name have to be fetched from url/param

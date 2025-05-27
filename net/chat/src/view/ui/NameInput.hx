@@ -5,6 +5,7 @@ class NameInput extends UIArea implements ParentElement {
 	// callbacks
 	var onConnect:String->Void;
 
+	var connectButton:TextLine;
 	var inputLine:TextLine;
 
 	public function new(x:Int, y:Int, width:Int, height:Int, onConnect:String->Void)
@@ -16,6 +17,12 @@ class NameInput extends UIArea implements ParentElement {
 	override function onAddUIElementToDisplay()
 	{
 		super.onAddUIElementToDisplay();
+
+		// --- connect button -----
+		connectButton = new TextLine(346, 32, 0, 26, 0, "enter", Ui.font, Ui.nameButtonFontStyle, Ui.nameButtonTextConfig);
+		connectButton.onPointerDown = function(_,_) enter(inputLine.text);
+		add(connectButton);
+		connectButton.hide();
 
 		// ---- enter name ----
 		add(new TextLine(20, 30, 0, 30, 1, "nick name:", Ui.font, Ui.nameLabelFontStyle, Ui.nameLabelTextConfig));
@@ -46,6 +53,8 @@ class NameInput extends UIArea implements ParentElement {
 				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a sace (also updating empty text!)
 				t.updateLayout();
 			}
+
+			if (~/ $/.replace(cleaned, "").length >= 2) connectButton.show();
 		}
 		inputLine.onDeleteText = function(t:TextLine, fromPos:Int, toPos:Int, chars:String) {
 			var s:String = t.text;
@@ -55,6 +64,7 @@ class NameInput extends UIArea implements ParentElement {
 				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a sace (also updating empty text!)
 				t.updateLayout();
 			}
+			if (~/ $/.replace(cleaned, "").length < 2) connectButton.hide();
 		}
 		
 		add(inputLine);
@@ -90,12 +100,6 @@ class NameInput extends UIArea implements ParentElement {
 		input2Action.addKeyboard(new KeyboardAction(actionConfig, actionMap));
 				
 		inputLine.input2Action = input2Action;
-
-		// --- connect button -----
-
-		var connectButton = new TextLine(346, 32, 0, 26, 0, "enter", Ui.font, Ui.nameButtonFontStyle, Ui.nameButtonTextConfig);
-		connectButton.onPointerDown = function(_,_) enter(inputLine.text);		
-		add(connectButton);
 
 
 		// ------------------------------------

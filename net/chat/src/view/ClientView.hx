@@ -14,7 +14,9 @@ class ClientView {
 	var peoteView:PeoteView;
 	var ui:Ui;
 
+	#if clientLogArea
 	var log:Log;
+	#end
 	var chat:Chat;
 	var nameInput:NameInput;
 
@@ -33,9 +35,11 @@ class ClientView {
 		ui = new Ui(x, y, width, height);
 		peoteView.addDisplay(ui);
 		
+		#if clientLogArea
 		// --------- logger ----------
 		log = new Log(0, 4, width, getLogHeight());
-		ui.add(log);		
+		ui.add(log);	
+		#end	
 
 		// ------- login area --------
 		nameInput = new NameInput(0, getLogHeight()+8, width, height, connect);
@@ -50,7 +54,16 @@ class ClientView {
 		// ----- peote-net client -----
 		// ----------------------------
 
-		client = new Client(Config.host, Config.port, Config.channel, chat.say, log.say);
+		client = new Client(Config.host, Config.port, Config.channel, chat.say, this.say);
+	}
+
+	public function say(s:String, clear = false)
+	{
+		#if clientLogArea
+		log.say(s, clear);
+		#else
+		trace(s);
+		#end
 	}
 
 	public function connect(nickName:String)
@@ -62,7 +75,7 @@ class ClientView {
 	public function onConnect()
 	{	
 		ui.remove(nameInput);
-		log.say("connection established \\o/");
+		say("connection established \\o/");
 		client.setNickName(nickName);
 		ui.add(chat);
 		chat.setInputFocus();
@@ -71,7 +84,7 @@ class ClientView {
 	public function onDisconnect()
 	{	
 		ui.remove(chat);
-		log.say("connection lost ...");
+		say("connection lost ...");
 		ui.add(nameInput);
 	}
 
@@ -89,7 +102,12 @@ class ClientView {
 	// ---------------- resizing window ------------------------
 	// ---------------------------------------------------------
 
-	function getLogHeight():Int return Std.int(ui.height * 0.2);
+	inline function getLogHeight():Int
+		#if clientLogArea 
+		return Std.int(ui.height * 0.2);
+		#else
+		return 0;
+		#end
 
 	public function resize(x:Int, y:Int, w:Int, h:Int) {
 		if (ui != null) {
@@ -98,9 +116,11 @@ class ClientView {
 			ui.width = w;
 			ui.height = h;
 			
+			#if clientLogArea
 			log.width = w;
 			log.height = getLogHeight();
 			log.updateLayout();
+			#end
 
 			nameInput.width = w;
 			nameInput.height = ui.height-getLogHeight();
