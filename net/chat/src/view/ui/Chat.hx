@@ -11,6 +11,7 @@ class Chat extends UIArea implements ParentElement {
 	}
 
 	var textPage:TextPage;
+	var sendButton:TextLine;
 	var inputLine:TextLine;
 	var slider:UISlider;
 
@@ -36,9 +37,21 @@ class Chat extends UIArea implements ParentElement {
 		textPage.onPointerUp = function(t:TextPage, e:PointerEvent) { t.stopSelection(e); }
 		add(textPage);
 
+
+		// --- send button -----
+
+		sendButton = new TextLine( width - gap - 54, height-inputSize, 54, 20, 0, "send", Ui.font, Ui.chatButtonFontStyle, Ui.chatButtonTextConfig);
+		sendButton.onPointerDown = function(_,_) {
+			onInput(inputLine.text);
+			inputLine.text = "";
+			inputLine.setXOffset(0);
+			inputLine.setCursor(0);
+		}		
+		add(sendButton);
+
 		// --- chat INPUT ----
 
-		inputLine = new TextLine(gap, height-inputSize, width - gap - gap, 20, 0, "", Ui.font, Ui.chatFontStyle, Ui.chatInputTextConfig);
+		inputLine = new TextLine(gap, height-inputSize, width - 3*gap - sendButton.width, 20, 0, "", Ui.font, Ui.chatFontStyle, Ui.chatInputTextConfig);
 		inputLine.onPointerDown = function(t:TextLine, e:PointerEvent) { t.setInputFocus(e); t.startSelection(e); }
 		inputLine.onPointerUp = function(t:TextLine, e:PointerEvent) { t.stopSelection(e); }
 		add(inputLine);
@@ -97,6 +110,9 @@ class Chat extends UIArea implements ParentElement {
 			textPage.width += deltaWidth;
 			textPage.updateLayout();
 
+			sendButton.x += deltaWidth;
+			sendButton.updateLayout();
+
 			inputLine.width += deltaWidth;
 			inputLine.updateLayout();
 		}
@@ -107,6 +123,9 @@ class Chat extends UIArea implements ParentElement {
 
 			textPage.height += deltaHeight;
 			textPage.updateLayout();
+
+			sendButton.y += deltaHeight;
+			sendButton.updateLayout();
 
 			inputLine.y += deltaHeight;
 			inputLine.updateLayout();

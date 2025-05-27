@@ -60,6 +60,7 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 
 	static var nameLabelFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
 	static var nameInputFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
+	static var nameButtonFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
 
 	static var nameLabelTextConfig:TextConfig = {
 		backgroundStyle: null,
@@ -72,7 +73,16 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 		backgroundStyle: styleLayer_1.copy(0x103117ff),
 		selectionStyle: styleLayer_1.copy(0x104127ff),
 		cursorStyle: styleLayer_1.copy(Color.RED2),
+		hAlign:HAlign.LEFT,
+		vAlign:VAlign.CENTER,
 		textSpace: { left:5, right:3, top:3, bottom:3 }
+	}
+
+	static var nameButtonTextConfig:TextConfig = {
+		backgroundStyle: styleLayer_0.copy(0x103117ff, 0x234a27ff),
+		hAlign:HAlign.CENTER,
+		vAlign:VAlign.CENTER,
+		textSpace: { left:10, right:8, top:3, bottom:3 }
 	}
 
 	// ---------- CHAT AREA -------------------
@@ -84,6 +94,7 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 
 	static var chatFontStyle = fontstyleLayer_0.copy(0x69a33fff, 9, 16);
 	static var chatNameFontStyle = fontstyleLayer_0.copy(0xaadf53ff, 9, 16);
+	static var chatButtonFontStyle = fontstyleLayer_0.copy(0x69b03cff, 9, 16);
 
 	static var chatTextConfig:TextConfig = {
 		backgroundStyle: styleLayer_0.copy(0x0a230cff, 0x0a230cff, 0, 11),
@@ -106,6 +117,12 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 		draggSpace: 1,
 	};
 
+	static var chatButtonTextConfig:TextConfig = {
+		backgroundStyle: styleLayer_0.copy(0x103117ff, 0x234a27ff),
+		hAlign:HAlign.CENTER,
+		vAlign:VAlign.CENTER,
+		textSpace: { left:10, right:8, top:3, bottom:3 }
+	}
 
 	// -------------------------------------------------------
 	// ----------------- CONSTRUCTOR -------------------------
