@@ -1,4 +1,4 @@
-#Simple chat prototype that can be build into 3 modes:
+# Simple chat prototype that can be build into 3 modes:
 
 - offline mode what include the server and two clients for developing
 - a gui server (`-D server`)
@@ -22,7 +22,7 @@ You can also create a dedicated server as commandline tool,
 use the scripts into server-cli/ folder to build it.
 
 
-#TODO
+## TODO
 
 - [x] wordwrapping in clientViews chat-output textpage
 - [x] glitch: chat output page scrolls back if there something is "selected" ?
