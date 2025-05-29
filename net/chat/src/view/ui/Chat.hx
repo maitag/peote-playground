@@ -18,8 +18,8 @@ class Chat extends UIArea implements ParentElement {
 	override function onAddUIElementToDisplay()
 	{
 		super.onAddUIElementToDisplay();
-
-		// -----------------------------------------------------------
+		if (childs.length > 0) return; // add only at the first time
+		// ---------------------------------------------------------
 		
 		var sliderSize:Int = 16;
 		var inputSize:Int = 30;
@@ -40,21 +40,19 @@ class Chat extends UIArea implements ParentElement {
 
 		// --- send button -----
 
-		sendButton = new TextLine( width - gap - 54, height-inputSize, 54, 20, 0, "send", Ui.font, Ui.chatButtonFontStyle, Ui.chatButtonTextConfig);
+		sendButton = new TextLine( width - gap - 54, height-inputSize+4, 54, 20, 0, "send", Ui.font, Ui.chatButtonFontStyle, Ui.chatButtonTextConfig);
 		sendButton.onPointerDown = function(_,_) {
 			onInput(inputLine.text);
 			inputLine.text = "";
 			inputLine.setXOffset(0);
 			inputLine.setCursor(0);
 		}		
-		add(sendButton);
 
 		// --- chat INPUT ----
 
-		inputLine = new TextLine(gap, height-inputSize, width - 3*gap - sendButton.width, 20, 0, "", Ui.font, Ui.chatFontStyle, Ui.chatInputTextConfig);
+		inputLine = new TextLine(gap, height-inputSize+4, width - 3*gap - sendButton.width, 20, 0, "", Ui.font, Ui.chatFontStyle, Ui.chatInputTextConfig);
 		inputLine.onPointerDown = function(t:TextLine, e:PointerEvent) { t.setInputFocus(e); t.startSelection(e); }
 		inputLine.onPointerUp = function(t:TextLine, e:PointerEvent) { t.stopSelection(e); }
-		add(inputLine);
 		
 		// --- custom keyboard-control via input2action ---
 
@@ -134,7 +132,9 @@ class Chat extends UIArea implements ParentElement {
 
 	}
 
-	public function setInputFocus() inputLine.setInputFocusAt(0);
+	public function showInput() if (!inputLine.isVisible) { add(inputLine); inputLine.setInputFocusAt(0); add(sendButton); };
+	public function hideInput() if (inputLine.isVisible) { remove(inputLine); remove(sendButton); }
+	public function setInputFocus() if (inputLine.isVisible) inputLine.setInputFocusAt(0);
 
 	// ----- C H A T (^_^) o u t -----
 

@@ -20,6 +20,8 @@
 	<!-- <haxedef name="port" value="7681" /> -->
 	<!-- <haxedef name="channel" value="chatplayground" /> -->
 
+	<haxedef name="clientLogArea" unless="html5" />
+
 	
 	<source path="src" />
 	

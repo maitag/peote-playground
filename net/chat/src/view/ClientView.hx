@@ -8,6 +8,7 @@ import view.ui.Chat;
 import view.ui.NameInput;
 
 import net.Client;
+import peote.net.Reason;
 
 class ClientView {
 
@@ -42,13 +43,13 @@ class ClientView {
 		#end	
 
 		// ------- login area --------
-		nameInput = new NameInput(0, getLogHeight()+8, width, height, connect);
+		nameInput = new NameInput(0, getLogHeight()+8, width, 90, connect);
 		ui.add(nameInput);
 		nameInput.setInputFocus();	
 
 		// -------- chat area ---------
-		chat = new Chat(0, getLogHeight()+8, width, height-getLogHeight(), onChatInput);
-
+		chat = new Chat(0, getLogHeight()+8 + nameInput.height + 4, width, height-getLogHeight()-nameInput.height-8-4, onChatInput);
+		ui.add(chat);
 
 		// ----------------------------
 		// ----- peote-net client -----
@@ -69,23 +70,50 @@ class ClientView {
 	public function connect(nickName:String)
 	{	
 		this.nickName = nickName;
-		client.connect(onConnect, onDisconnect);
+		client.connect(onConnect, onDisconnect, onError);
+		nameInput.hide();
 	}
 
 	public function onConnect()
 	{	
-		ui.remove(nameInput);
-		say("connection established \\o/");
+		chat.say("connection established \\o/\n");
 		client.setNickName(nickName);
-		ui.add(chat);
-		chat.setInputFocus();
+
+		chat.y = getLogHeight()+8;
+		chat.height = ui.height-getLogHeight()-8;
+		chat.updateLayout();
+
+		chat.showInput();
 	}
 
-	public function onDisconnect()
+	public function onDisconnect(reason:Reason)
 	{	
-		ui.remove(chat);
-		say("connection lost ...");
-		ui.add(nameInput);
+		chat.y = getLogHeight()+8 + nameInput.height+4;
+		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
+		chat.updateLayout();
+
+		chat.hideInput();
+
+		chat.say('DISCONNECT (${reason.toString()}): chat-server closed\n');
+
+		nameInput.show();
+		nameInput.updateLayout(); // if there was a window resize inbetween
+		nameInput.setInputFocus();
+	}
+
+	public function onError(reason:Reason)
+	{	
+		chat.y = getLogHeight()+8 + nameInput.height+4;
+		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
+		chat.updateLayout();
+
+		chat.hideInput();
+
+		chat.say('ERROR (${reason.toString()}): can\'t connect or lost connection to host\n');
+
+		nameInput.show();
+		nameInput.updateLayout(); // if there was a window resize inbetween
+		nameInput.setInputFocus();
 	}
 
 	public function onChatInput(msg:String)
@@ -123,13 +151,13 @@ class ClientView {
 			#end
 
 			nameInput.width = w;
-			nameInput.height = ui.height-getLogHeight();
+			// nameInput.height = ui.height-getLogHeight();
 			nameInput.y = getLogHeight()+8;
 			nameInput.updateLayout();
 
 			chat.width = w;
-			chat.height = ui.height-getLogHeight();
-			chat.y = getLogHeight()+8;
+			chat.height = ui.height-getLogHeight()-8 -((nameInput.isVisible) ? nameInput.height + 4 : 0);
+			chat.y = getLogHeight()+8 + ((nameInput.isVisible) ? nameInput.height+4 : 0);
 			chat.updateLayout();
 		}
 	}

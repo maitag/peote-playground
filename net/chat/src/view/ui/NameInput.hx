@@ -17,12 +17,12 @@ class NameInput extends UIArea implements ParentElement {
 	override function onAddUIElementToDisplay()
 	{
 		super.onAddUIElementToDisplay();
+		if (childs.length > 0) return; // add only at the first time
+		// ---------------------------------------------------------
 
 		// --- connect button -----
 		connectButton = new TextLine(346, 32, 0, 26, 0, "enter", Ui.font, Ui.nameButtonFontStyle, Ui.nameButtonTextConfig);
-		connectButton.onPointerDown = function(_,_) enter(inputLine.text);
-		add(connectButton);
-		connectButton.hide();
+		connectButton.onPointerDown = (_,_) -> enter(inputLine.text);
 
 		// ---- enter name ----
 		add(new TextLine(20, 30, 0, 30, 1, "nick name:", Ui.font, Ui.nameLabelFontStyle, Ui.nameLabelTextConfig));
@@ -50,21 +50,25 @@ class NameInput extends UIArea implements ParentElement {
 			if (s != cleaned) {				
 				t.setText(cleaned);
 				if (cleaned.length < s.length) t.setCursor(t.cursor - (s.length - cleaned.length));
-				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a sace (also updating empty text!)
+				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a space (also updating empty text!)
 				t.updateLayout();
 			}
 
-			if (~/ $/.replace(cleaned, "").length >= 2) connectButton.show();
+			// better add/remove instead of show/hide because the UIarea always is masked and then it will show it on resize also if was hide! (ui-glitch?)
+			// if (~/ $/.replace(cleaned, "").length >= 2) connectButton.show();
+			if (!connectButton.isVisible && ~/ $/.replace(cleaned, "").length >= 2) add(connectButton);
 		}
+
 		inputLine.onDeleteText = function(t:TextLine, fromPos:Int, toPos:Int, chars:String) {
 			var s:String = t.text;
 			var cleaned = cleanNickName(s);
 			if (s != cleaned) {				
 				t.setText(cleaned);
-				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a sace (also updating empty text!)
+				t.xOffset = 0; // <- to avoid GLITCH in peote-ui if first letter is a space (also updating empty text!)
 				t.updateLayout();
 			}
-			if (~/ $/.replace(cleaned, "").length < 2) connectButton.hide();
+			// if (~/ $/.replace(cleaned, "").length < 2) connectButton.hide();
+			if (connectButton.isVisible && ~/ $/.replace(cleaned, "").length < 2) remove(connectButton);
 		}
 		
 		add(inputLine);
@@ -79,7 +83,7 @@ class NameInput extends UIArea implements ParentElement {
 		
 		var actionMap:ActionMap = [
 			"enter" => {
-				action:(_, _) -> {
+				action:function(_,_) {
 					enter(inputLine.text);
 				},
 				repeatKeyboardDefault:false
@@ -110,7 +114,6 @@ class NameInput extends UIArea implements ParentElement {
 		}
 
 		this.onResizeHeight = (_, height:Int, deltaHeight:Int) -> {
-
 		}
 
 	}
@@ -128,6 +131,6 @@ class NameInput extends UIArea implements ParentElement {
 		return s.substr(0, 23);
 	}
 
-	public function setInputFocus() inputLine.setInputFocusAt(inputLine.length);
+	public function setInputFocus() if (inputLine.isVisible) inputLine.setInputFocusAt(inputLine.length);
 
 }

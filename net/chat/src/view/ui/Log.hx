@@ -14,12 +14,9 @@ class Log extends UIArea implements ParentElement
 
 	override function onAddUIElementToDisplay()
 	{
-		super.onAddUIElementToDisplay();
-		
-		if (childs.length > 0) return;
-		// add only at the first time
-		
-		// -----------------------------------------------------------
+		super.onAddUIElementToDisplay();		
+		if (childs.length > 0) return; // add only at the first time		
+		// ---------------------------------------------------------
 		
 		var sliderSize:Int = 16;
 		var headerSize:Int = 0;

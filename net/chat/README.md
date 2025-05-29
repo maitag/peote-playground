@@ -32,6 +32,7 @@ use the scripts into server-cli/ folder to build it.
 - [x] prevent double spaces and take care on min/max-length for the nickname (also while editing!)
 - [x] a simple "enter" button while login and "send" button beside the chat input TextLine
 - [x] let the log-field for the client easy en/disable by compilerdefine
+- [x] let the client re-connect on error and keep the nickname-input on top of chat-output area
 - [ ] servercheck that new nickname not already exists -> have to call a client remote function into this case
 - [ ] copy paste and other keyboard events for the chat-output textpage
 - [ ] simple "who" button in client to show who is logged on

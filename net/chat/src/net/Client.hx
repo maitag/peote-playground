@@ -18,7 +18,8 @@ class Client {
 	var log:String->?Bool->Void;
 	
 	var onRemoteReady:Void->Void;
-	var onDisconnect:Void->Void;
+	var onDisconnect:Reason->Void;
+	var onError:Reason->Void;
 	
 	var onClientEnter:String->?Bool->Void;
 	var onClientMessage:String->?Bool->Void;
@@ -56,22 +57,24 @@ class Client {
 			{
 				log('Disconnect:$reason, channel number=${client.jointNr}');
 
-				onDisconnect(); // <-- callback to View
+				onDisconnect(reason); // <-- callback to View
+				peoteClient.leave();
 			},
 			
 			onError: function(client:PeoteClient, reason:Reason)
 			{
 				log('Error:$reason');
 
-				onDisconnect(); // <-- callback to View
+				onError(reason); // <-- callback to View
 			}			
 		});		
 	}
 	
-	public function connect(onRemoteReady:Void->Void, onDisconnect:Void->Void)
+	public function connect(onRemoteReady:Void->Void, onDisconnect:Reason->Void, onError:Reason->Void)
 	{
 		this.onRemoteReady = onRemoteReady;
 		this.onDisconnect = onDisconnect;
+		this.onError = onError;
 
 		// enter server
 		log('try to connect to $host:$port\nenter channel "$channel" ...');
