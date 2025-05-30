@@ -70,6 +70,7 @@ class ClientView {
 	public function connect(nickName:String)
 	{	
 		this.nickName = nickName;
+		
 		client.connect(onConnect, onDisconnect, onError);
 		nameInput.hide();
 	}
@@ -103,6 +104,8 @@ class ClientView {
 
 	public function onError(reason:Reason)
 	{	
+		// Halfwheat, i am sooo soo sory :). . . that this all not works in html5 yet -_-
+		#if !html5
 		chat.y = getLogHeight()+8 + nameInput.height+4;
 		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
 		chat.updateLayout();
@@ -114,6 +117,7 @@ class ClientView {
 		nameInput.show();
 		nameInput.updateLayout(); // if there was a window resize inbetween
 		nameInput.setInputFocus();
+		#end
 	}
 
 	public function onChatInput(msg:String)

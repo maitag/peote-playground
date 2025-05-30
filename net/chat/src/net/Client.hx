@@ -58,7 +58,6 @@ class Client {
 				log('Disconnect:$reason, channel number=${client.jointNr}');
 
 				onDisconnect(reason); // <-- callback to View
-				peoteClient.leave();
 			},
 			
 			onError: function(client:PeoteClient, reason:Reason)
@@ -78,6 +77,7 @@ class Client {
 
 		// enter server
 		log('try to connect to $host:$port\nenter channel "$channel" ...');
+		peoteClient.leave(); // <-- if was opened before!
 		peoteClient.enter(host, port, channel);
 	}
 
