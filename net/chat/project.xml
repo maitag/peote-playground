@@ -10,7 +10,6 @@
 	<window width="1024" height="960" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
 
-	
 	<app main="OfflineTest" path="bin" file="OfflineTest" />
 	<app main="PeoteChatServer" path="bin" file="PeoteChatServer" if="server" />
 	<app main="PeoteChatClient" path="bin" file="PeoteChatClient" if="client" />
@@ -21,7 +20,6 @@
 	<!-- <haxedef name="channel" value="chatplayground" /> -->
 
 	<haxedef name="clientLogArea" unless="html5" />
-
 	
 	<source path="src" />
 	
@@ -30,8 +28,6 @@
 	<haxelib name="peote-text" />
 	<haxelib name="input2action" />
 	<haxelib name="peote-ui" />
-	<!-- <haxelib name="peote-ui-extra" /> -->
-	<!-- <haxelib name="peote-event" /> -->
 	<haxelib name="peote-socket" />
 	<haxelib name="peote-net" />
 	

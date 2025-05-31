@@ -71,18 +71,23 @@ class ClientView {
 	{	
 		this.nickName = nickName;
 		
-		client.connect(onConnect, onDisconnect, onError);
 		nameInput.hide();
+		chat.y = getLogHeight()+8;
+		chat.height = ui.height-getLogHeight()-8;
+		chat.updateLayout();
+
+		// without Timer here it could block the ui changes above (on native targets)
+		#if html5
+		client.connect(onConnect, onDisconnect, onError);
+		#else
+		haxe.Timer.delay(()->client.connect(onConnect, onDisconnect, onError),100);
+		#end
 	}
 
 	public function onConnect()
 	{	
 		chat.say("connection established \\o/\n");
 		client.setNickName(nickName);
-
-		chat.y = getLogHeight()+8;
-		chat.height = ui.height-getLogHeight()-8;
-		chat.updateLayout();
 
 		chat.showInput();
 	}
@@ -104,8 +109,6 @@ class ClientView {
 
 	public function onError(reason:Reason)
 	{	
-		// Halfwheat, i am sooo soo sory :). . . that this all not works in html5 yet -_-
-		#if !html5
 		chat.y = getLogHeight()+8 + nameInput.height+4;
 		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
 		chat.updateLayout();
@@ -117,7 +120,6 @@ class ClientView {
 		nameInput.show();
 		nameInput.updateLayout(); // if there was a window resize inbetween
 		nameInput.setInputFocus();
-		#end
 	}
 
 	public function onChatInput(msg:String)
