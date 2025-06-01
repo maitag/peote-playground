@@ -55,7 +55,7 @@ class ClientView {
 		// ----- peote-net client -----
 		// ----------------------------
 
-		client = new Client(Config.host, Config.port, Config.channel, chat.say, this.say);
+		client = new Client(Config.host, Config.port, Config.channel, chat.say, this.say, chat.userEnter, chat.userLeave);
 	}
 
 	public function say(s:String, clear = false)
@@ -71,10 +71,7 @@ class ClientView {
 	{	
 		this.nickName = nickName;
 		
-		nameInput.hide();
-		chat.y = getLogHeight()+8;
-		chat.height = ui.height-getLogHeight()-8;
-		chat.updateLayout();
+		hideNameInput();
 
 		// without Timer here it could block the ui changes above (on native targets)
 		#if html5
@@ -86,40 +83,40 @@ class ClientView {
 
 	public function onConnect()
 	{	
-		chat.say("connection established \\o/\n");
 		client.setNickName(nickName);
-
-		chat.showInput();
+		chat.enableInput();
 	}
 
 	public function onDisconnect(reason:Reason)
 	{	
+		chat.disableInput();
+		showNameInput();
+		chat.say('DISCONNECT (${reason.toString()}): chat-server closed\n');
+	}
+
+	public function onError(reason:Reason)
+	{	
+		chat.disableInput();
+		showNameInput();
+		if (reason == Reason.KICK) chat.say('Nickname already exists\n');
+		else chat.say('ERROR (${reason.toString()}): can\'t connect or lost connection to host\n');
+	}
+
+	public function showNameInput() {		
 		chat.y = getLogHeight()+8 + nameInput.height+4;
 		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
 		chat.updateLayout();
-
-		chat.hideInput();
-
-		chat.say('DISCONNECT (${reason.toString()}): chat-server closed\n');
 
 		nameInput.show();
 		nameInput.updateLayout(); // if there was a window resize inbetween
 		nameInput.setInputFocus();
 	}
 
-	public function onError(reason:Reason)
-	{	
-		chat.y = getLogHeight()+8 + nameInput.height+4;
-		chat.height = ui.height-getLogHeight()-8 - nameInput.height-4;
+	public function hideNameInput() {
+		nameInput.hide();
+		chat.y = getLogHeight()+8;
+		chat.height = ui.height-getLogHeight()-8;
 		chat.updateLayout();
-
-		chat.hideInput();
-
-		chat.say('ERROR (${reason.toString()}): can\'t connect or lost connection to host\n');
-
-		nameInput.show();
-		nameInput.updateLayout(); // if there was a window resize inbetween
-		nameInput.setInputFocus();
 	}
 
 	public function onChatInput(msg:String)
@@ -127,7 +124,7 @@ class ClientView {
 		client.send(msg);
 
 		// put it into own chat-output also ! ( syncORDER can diff to what others sees !!! :)
-		chat.say(msg,nickName);
+		chat.say(msg, nickName);
 	}
 	
 

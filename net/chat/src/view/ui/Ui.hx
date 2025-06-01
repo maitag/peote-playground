@@ -75,7 +75,7 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 		cursorStyle: styleLayer_1.copy(Color.RED2),
 		hAlign:HAlign.LEFT,
 		vAlign:VAlign.CENTER,
-		textSpace: { left:5, right:3, top:3, bottom:3 }
+		textSpace: { left:5, right:3, top:3, bottom:3 },
 	}
 
 	static var nameButtonTextConfig:TextConfig = {
@@ -107,7 +107,8 @@ abstract Ui(PeoteUIDisplay) from PeoteUIDisplay to PeoteUIDisplay
 		backgroundStyle: styleLayer_1.copy(0x103117ff),
 		selectionStyle: styleLayer_1.copy(0x104127ff),
 		cursorStyle: styleLayer_1.copy(Color.RED2),
-		textSpace: { left:5, right:3, top:3, bottom:3 }
+		textSpace: { left:5, right:3, top:3, bottom:3 },
+		undoBufferSize:32
 	}
 
 	static var chatSliderConfig:SliderConfig = {

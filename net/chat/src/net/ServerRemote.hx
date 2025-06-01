@@ -18,13 +18,6 @@ class ServerRemote implements Remote {
 	public inline function clientRemoteIsReady( client ) {
 		//trace(Type.typeof(client));
 		this.client = client;
-
-		// send map of all connected users and its nicknames:
-		var nickNames = new Map<Int,String>();
-		for ( remote in server.serverRemote) 
-			if (remote.userNr != userNr) nickNames.set(remote.userNr, remote.nick);
-		log('call "userList()" of client: $userNr');
-		client.userList(nickNames);
 	}
 	
 	// ------------------------------------------------------------
@@ -58,27 +51,61 @@ class ServerRemote implements Remote {
 	@:remote public function setNickName(nick:String):Void {
 		log('client "${this.nick}" ($userNr) tryes to change nickname into -> $nick');
 		
-		// TODO: if that nickname is wrong or still exists
-		// put a postfix on it or call a "wrongNick()" back to the client!
-
-
-		// call userSetNickName on all clients (excluding the sender)
-		for (remote in server.serverRemote)
-		{
-			if (remote.client != null && remote.userNr != userNr) {
-				if (this.nick == "") {		
-					log('call "userEnter()" of client: "${remote.nick}" ($userNr)');
-					remote.client.userEnter(userNr, nick);
-				}
-				else {
-					log('call "userSetNickName()" of client: "${remote.nick}" ($userNr)');
-					remote.client.userSetNickName(userNr, nick);
+		// check nickname:
+		var wrongNick = false;
+		
+		if (nick.length < 2 || nick != cleanNickName(nick)) wrongNick = true;
+		else {
+			// check if nickname already taken
+			for (remote in server.serverRemote)
+			{
+				if (nick == remote.nick) {
+					wrongNick = true;
+					break;
 				}
 			}
 		}
 
-		this.nick = nick;
+		if (wrongNick) {
+			// call "wrongNickName()" back to the client!
+			client.wrongNickName();
+		}
+		else {		
+			// call userSetNickName on all clients (excluding the sender)
+			for (remote in server.serverRemote)
+			{
+				if (remote.client != null && remote.userNr != userNr) {
+					if (this.nick == "") {		
+						log('call "userEnter()" of client: "${remote.nick}" ($userNr)');
+						remote.client.userEnter(userNr, nick);
+					}
+					else {
+						log('call "userSetNickName()" of client: "${remote.nick}" ($userNr)');
+						remote.client.userSetNickName(userNr, nick);
+					}
+				}
+			}
+
+			this.nick = nick;
+
+
+			// send map of all connected users and its nicknames:
+			var nickNames = new Map<Int,String>();
+			for ( remote in server.serverRemote) 
+				if (remote.userNr != userNr) nickNames.set(remote.userNr, remote.nick);
+			log('call "userList()" of client: $userNr');
+			client.userList(nickNames);
+		}
+
 	}
+
+	public function cleanNickName(s:String):String {
+		s = ~/  +/g.replace(s, " "); // multiple spaces
+		s = ~/^ /.replace(s, ""); // space at line start
+		s = ~/ $/.replace(s, ""); // space at line end
+		return s.substr(0, 23);
+	}
+
 
 }
 

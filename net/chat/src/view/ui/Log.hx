@@ -57,6 +57,7 @@ class Log extends UIArea implements ParentElement
 		
 		textPage.onPointerUp = function(t, e) {
 			t.stopSelection(e);
+			t.copyToClipboard();
 		}
 		add(textPage);
 				

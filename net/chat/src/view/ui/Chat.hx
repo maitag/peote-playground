@@ -34,7 +34,7 @@ class Chat extends UIArea implements ParentElement {
 			Ui.font, Ui.chatFontStyle, Ui.chatTextConfig
 		);
 		textPage.onPointerDown = function(t:TextPage, e:PointerEvent) { t.startSelection(e); }
-		textPage.onPointerUp = function(t:TextPage, e:PointerEvent) { t.stopSelection(e); }
+		textPage.onPointerUp = function(t:TextPage, e:PointerEvent) { t.stopSelection(e); t.copyToClipboard(); }
 		add(textPage);
 
 
@@ -132,8 +132,8 @@ class Chat extends UIArea implements ParentElement {
 
 	}
 
-	public function showInput() if (!inputLine.isVisible) { add(inputLine); inputLine.setInputFocusAt(0); add(sendButton); };
-	public function hideInput() if (inputLine.isVisible) { remove(inputLine); remove(sendButton); }
+	public function enableInput() if (!inputLine.isVisible) { add(inputLine); inputLine.setInputFocusAt(0); add(sendButton); };
+	public function disableInput() if (inputLine.isVisible) { remove(inputLine); remove(sendButton); }
 	public function setInputFocus() if (inputLine.isVisible) inputLine.setInputFocusAt(0);
 
 	// ----- C H A T (^_^) o u t -----
@@ -157,6 +157,30 @@ class Chat extends UIArea implements ParentElement {
 		textPage.fontProgram.pageWrapLine(textPage.page, textPage.length-1, true, false);
 		
 		textPage.setCursorLine(textPage.length-1);
+		textPage.updateLayout();
+	}
+
+	public function userEnter(nick:String)
+	{	
+		// remove from top
+		if (textPage.length > 5000) textPage.deleteChars(0, 50, 0, 100000);
+
+		textPage.appendChars("\n");
+		textPage.appendChars(nick, Ui.chatNameFontStyle);
+		textPage.appendChars(" enters chat\n");
+		
+		textPage.updateLayout();
+	}
+
+	public function userLeave(nick:String)
+	{	
+		// remove from top
+		if (textPage.length > 5000) textPage.deleteChars(0, 50, 0, 100000);
+
+		textPage.appendChars("\n");
+		textPage.appendChars(nick, Ui.chatNameFontStyle);
+		textPage.appendChars(" leaves chat\n");
+		
 		textPage.updateLayout();
 	}
 }

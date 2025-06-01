@@ -16,6 +16,8 @@ class Client {
 	// callbacks:
 	var msg:String->?String->Void;
 	var log:String->?Bool->Void;
+	var onUserEnter:String->Void;
+	var onUserLeave:String->Void;
 	
 	var onRemoteReady:Void->Void;
 	var onDisconnect:Reason->Void;
@@ -25,9 +27,9 @@ class Client {
 	var onClientMessage:String->?Bool->Void;
 
 
-	var userNick = new IntMap<String>();
+	var userNick:IntMap<String>;
 
-	public function new(host:String, port:Int, channel:String, msg:String->?String->Void, log:String->?Bool->Void) 
+	public function new(host:String, port:Int, channel:String, msg:String->?String->Void, log:String->?Bool->Void, onUserEnter:String->Void, onUserLeave:String->Void) 
 	{
 		this.host = host;
 		this.port = port;
@@ -35,11 +37,14 @@ class Client {
 
 		this.msg = msg;
 		this.log = log;
+		this.onUserEnter = onUserEnter;
+		this.onUserLeave = onUserLeave;
 		
 		peoteClient = new PeoteClient(
 		{
 			onEnter: function(client:PeoteClient)
 			{
+				userNick = new IntMap<String>();
 				log('Channel number ${client.jointNr} entered');
 				clientRemote = new ClientRemote(this);
 				client.setRemote(clientRemote, 0);  // --> Server's onRemote will be called with remoteId 0
@@ -91,13 +96,18 @@ class Client {
 
 	// --- these functions are called back by ClientRemote ----
 
+	function wrongNickName() {
+		peoteClient.leave();
+		onError(Reason.KICK);
+	}
+
 	function userList(nickNames:Map<Int,String>):Void {
 		var users = "";
 		for ( k=>v in nickNames ) {
 			userNick.set(k, v);
 			users += v + "\n";
 		}
-		if (users == "") msg("No other user logged in yet.\n");
+		if (users == "") msg("No others are logged in.\n");
 		else msg(users + "are logged in.\n");
 	}
 
@@ -108,14 +118,16 @@ class Client {
 
 	function userEnter(userNr:Int, nick:String):Void
 	{
-		msg('User "$nick" enters');
 		userNick.set(userNr, nick);
+		// msg('User "$nick" enters');
+		onUserEnter(nick);
 	}
 
 	function userLeave(userNr:Int):Void
 	{
-		msg('User "${userNick.get(userNr)}" leaves');
 		userNick.remove(userNr);
+		// msg('User "${userNick.get(userNr)}" leaves');
+		onUserLeave(userNick.get(userNr));
 	}
 
 	function userSetNickName(userNr:Int, nick:String):Void 

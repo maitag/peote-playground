@@ -30,6 +30,11 @@ class ClientRemote implements Remote {
 	// ----- Functions that run on Client and called by Server ----
 	// ------------------------------------------------------------
 	
+	@:remote public function wrongNickName():Void {
+		log('nickname already exists');
+		client.wrongNickName();
+	}
+	
 	@:remote public function userList(nickNames:Map<Int,String>):Void {
 		log('client gets user list');
 		client.userList(nickNames);
