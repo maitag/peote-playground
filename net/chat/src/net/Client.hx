@@ -125,9 +125,9 @@ class Client {
 
 	function userLeave(userNr:Int):Void
 	{
-		userNick.remove(userNr);
 		// msg('User "${userNick.get(userNr)}" leaves');
 		onUserLeave(userNick.get(userNr));
+		userNick.remove(userNr);
 	}
 
 	function userSetNickName(userNr:Int, nick:String):Void 
