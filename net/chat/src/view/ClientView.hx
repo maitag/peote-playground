@@ -25,9 +25,12 @@ class ClientView {
 
 	var nickName:String;
 
-	public function new(peoteView:PeoteView, x:Int, y:Int, width:Int, height:Int)
+	var onMissingServer:Void->Void;
+
+	public function new(peoteView:PeoteView, x:Int, y:Int, width:Int, height:Int, onMissingServer:Void->Void = null)
 	{
 		this.peoteView = peoteView;
+		this.onMissingServer = onMissingServer;
 
 		// ---------------------------
 		// -------- peote-ui ---------
@@ -90,8 +93,12 @@ class ClientView {
 	public function onDisconnect(reason:Reason)
 	{	
 		chat.disableInput();
-		showNameInput();
 		chat.say('DISCONNECT (${reason.toString()}): chat-server closed\n');
+		if (onMissingServer == null) showNameInput();
+		else haxe.Timer.delay(() -> {
+			onMissingServer(); // callback to start server into background
+			showNameInput();
+		},2000);
 	}
 
 	public function onError(reason:Reason)
@@ -121,13 +128,31 @@ class ClientView {
 
 	public function onChatInput(msg:String)
 	{	
-		client.send(msg);
+		if ( !command(msg) ) 
+		{
+			client.send(msg);
 
-		// put it into own chat-output also ! ( syncORDER can diff to what others sees !!! :)
-		chat.say(msg, nickName);
+			// put it into own chat-output also ! ( syncORDER can diff to what others sees !!! :)
+			chat.say(msg, nickName);
+		}
 	}
 	
-
+	public function command(msg:String):Bool
+	{
+		return switch (msg) {
+			case "/who":
+				var noUsers = true;
+				for (nick in client.userNick) {
+					chat.say(nick);
+					noUsers = false;
+				}
+				if (noUsers) chat.say("No others are logged in.\n");
+				else chat.say("are logged in.\n");
+				true;
+			default: false;
+		}
+	}
+	
 
 	// ---------------------------------------------------------
 	// ---------------- resizing window ------------------------

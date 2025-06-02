@@ -27,7 +27,7 @@ class Client {
 	var onClientMessage:String->?Bool->Void;
 
 
-	var userNick:IntMap<String>;
+	public var userNick:IntMap<String>;
 
 	public function new(host:String, port:Int, channel:String, msg:String->?String->Void, log:String->?Bool->Void, onUserEnter:String->Void, onUserLeave:String->Void) 
 	{

@@ -34,7 +34,7 @@ class ServerView {
 		// ---- peote-net server -----
 		// ---------------------------
 		
-		new Server(Config.host, Config.port, Config.channel, log.say, offline);		
+		new Server(Config.host, Config.port, Config.channel, log.say, offline);
 	}
 
 

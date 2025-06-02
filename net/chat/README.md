@@ -33,10 +33,10 @@ use the scripts into server-cli/ folder to build it.
 - [x] a simple "enter" button while login and "send" button beside the chat input TextLine
 - [x] let the log-field for the client easy en/disable by compilerdefine
 - [x] let the client re-connect on error and keep the nickname-input on top of chat-output area
-- [ ] servercheck that new nickname not already exists -> have to call a client remote function into this case
-- [ ] copy paste and other keyboard events for the chat-output textpage
-- [ ] simple "who" button in client to show who is logged on
-- [ ] let Client automatic try to connect again (after little timeout) if the connection gets lost
+- [x] fixing bug in peote-socket lib where after closing the websocket it send events after closeTimeout
+- [x] servercheck that new nickname not already exists -> have to call a client remote function into this case
+- [x] copy into clipboard by simple select inside the chat-output textpage
+- [x] simple "/who" command in client to show who is logged on
+- [x] another Client/Server Constellation where the server is opened on demand (if the "channel" is free, otherwise it only "enters" the client)
 - [ ] for web-clients the "channel" name have to be fetched from url/param
-- [ ] another Client/Server Constellation where the server is opened on demand (if the "channel" is free, otherwise it only "enters" the client)
-- [ ] if a new user enters there should be transmitted the informations about the haxe-version and target
+- [ ] cleaning up the log and output messages

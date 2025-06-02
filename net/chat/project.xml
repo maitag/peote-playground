@@ -13,6 +13,7 @@
 	<app main="OfflineTest" path="bin" file="OfflineTest" />
 	<app main="PeoteChatServer" path="bin" file="PeoteChatServer" if="server" />
 	<app main="PeoteChatClient" path="bin" file="PeoteChatClient" if="client" />
+	<app main="PeoteChatServerOnDemand" path="bin" file="PeoteChatServerOnDemand" if="client server" />
 
 	<!-- <haxedef name="host" value="localhost" /> -->
 	<!-- <haxedef name="host" value="127.0.0.1" /> -->
