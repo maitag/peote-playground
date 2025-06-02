@@ -67,16 +67,18 @@ class Server
 			{
 				log('Error:$reason, userNr:$userNr');
 				
-				var nick = serverRemote.get(userNr).nick;
-				serverRemote.remove(userNr);
-				if (nick == "") return; // user was not set nickname
+				if (userNr >= 0) {
+					var nick = serverRemote.get(userNr).nick;
+					serverRemote.remove(userNr);
+					if (nick == "") return; // user was not set nickname
 
-				// call userLeave on all clients
-				for (remote in serverRemote) {
-					// if (remote.client != null && remote.userNr != userNr) {
-					if (remote.client != null) {
-						log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
-						remote.client.userLeave(userNr);
+					// call userLeave on all clients
+					for (remote in serverRemote) {
+						// if (remote.client != null && remote.userNr != userNr) {
+						if (remote.client != null) {
+							log('call "userLeave()" of client: "${remote.nick}" ($userNr)');
+							remote.client.userLeave(userNr);
+						}
 					}
 				}
 			}			

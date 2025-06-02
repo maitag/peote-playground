@@ -2,9 +2,9 @@ package;
 
 class Config {
 	
-	static var defaultHost = "localhost";
-	static var defaultPort = "7680";
-	static var defaultChannel = "chatplayground";
+	public static var defaultHost = "localhost";
+	public static var defaultPort = "7680";
+	public static var defaultChannel = "chatplayground";
 
 	public static var host(get,never):String;
 	public static var port(get,never):Int;

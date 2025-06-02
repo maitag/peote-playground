@@ -16,7 +16,7 @@
 	<app main="PeoteChatServerOnDemand" path="bin" file="PeoteChatServerOnDemand" if="client server" />
 
 	<!-- <haxedef name="host" value="localhost" /> -->
-	<!-- <haxedef name="host" value="127.0.0.1" /> -->
+	<!-- <haxedef name="host" value="127.0.0.1" if="html5" /> -->
 	<!-- <haxedef name="port" value="7681" /> -->
 	<!-- <haxedef name="channel" value="chatplayground" /> -->
 

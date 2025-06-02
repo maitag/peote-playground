@@ -38,5 +38,6 @@ use the scripts into server-cli/ folder to build it.
 - [x] copy into clipboard by simple select inside the chat-output textpage
 - [x] simple "/who" command in client to show who is logged on
 - [x] another Client/Server Constellation where the server is opened on demand (if the "channel" is free, otherwise it only "enters" the client)
-- [ ] for web-clients the "channel" name have to be fetched from url/param
-- [ ] cleaning up the log and output messages
+- [x] for web-clients the "channel" name have to be fetched from url/param
+- [ ] fix glitches on mobile browsers and softkeyboard (resizing/input focus!)
+- [ ] make compatible for limes android target

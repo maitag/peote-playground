@@ -23,6 +23,14 @@ class PeoteChatServerOnDemand extends lime.app.Application
 	
 	public function onUIInit() 
 	{
+		#if html5
+		// resolving the channelname by catching the URL param
+		var urlparamRegExp = ~/\?([\w_-]+)$/;
+		if (urlparamRegExp.match(js.Browser.document.URL)) {
+			Config.defaultChannel = urlparamRegExp.matched(1);
+		}
+		#end
+
 		var peoteView = new PeoteView(window);
 
 		// ------- try to create a server into background --------
