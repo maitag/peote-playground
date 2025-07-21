@@ -2,10 +2,12 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.graphics.Image;
 import peote.view.*;
+import peote.view.text.*;
 import utils.Loader;
 
 class Main extends Application {
 	var buffer:Buffer<Tile>;
+	var glyphs:TextProgram;
 
 	override function onWindowCreate() {
 		switch (window.context.type) {
@@ -28,7 +30,7 @@ class Main extends Application {
 		var rhombusHeight = 24;
 
 		var rows = 5;
-		var columns = 5;
+		var columns = 6;
 
 		// init display
 		var display = new Display(0, 0, window.width, window.height, Color.GREY1);
@@ -59,6 +61,11 @@ class Main extends Application {
 			program.addTexture(texture);
 			program.addToDisplay(display);
 
+
+			glyphs = new TextProgram({fgColor: 0x006a82ff});
+			display.addProgram(glyphs);
+			glyphs.hide();
+			
 			// init IsoPoint for offsetting tiles
 			var point = new IsoPoint(rhombusWidth, rhombusHeight);
 
@@ -66,13 +73,18 @@ class Main extends Application {
 			var cells:Array<Tile> = [];
 			var cubeId = 1;
 			var colorShift = Math.floor(256 / 6);
-			for (r in 0...columns) {
-				for (c in 0...rows) {
-					point.changeGrid(c, r);
+			var i = 0;
+			for (row in 0...rows) {
+				for (col in 0...columns) {
+					point.changeGrid(col, row);
 					var t = new Tile(point.x, point.y, tileSize, tileSize, cubeId);
-					t.tint.r = (r * colorShift);
-					t.tint.g = (c * colorShift);
+					t.tint.r = (row * colorShift);
+					t.tint.g = (col * colorShift);
 					cells.push(buffer.addElement(t));
+					var tX = Std.int(t.x + rhombusWidthMid - 24);
+					var tY = Std.int(t.y + (rhombusHeight / 2));
+					glyphs.add(new Text(tX, tY, '${point.column},${point.row}:$i'));
+					i++;
 				}
 			}
 
@@ -89,14 +101,19 @@ class Main extends Application {
 			window.onMouseMove.add((x, y) -> {
 				// offset mouse x y
 				// use display.localX and display.localY to offset the mouse position by the display offset and zoom
-				var localX = display.localX(x) - cursorPoint.halfWidth;
-				var localY = display.localY(y) - cursorPoint.halfHeight;
+				var localX = display.localX(x) - cursorPoint.widthMid;
+				var localY = display.localY(y) - cursorPoint.heightMid;
 
 				// update the IsoPoint with offset mouse positions
 				cursorPoint.changeScreen(localX, localY);
 
+				// clamp to grid boundary
+				var c = Math.min(columns - 1, Math.max(0, cursorPoint.column));
+				var r = Math.min(rows - 1, Math.max(0, cursorPoint.row));
+
 				// quantise to grid
-				cursorPoint.changeGrid(cursorPoint.column, cursorPoint.row);
+				cursorPoint.changeGrid(Math.round(c), Math.round(r));
+
 
 				// update tile position to reflect cursor
 				cursorTile.x = Math.round(cursorPoint.x);
@@ -117,14 +134,14 @@ class Main extends Application {
 				var newZoom = previousZoom + (zoomIncrement * dy);
 				if (newZoom < 0.5)
 					newZoom = 0.5; // clamp minimum zoom
-				var windowWidthHalf = window.width / 2;
-				var windowHeightHalf = window.height / 2;
+				var windowWidthMid = window.width / 2;
+				var windowHeightMid = window.height / 2;
 
 				// calculate new zoom variables
 				var offset = (newZoom / previousZoom);
 				display.zoom = newZoom;
-				display.xOffset = windowWidthHalf - (windowWidthHalf - previousOffsetX) * offset;
-				display.yOffset = windowHeightHalf - (windowHeightHalf - previousOffsetY) * offset;
+				display.xOffset = windowWidthMid - (windowWidthMid - previousOffsetX) * offset;
+				display.yOffset = windowHeightMid - (windowHeightMid - previousOffsetY) * offset;
 			});
 
 			// bind mouse buttons
@@ -142,8 +159,8 @@ class Main extends Application {
 
 				} else {
 					// else reset all cells
-					for (col in 0...columns) {
-						for (row in 0...rows) {
+					for (row in 0...rows) {
+						for (col in 0...columns) {
 							var elemIndex = col + columns * row;
 							var tile = cells[elemIndex];
 							tile.tint.r = (row * colorShift);
@@ -155,11 +172,36 @@ class Main extends Application {
 				}
 			});
 
+			// bind keys
+			window.onKeyDown.add((code, modifier) -> {
+				switch code {
+					case NUMPAD_1:
+					case NUMPAD_2:
+					case NUMPAD_3:
+					case NUMPAD_4:
+					case NUMPAD_5:
+					case NUMPAD_6:
+					case NUMPAD_7:
+					case NUMPAD_8:
+					case NUMPAD_9:
+					case NUMPAD_0: toggleLabels();
+					case _:
+				}
+			});
+
 			// bind app update for "game loop"
 			onUpdate.add(i -> {
 				// send tile element changes to GPU
 				buffer.update();
 			});
 		});
+	}
+
+	function toggleLabels() {
+		if (glyphs.isVisible) {
+			glyphs.hide();
+		} else {
+			glyphs.show();
+		}
 	}
 }

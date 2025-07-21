@@ -4,26 +4,26 @@ class IsoPoint {
 	public var x:Float;
 	public var y:Float;
 
-	public var halfWidth:Float;
-	public var halfHeight:Float;
+	public var widthMid:Float;
+	public var heightMid:Float;
 
 	public function new(rhombusWidth:Float, rhombusHeight:Float) {
-		halfWidth = rhombusWidth / 2;
-		halfHeight = rhombusHeight / 2;
+		widthMid = rhombusWidth / 2;
+		heightMid = rhombusHeight / 2;
 		changeGrid(0, 0);
 	}
 
 	public function changeGrid(column:Int, row:Int) {
 		this.column = column;
 		this.row = row;
-		x = (column - row) * halfWidth;
-		y = (column + row) * halfHeight;
+		x = (column - row) * widthMid;
+		y = (column + row) * heightMid;
 	}
 
 	public function changeScreen(x:Float, y:Float) {
 		this.x = x;
 		this.y = y;
-		column = Math.round((x / halfWidth + y / halfHeight) / 2);
-		row = Math.round((y / halfHeight - x / halfWidth) / 2);
+		column = Math.round((x / widthMid + y / heightMid) / 2);
+		row = Math.round((y / heightMid - x / widthMid) / 2);
 	}
 }
