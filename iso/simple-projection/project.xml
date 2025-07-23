@@ -11,6 +11,9 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
+	<!-- <app main="MainMap" path="bin" file="MainMap" /> -->
+	<!-- <app main="MainSemmi" path="bin" file="MainSemmi" /> -->
+
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
