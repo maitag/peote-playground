@@ -1,16 +1,10 @@
 package;
 
-import haxe.CallStack;
-
 import lime.app.Application;
 import lime.ui.Window;
 
 import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
 import peote.view.Color;
-
 
 class Main extends Application
 {
@@ -20,7 +14,7 @@ class Main extends Application
 		{
 			case WEBGL, OPENGL, OPENGLES:
 				try startSample(window)
-				catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
+				catch (_) trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()), _);
 			default: throw("Sorry, only works with OpenGL.");
 		}
 	}
@@ -28,14 +22,19 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
-	
+	var peoteView:PeoteView;
+
 	public function startSample(window:Window)
 	{
-		var peoteView = new PeoteView(window);
+		peoteView = new PeoteView(window, 0x000020ff);
 
-		var displayRings = new DisplayRings(0, 0, 600, 600, Color.GREEN);
+		peoteView.xZoom = window.width/800;
+		peoteView.yZoom = window.height/600;
 
-		peoteView.addDisplay(displayRings);
+		peoteView.addDisplay(new DisplayRings(-100, -100, 600, 600));
+		peoteView.addDisplay(new DisplayRings(300, -100, 600, 600));
+		peoteView.addDisplay(new DisplayRings(-100, 100, 600, 600));
+		peoteView.addDisplay(new DisplayRings(300, 100, 600, 600));
 
 		// time to s t a r t:
 		peoteView.start();
@@ -74,7 +73,11 @@ class Main extends Application
 	// override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {}
 
 	// -------------- other WINDOWS EVENTS ----------------------------
-	// override function onWindowResize (width:Int, height:Int):Void { trace("onWindowResize", width, height); }
+	override function onWindowResize (width:Int, height:Int):Void {
+		// trace("onWindowResize", width, height);
+		peoteView.xZoom = width/800;
+		peoteView.yZoom = height/600;
+	}
 	// override function onWindowLeave():Void { trace("onWindowLeave"); }
 	// override function onWindowActivate():Void { trace("onWindowActivate"); }
 	// override function onWindowClose():Void { trace("onWindowClose"); }

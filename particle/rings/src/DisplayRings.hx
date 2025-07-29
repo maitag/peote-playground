@@ -11,14 +11,16 @@ class DisplayRings extends Display
 		super(x, y, width, height, color);
 
 		// Fill up the BUFFER:
-		buffer = new Buffer<Particle>(1024,1024);
-		for (i in 0 ... 360) {
-			var p = new Particle(i, 200);
+		buffer = new Buffer<Particle>(90);
+		for (i in 0 ... 90) {
+			var p = new Particle(i*4, Color.random());
 			buffer.addElement(p);
 		}
 
-		// here into a LOOP at the END ;)
-		addTimedFormulaProgram(1.0);
+		// create programs
+		for (i in 0...41) {
+			addTimedFormulaProgram(i*0.092);
+		}
 	}
 
 
@@ -27,15 +29,18 @@ class DisplayRings extends Display
 		var program = new Program(buffer);
 
 		program.injectIntoVertexShader(true);
+		
+		// position in depend of angle and distance (what changes over time)
+		time += Math.random()*0.03;
+		program.setFormula("x", '${width>>1}.0  + mod(($time+uTime)*80.0, 300.0) * cos(a)');
+		program.setFormula("y", '${height>>1}.0 + mod(($time+uTime)*80.0, 300.0) * sin(a)');
 
-		// what is formula ... ?
-		// in depend of angle "a"
-		// and distance "d" ?
-		program.setFormula("x", '${width>>1} + d * cos(a)'); // <-- uTime later
-		program.setFormula("y", '${height>>1} + d * sin(a)'); // <-- uTime later
+		// randomize the angle a bit
+		time += Math.random()*0.3;
+		program.setFormula("a", 'a+uTime*0.3+$time');
 
-		// hey filt3rek, do you have some -> easyout @formula 4mme ;)
 
+		program.blendEnabled = true;
 
 		addProgram(program);
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="PeoteViewSamples" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
+	<meta title="peote-playground: ring particles" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
@@ -11,7 +11,8 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
-	<!-- <define name="stats" if="html5" /> -->
+
+	<define name="stats" if="html5" />
 	
 	<source path="src" />
 	
@@ -32,7 +33,7 @@
 	<!--<haxedef name="peoteview_debug_buffer" />-->
 	<!--<haxedef name="peoteview_debug_view" />-->
 	<!--<haxedef name="peoteview_debug_display" />-->
-	<!--<haxedef name="peoteview_debug_program" />-->
+	<!-- <haxedef name="peoteview_debug_program" /> -->
 	<!--<haxedef name="peoteview_debug_texture" />-->
 	<!--<haxedef name="peoteview_debug_shader" />-->
 
