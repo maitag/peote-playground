@@ -18,7 +18,7 @@ class PointProgram extends Program
 
 		injectIntoVertexShader(true);
 		
-		// position formulas (what changes over time)
+		// position formulas
 		setFormula("x", pointFormulas.fx);
 		setFormula("y", pointFormulas.fy);
 

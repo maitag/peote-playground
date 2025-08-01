@@ -22,7 +22,7 @@ class PointParticle implements Element
 	
 	// -----------------------------------
 
-	// calculated by shader (formula is set in PointProgram)
+	// calculated by shader
 	@posX  @const var x:Float = 0.0;
 	@posY  @const var y:Float = 0.0;	
 	@sizeX @const var w:Float = 10.0;
