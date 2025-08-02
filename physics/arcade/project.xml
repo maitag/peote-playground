@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="PeoteArcade" package="peote.view" version="0.1.0" company="logo" />
+	<window fps="61" resizable="true" allowHighDPI="false" />
+	<window width="1920" height="1080" unless="html5" />
+
+	<app main="MainScene" path="bin" file="Main" />
+
+	<source path="src" />
+	<assets path="assets" exclude="lime.svg" embed="false" />
+	<icon path="assets/lime.svg" />
+
+	<haxelib name="lime" />	
+	<haxelib name="peote-view" />
+	<haxelib name="arcade" />
+	
+	<haxedef name="peoteview_es2" if="android" />
+	<haxedef name="peoteview_uniformbuffers" />
+	<haxedef name="peoteview_instancedrawing" />
+	<haxedef name="peoteview_vertexarrayobjects" />
+	<haxedef name="keep_inline_positions" />
+
+	<haxeflag name="-dce" value="full" />
+</project>
