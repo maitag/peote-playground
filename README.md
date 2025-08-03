@@ -25,3 +25,5 @@ Among other things, it should also show various use cases and procedures, or how
 
 Feel free to play around or add some new ones!
 (start quick in using a copy of the `_starter/` folder)
+good cooking!
+*hugs
