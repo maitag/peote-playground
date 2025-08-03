@@ -4,7 +4,8 @@
 	<window fps="61" resizable="true" allowHighDPI="false" />
 	<window width="1920" height="1080" unless="html5" />
 
-	<app main="MainScene" path="bin" file="Main" />
+	<app main="MainScene" path="bin" file="MainLogo" />
+	<!-- <app main="MainSemmi" path="bin" file="MainSemmi" /> -->
 
 	<source path="src" />
 	<assets path="assets" exclude="lime.svg" embed="false" />
