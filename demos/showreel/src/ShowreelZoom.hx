@@ -129,7 +129,7 @@ class ShowreelZoom extends Application
 		textureObject     = new Texture(3960, 780, maxVariation, {mipmap:true, smoothExpand:true, smoothShrink:true, smoothMipmap:true, maxTextureSize:4096, tilesX:22, tilesY:6}); 
 		textureObjMirr    = new Texture(3960, 780, maxVariation, {mipmap:true, smoothExpand:true, smoothShrink:true, smoothMipmap:true, maxTextureSize:4096, tilesX:22, tilesY:6});
 		
-		program.autoUpdateTextures = false;
+		program.autoUpdate = false;
 		program.setTexture(textureBackground, Elem.TEXTURE_background);
 		program.setTexture(textureRing      , Elem.TEXTURE_ring);
 		program.setTexture(textureReel      , Elem.TEXTURE_reel);
@@ -137,7 +137,7 @@ class ShowreelZoom extends Application
 		program.setTexture(textureObjMirr   , Elem.TEXTURE_objmirr);
 		program.snapToPixel(1);
 		program.discardAtAlpha(null);
-		program.updateTextures();
+		program.update();
 					
 		var path = "assets/showreel";
 		loadImage(textureBackground, '$path/background.jpg');
@@ -248,23 +248,26 @@ class ShowreelZoom extends Application
 					}
 				}
 		}
-					
-		new Timer(40).run = zoom;
+		
+		// ZOOM THEM BY TIMER:
+		// new Timer(40).run = zoom;
 
 		peoteView.start();
 	}
 	
-	// public override function render(context:RenderContext):Void zoom();
-	
+	// ANY, LETS TRY OUT HOW MUCH IS FASTER BY USING D I R E C T ;:) ->
+	public override function render(context:RenderContext):Void zoom();
+
 	var fz:Float = 0.002;
 	var fz1:Float = 0.0319;
 	var fz2:Float = 1.0;
+	var speed:Float = 1.005;
 	public function zoom()
 	{	
 		if (fz2 < 32) {
-			fz  *= 1.005;
-			fz1 *= 1.005;
-			fz2 *= 1.005; 
+			fz  *= speed;
+			fz1 *= speed;
+			fz2 *= speed; 
 		}
 		else {
 			fz = 0.002;
@@ -272,8 +275,8 @@ class ShowreelZoom extends Application
 			fz2 = 1.0;
 		}
 		display.zoom = fz;
-		display2.zoom = fz2;
 		display1.zoom = fz1;
+		display2.zoom = fz2;
 	}
 		
 	

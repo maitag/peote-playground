@@ -51,8 +51,6 @@ class Main extends Application
 			texture.tilesY = 3;
 	
 			program.addTexture(texture, "custom");
-			program.updateTextures();
-
 
 			var sprite = new AnimTileSprite();
 

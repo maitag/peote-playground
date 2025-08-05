@@ -118,7 +118,7 @@ class ShowreelGrid extends Application
 		textureObject     = new Texture(3960, 780, maxVariation, {mipmap:true, smoothExpand:true, smoothShrink:true, smoothMipmap:true, maxTextureSize:4096, tilesX:22, tilesY:6}); 
 		textureObjMirr    = new Texture(3960, 780, maxVariation, {mipmap:true, smoothExpand:true, smoothShrink:true, smoothMipmap:true, maxTextureSize:4096, tilesX:22, tilesY:6});
 		
-		program.autoUpdateTextures = false;
+		program.autoUpdate = false;
 		program.setTexture(textureBackground, Elem.TEXTURE_background);
 		program.setTexture(textureRing      , Elem.TEXTURE_ring);
 		program.setTexture(textureReel      , Elem.TEXTURE_reel);
@@ -127,7 +127,7 @@ class ShowreelGrid extends Application
 		
 		program.discardAtAlpha(null);
 		//program.setFragmentFloatPrecision("highp");
-		program.updateTextures();
+		program.update();
 		
 		var path = "assets/showreel";
 		loadImage(textureBackground, '$path/background.jpg');

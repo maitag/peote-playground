@@ -79,10 +79,13 @@ class Main extends Application {
 
 		buffer.addElement(player);
 
+		isReady=true;
 	}
 
-
+	var isReady=false;
 	override function update(dt:Float):Void {
+		if (!isReady) return;
+		
 		ball.update(dt);
 
 		// paddle/player update 
@@ -139,7 +142,7 @@ class Main extends Application {
 	function updateText(text:Text, data:Int) {
 		text.text = '$data';
 		text.x = display.width - (text.letterWidth * text.text.length) - 15;
-		textProgram.update(text, true);
+		textProgram.updateText(text, true);
 	}
 
 	function resetGame() {

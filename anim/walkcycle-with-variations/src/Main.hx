@@ -50,7 +50,6 @@ class Main extends Application
 		});
 
 		program.addTexture(texture, "custom");
-		program.updateTextures();
 
 		var y_offset = display.height / total_elements;
 		
