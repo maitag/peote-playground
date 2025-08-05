@@ -28,7 +28,7 @@ class GaussianBlurHQ implements Element
 		program = new Program(buffer);
 		
 		// create a texture-layer named "base"
-		program.setTexture(texture, "base", true);
+		program.setTexture(texture, "base", false);
 
 		program.injectIntoFragmentShader(
 		"				

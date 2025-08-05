@@ -105,12 +105,17 @@ class Main extends Application {
 		}
 		';
 
+		// update manual at the end
+		program.autoUpdate = false;
+
 		// inject the shader into the program (including time)
 		var uTimeUniformEnabled = true;
 		program.injectIntoFragmentShader(frag_shader_code, uTimeUniformEnabled);
 
 		// set shader for coloring the program, note that we pass in mouse variables from Canvas Element
 		program.setColorFormula('compose(vec2(fMouseX, fMouseY))');
+
+		program.update();
 
 		// start time
 		peoteView.start();

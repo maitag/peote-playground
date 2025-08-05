@@ -38,26 +38,23 @@ class MainSemmi extends Application {
 		super.update(delta);
 		world.elapsed = delta / 1000;
 
-		for (i in 0...buffer.length)
-		{
-			// 1
-			var element: PhysicsElem = buffer.getElement(i);
+		for (element in buffer) {
 			element.body.preUpdate(world, element.body.x, element.body.y, element.body.width, element.body.height, element.body.rotation);
-		
-			// 2
+		}
+
+		for (i in 0...buffer.length) {
 			for (j in i + 1...buffer.length) {
 				var element: PhysicsElem = buffer.getElement(i);
 				var elementNext: PhysicsElem = buffer.getElement(j);
 				world.collide(element.body, elementNext.body);
 			}
-		
-			// 3
-			var element: PhysicsElem = buffer.getElement(i);
-			element.body.postUpdate(world);		
+		}
 
-			// 4
-			var element: PhysicsElem = buffer.getElement(i);
+		for (element in buffer) {
+			element.body.postUpdate(world);
+		
 			element.updatePhysics();
+			
 			buffer.updateElement(element);
 		}
 		

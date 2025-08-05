@@ -35,7 +35,7 @@ class NormalLight implements Element
 		
 		// create a texture-layer named "base"
 		program.setTexture(lightsTexture, "lights", false);
-		program.setTexture(normalTexture, "normal", true);
+		program.setTexture(normalTexture, "normal", false);
 
 		program.injectIntoFragmentShader(
 		"			
