@@ -35,7 +35,13 @@ class Main extends Application
 		var emitterDisplay = new EmitterDisplay(100, 100, 300, 300, Color.GREEN1);
 		peoteView.addDisplay(emitterDisplay);
 		
-		emitterDisplay.point(SUNRAYS, 150, 150, Color.RED3, 0, 0);
+		emitterDisplay.spawn(
+			SUNRAYS,
+			150, 150, // spawn point (ex, ey)
+			100, // size
+			Color.random(),
+			{}
+		);
 
 		// time to s t a r t:
 		peoteView.start();

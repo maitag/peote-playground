@@ -3,7 +3,7 @@ package;
 import peote.view.Element;
 import peote.view.Color;
 
-class PointParticle implements Element
+class Particle implements Element
 {
 	// ------------ INPUTS --------------
 	
@@ -20,7 +20,9 @@ class PointParticle implements Element
 	// timeDiff to use in shader formulas
 	@custom public var t:Int = 0;
 	
-	// -----------------------------------
+	// ------ CONST for FORMULAS ---------
+	@const var a:Float; // angle to go
+	@const var d:Float; // distance from spawnpoint
 
 	// calculated by shader
 	@posX  @const var x:Float = 0.0;
