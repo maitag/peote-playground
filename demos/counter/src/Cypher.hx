@@ -3,7 +3,7 @@ package;
 import peote.view.Element;
 import peote.view.Color;
 
-class Number implements Element
+class Cypher implements Element
 {
 	@custom public var precision:Int = 1;
 
@@ -19,7 +19,7 @@ class Number implements Element
 	@color public var c:Color = 0xff0000ff;
 
 	// the tile->NUMBER
-	@texTile public var n:Int = 48;
+	@const @formula("n") @texTile public var n:Int = 48;
 
 	
 	public function new(precision:Int, _x:Int, _y:Int, _w:Int, _h:Int, _c:Color) {
