@@ -11,6 +11,8 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
+	<!-- <app main="MainMulti" path="bin" file="MainMulti" /> -->
+
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
