@@ -76,10 +76,10 @@ class MainMulti extends Application
 			programDec.injectIntoVertexShader(true, [speedDec]);
 			programHex.injectIntoVertexShader(true, [speedHex]);
 			
-			programBin.setFormula("n", "48.0 + mod(uTime * min(  pow(  2.0, precision) * uSpeed * 1.0e-15 , 200.0  ),  2.0)");
-			programOct.setFormula("n", "48.0 + mod(uTime * min(  pow(  8.0, precision) * uSpeed * 1.0e-28 , 800.0  ),  8.0)");
-			programDec.setFormula("n", "48.0 + mod(uTime * min(  pow( 10.0, precision) * uSpeed * 1.0e-30 , 1000.0  ), 10.0)");
-			programHex.setFormula("n", "48.0 + mod(uTime * min(  pow( 16.0, precision) * uSpeed * 1.0e-36 , 1600.0  ), 16.0)
+			programBin.setFormula("n", "n + mod(uTime * min(  pow(  2.0, precision) * uSpeed * 1.0e-15 , 200.0  ),  2.0)");
+			programOct.setFormula("n", "n + mod(uTime * min(  pow(  8.0, precision) * uSpeed * 1.0e-28 , 800.0  ),  8.0)");
+			programDec.setFormula("n", "n + mod(uTime * min(  pow( 10.0, precision) * uSpeed * 1.0e-30 , 1000.0  ), 10.0)");
+			programHex.setFormula("n", "n + mod(uTime * min(  pow( 16.0, precision) * uSpeed * 1.0e-36 , 1600.0  ), 16.0)
 			+ (( mod(uTime * min(  pow( 16.0, precision) * uSpeed * 1.0e-36 , 1600.0  ), 16.0) < 10.0) ? 0.0 : 7.0)
 			");
 

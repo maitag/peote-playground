@@ -18,7 +18,7 @@ class Cypher implements Element
 	// color (RGBA)
 	@color public var c:Color = 0xff0000ff;
 
-	// the tile->NUMBER
+	// the tile -> start of NUMBER into tilesheet
 	@const @formula("n") @texTile public var n:Int = 48;
 
 	
@@ -28,6 +28,6 @@ class Cypher implements Element
 		y = _y;
 		w = _w;
 		h = _h;
-		c = _c; //anyway ;) -> LAURA \o/
+		c = _c;
 	}
 }
