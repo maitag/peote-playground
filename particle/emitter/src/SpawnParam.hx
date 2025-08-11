@@ -1,18 +1,18 @@
 package;
 
-@:structInit
+@:structInit @:publicFields
 class SpawnParam {
 
-	var start:Int = 1; // amount of initial particles
+	var ex:Int = 0;
 
-	var spawn:Int = 2; // how many new are spawn per timestep
+	var ey:Int = 0;
 
-	var beat:Float = 1.5; // duration before next timestep and new ones spawns
+	var size:Int = 100; 
 
-	var time:Float = 3.0; // lifetime for particles wich spawned per timestep 
+	var spawn:Int = 1; // how many new particles are spawn per timestep
 
-	var duration:Float = 5.0; // duration time (no more are spawned afterwards)
+	var delay:Int = 1000; // duration (in ms) before next timestep and new ones spawns
 
-	// later "modifier" ->
-	// var speed:Float = 1.0 // to slow down or speed all up ;)
+	var duration:Int = 3000; // lifetime (in ms) for particles wich spawned per timestep 
+
 }

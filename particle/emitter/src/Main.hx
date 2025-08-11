@@ -35,12 +35,16 @@ class Main extends Application
 		var emitterDisplay = new EmitterDisplay(100, 100, 300, 300, Color.GREEN1);
 		peoteView.addDisplay(emitterDisplay);
 		
-		emitterDisplay.spawn(
-			SUNRAYS,
-			150, 150, // spawn point (ex, ey)
-			100, // size
-			Color.random(),
-			{}
+		emitterDisplay.spawn( 
+			SUNRAYS, // type (formula)
+			5, // steps - how often it spawns
+			{
+				ex: 150, ey:150,
+				size:300,
+				spawn:5,    // amount of particlespawn per step
+				delay:1000, // time before next spawn
+				duration:2000 // how long a particlespawn exist
+			}
 		);
 
 		// time to s t a r t:

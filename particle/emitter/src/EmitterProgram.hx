@@ -26,9 +26,15 @@ class EmitterProgram extends Program
 		blendEnabled = true;
 
 	}
+	
+	public inline function addNewParticle(ex:Int, ey:Int, color:Color, seed:Int, timeDiff:Int):Particle
+	{
+		return buff.addElement( new Particle(ex, ey, color, seed, timeDiff) );
+	}
 
-	public function spawn(ex:Int, ey:Int, color:Color, seed:Int, timeDiff:Int) {
-		buff.addElement( new Particle(ex, ey, color, seed, timeDiff) );
+	public inline function removeParticles(particles:Array<Particle>)
+	{
+		for (particle in particles) buff.removeElement( particle );
 	}
 
 }
