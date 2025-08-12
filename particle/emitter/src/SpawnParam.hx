@@ -3,11 +3,13 @@ package;
 @:structInit @:publicFields
 class SpawnParam {
 
+	// spawn point of where particles are emitting
 	var ex:Int = 0;
-
 	var ey:Int = 0;
 
-	var size:Int = 100; 
+	// sizes (how far particle goes away from spawn point) 
+	var sx:Int = 100; 
+	var sy:Int = 100; 
 
 	var spawn:Int = 1; // how many new particles are spawn per timestep
 

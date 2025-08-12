@@ -37,13 +37,13 @@ class Main extends Application
 		
 		emitterDisplay.spawn( 
 			SUNRAYS, // type (formula)
-			5, // steps - how often it spawns
+			50, // steps - how often it spawns
 			{
 				ex: 150, ey:150,
-				size:300,
-				spawn:5,    // amount of particlespawn per step
-				delay:1000, // time before next spawn
-				duration:2000 // how long a particlespawn exist
+				sx: 150, sy:150,
+				spawn:30, // amount of particlespawn per step
+				delay:100, // time before next spawn
+				duration:1000 // how long a particlespawn exist
 			}
 		);
 

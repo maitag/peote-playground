@@ -9,9 +9,10 @@ enum abstract EmitterType(Int) from Int to Int {
 	public function new() {
 		this = [
 			SUNRAYS => {
-				fx: "ex + mod((uTime)*300.0, 150.0) * cos(0.0)",
-			 	fy: "ey + mod((uTime)*300.0, 150.0) * sin(0.0)",
-				
+				fx: "ex + t*sx * cos(a)",
+			 	fy: "ey + t*sy * sin(a)",
+			 	
+				fa: "seed"
 			}
 			// SPIRAL  => {fx:"", fy:""}
 		];

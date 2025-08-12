@@ -9,7 +9,6 @@ import peote.view.*;
 class EmitterDisplay extends Display
 {
 	var emitterProgram = new Vector<EmitterProgram>(5);
-	var scheduler = new IntMap<Array<Particle>>(); 
 
 	public function new(x:Int, y:Int, width:Int, height:Int, color:Color = 0x00000000)
 	{
@@ -36,10 +35,19 @@ class EmitterDisplay extends Display
 		var particles = new Array<Particle>();
 
 		for (i in 0...param.spawn) {
-			particles.push( program.addNewParticle(param.ex, param.ey, Color.random(), 42, 5) );
+			particles.push(
+				program.addNewParticle(
+					param.ex, param.ey, // emitter spawnpoint
+					param.sx, param.sy, // how far particles go away per duration
+					Color.random(),
+					peoteView.time, // spawn time
+					param.duration, // how long particles exists (per spawn)
+					Std.random(0x7fff) // seeds
+				) 
+			);
 		}
 
-		Timer.delay(program.removeParticles.bind(particles), param.duration);
+		Timer.delay( program.removeParticles.bind(particles), param.duration );
 
 
 		// ------ next spawn after duration ----------
@@ -50,7 +58,7 @@ class EmitterDisplay extends Display
 		if (--step > 0)
 			Timer.delay(
 				spawnStep.bind(step, program, param),
-				param.duration
+				param.delay
 			);
 
 	}
