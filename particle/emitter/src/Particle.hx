@@ -19,7 +19,7 @@ class Particle implements Element
 	@color public var c:Color = 0xff0000ff;
 
 	// seed to use in shader formulas
-	@custom public var seed:Int = 0;
+	@custom @formula("seed") public var seed:Int = 0;
 
 	// how many milliseconds "t" is need to travel from 0.0 up to 1.0
 	@custom public var duration:Int = 0;

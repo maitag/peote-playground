@@ -24,30 +24,34 @@ class EmitterDisplay extends Display
 		
 	}
 
-	public function spawn(type:EmitterType, steps:Int, param:SpawnParam)
+	public function spawn(type:EmitterType, param:SpawnParam)
 	{
 		// start spawning over time
-		spawnStep(steps, emitterProgram.get(type), param);
+		spawnStep(0, emitterProgram.get(type), param);
 	}
 
 	function spawnStep(step:Int, program:EmitterProgram, param:SpawnParam)
 	{
 		var particles = new Array<Particle>();
 
-		for (i in 0...param.spawn) {
+		var spawn:Int = (param.spawnFunc == null) ? param.spawn : param.spawnFunc(step);
+		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(step);
+
+		for (i in 0...spawn) {
 			particles.push(
 				program.addNewParticle(
 					param.ex, param.ey, // emitter spawnpoint
 					param.sx, param.sy, // how far particles go away per duration
 					Color.random(),
+					// Color.RED,
 					peoteView.time, // spawn time
-					param.duration, // how long particles exists (per spawn)
-					Std.random(0x7fff) // seeds
+					duration, // how long particles exists (per spawn)
+					Std.random(0x8000) // seed
 				) 
 			);
 		}
 
-		Timer.delay( program.removeParticles.bind(particles), param.duration );
+		Timer.delay( program.removeParticles.bind(particles), duration );
 
 
 		// ------ next spawn after duration ----------
@@ -55,10 +59,10 @@ class EmitterDisplay extends Display
 		// TODO: let the "param" change, e.g. change amount of new spawned etc.
 		// var newParam = { spawn:param.spawn++ ...}
 
-		if (--step > 0)
+		if (++step < param.steps)
 			Timer.delay(
 				spawnStep.bind(step, program, param),
-				param.delay
+				(param.delayFunc == null) ? param.delay : param.delayFunc(step)
 			);
 
 	}

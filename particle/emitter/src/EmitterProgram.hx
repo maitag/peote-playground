@@ -3,7 +3,7 @@ package;
 import peote.view.*;
 
 @:structInit class Params {
-	@:optional public var ft:String;
+	public var ft = "(uTime-t)/(duration*0.001)";
 
 	@:optional public var fx:String;
 	@:optional public var fy:String;
@@ -25,11 +25,17 @@ class EmitterProgram extends Program
 
 		autoUpdate = false;
 
-		injectIntoVertexShader(true);
+		// ok -> lets _inject ->
+		injectIntoVertexShader("
+			#define PI 3.1415926535897932384626433832795
+
+			float random(float seed, float min, float max) {
+				return mix( min, max, seed / 32767.0);
+			}
+		",
+		true);
 		
-		// formulas
-		if (params.ft != null) setFormula("t", params.ft);
-		else setFormula("t", "(uTime-t)/(duration*0.001)");
+		setFormula("t", params.ft);
 		
 		if (params.fx != null) setFormula("x", params.fx);
 		if (params.fy != null) setFormula("y", params.fy);

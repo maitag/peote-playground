@@ -12,7 +12,7 @@ enum abstract EmitterType(Int) from Int to Int {
 				fx: "ex + t*sx * cos(a)",
 			 	fy: "ey + t*sy * sin(a)",
 			 	
-				fa: "seed"
+				fa: "random(seed, -1.0, 1.0) * PI" // angle
 			}
 			// SPIRAL  => {fx:"", fy:""}
 		];

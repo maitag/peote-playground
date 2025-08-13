@@ -37,13 +37,19 @@ class Main extends Application
 		
 		emitterDisplay.spawn( 
 			SUNRAYS, // type (formula)
-			50, // steps - how often it spawns
 			{
-				ex: 150, ey:150,
-				sx: 150, sy:150,
-				spawn:30, // amount of particlespawn per step
-				delay:100, // time before next spawn
-				duration:1000 // how long a particlespawn exist
+				steps: 50, // how often them spawns
+				ex: 150, ey:150, // emitter position
+				sx: 150, sy:150, // how far the particles goes away over time
+
+				spawn:30, // amount of particles what spawn per time-step
+				spawnFunc:(step)->{return ++step;}, // to mod spawn in depend of timestep
+
+				delay:1000, // time before next spawn
+				delayFunc:(step)->{return Std.int(1000 - step*50);}, // to mod delay in depend of timestep
+
+				duration:2000, // how long a particlespawn exist
+				durationFunc:(step)->{return Std.int(2000 - step*50);}, // to mod duration in depend of timestep
 			}
 		);
 
