@@ -6,7 +6,7 @@ import lime.ui.Window;
 import peote.view.PeoteView;
 import peote.view.Color;
 
-class Main extends Application
+class MainSpawnOnClick extends Application
 {
 	override function onWindowCreate():Void
 	{
@@ -27,37 +27,19 @@ class Main extends Application
 
 	public function startSample(window:Window)
 	{
-		var peoteView = new PeoteView(window, 0x000020ff);
+		peoteView = new PeoteView(window, 0x000020ff);
 
 		peoteView.xZoom = window.width/800;
 		peoteView.yZoom = window.height/600;
 
-		emitterDisplay = new EmitterDisplay(100, 100, 300, 300, Color.GREEN1);
+		emitterDisplay = new EmitterDisplay(0, 0, 800, 600);
 		peoteView.addDisplay(emitterDisplay);
 		
-		emitterDisplay.spawn( 
-			SUNRAYS, // type (formula)
-			{
-				steps: 50, // timesteps (how often particles spawns)
-
-				ex: 150, ey:150, // emitter position
-				sx: 150, sy:150, // how far the particles goes away over time
-
-				spawn:3, // amount of particles what spawn per time-step
-				spawnFunc:(spawn, step)->{return spawn + step;}, // to mod spawn in depend of timestep
-
-				delay:200, // time before next spawn
-				delayFunc:(delay, step)->{return Std.int(delay - step);}, // to mod delay in depend of timestep
-
-				duration:700, // how long a particlespawn exist
-				durationFunc:(duration, step)->{return Std.int(duration - step);}, // to mod duration in depend of timestep
-			}
-		);
-
 		// time to s t a r t:
 		peoteView.start();
 	}
 	
+	public function random(min:Int, max:Int) return min + Std.random(max + 1 - min);
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
@@ -74,7 +56,32 @@ class Main extends Application
 
 	// ----------------- MOUSE EVENTS ------------------------------
 	// override function onMouseMove (x:Float, y:Float):Void {}	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
+	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {
+		emitterDisplay.spawn(
+			// SUNRAYS, // type (formula)
+			random(0,1),
+			{
+				steps: random(5,50), // timesteps (how often particles spawns)
+
+				// emitter position
+				ex: Std.int(x/peoteView.xZoom),
+				ey: Std.int(y/peoteView.yZoom),
+
+				// how far the particles goes away over time
+				sx: random(50,300),
+				sy: random(50,300),
+
+				spawn:random(1,30), // amount of particles what spawn per time-step
+				spawnFunc:(spawn, step)->{return spawn + step*random(-3, 3);}, // to mod spawn in depend of timestep
+
+				delay:random(50,300), // time before next spawn
+				delayFunc:(delay, step)->{return delay + step*random(-3, 3);}, // to mod delay in depend of timestep
+
+				duration:random(100,3000), // how long a particlespawn exist
+				durationFunc:(duration, step)->{return duration + step*random(-3, 3);}, // to mod duration in depend of timestep
+			}
+		);
+	}	
 	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}

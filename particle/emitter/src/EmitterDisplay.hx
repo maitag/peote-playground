@@ -37,6 +37,9 @@ class EmitterDisplay extends Display
 		var spawn:Int = (param.spawnFunc == null) ? param.spawn : param.spawnFunc(param.spawn, step);
 		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(param.duration, step);
 
+		spawn = minMax(spawn, 1, 4096);
+		duration = minMax(duration, 10, 10000);
+
 		for (i in 0...spawn) {
 			particles.push(
 				program.addNewParticle(
@@ -56,15 +59,17 @@ class EmitterDisplay extends Display
 
 		// ------ next spawn after duration ----------
 
-		// TODO: let the "param" change, e.g. change amount of new spawned etc.
-		// var newParam = { spawn:param.spawn++ ...}
-
 		if (++step < param.steps)
 			Timer.delay(
 				spawnStep.bind(step, program, param),
-				(param.delayFunc == null) ? param.delay : param.delayFunc(param.delay, step)
+				minMax((param.delayFunc == null) ? param.delay : param.delayFunc(param.delay, step), 10, 100000)
 			);
 
 	}
 
+	inline function minMax(value:Int, min:Int, max:Int) {
+		if (value < min) value = min;
+		else if (value > max) value = max;
+		return value;
+	}
 }

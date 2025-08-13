@@ -58,6 +58,7 @@ class EmitterProgram extends Program
 	public inline function removeParticles(particles:Array<Particle>)
 	{
 		for (particle in particles) buff.removeElement( particle );
+		particles = null;
 	}
 
 }
