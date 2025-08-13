@@ -36,20 +36,20 @@ class Main extends Application
 		peoteView.addDisplay(emitterDisplay);
 		
 		emitterDisplay.spawn( 
-			SUNRAYS, // type (formula)
+			SPIRAL, // type (formula)
 			{
 				steps: 50, // how often them spawns
 				ex: 150, ey:150, // emitter position
 				sx: 150, sy:150, // how far the particles goes away over time
 
-				spawn:30, // amount of particles what spawn per time-step
-				spawnFunc:(step)->{return ++step;}, // to mod spawn in depend of timestep
+				spawn:3, // amount of particles what spawn per time-step
+				spawnFunc:(spawn, step)->{return spawn + step;}, // to mod spawn in depend of timestep
 
-				delay:1000, // time before next spawn
-				delayFunc:(step)->{return Std.int(1000 - step*50);}, // to mod delay in depend of timestep
+				delay:200, // time before next spawn
+				delayFunc:(delay, step)->{return Std.int(delay - step);}, // to mod delay in depend of timestep
 
-				duration:2000, // how long a particlespawn exist
-				durationFunc:(step)->{return Std.int(2000 - step*50);}, // to mod duration in depend of timestep
+				duration:700, // how long a particlespawn exist
+				durationFunc:(duration, step)->{return Std.int(duration - step);}, // to mod duration in depend of timestep
 			}
 		);
 

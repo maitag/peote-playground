@@ -16,7 +16,7 @@ class EmitterDisplay extends Display
 
 		// create all emitter programs with its formulas 
 		var formula = new EmitterType.Formula();
-		for (i in 0...1) {
+		for (i in 0...formula.length) {
 			var p = new EmitterProgram( formula.get(i) );
 			emitterProgram.set(i, p);
 			addProgram(p);
@@ -34,8 +34,8 @@ class EmitterDisplay extends Display
 	{
 		var particles = new Array<Particle>();
 
-		var spawn:Int = (param.spawnFunc == null) ? param.spawn : param.spawnFunc(step);
-		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(step);
+		var spawn:Int = (param.spawnFunc == null) ? param.spawn : param.spawnFunc(param.spawn, step);
+		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(param.duration, step);
 
 		for (i in 0...spawn) {
 			particles.push(
@@ -62,7 +62,7 @@ class EmitterDisplay extends Display
 		if (++step < param.steps)
 			Timer.delay(
 				spawnStep.bind(step, program, param),
-				(param.delayFunc == null) ? param.delay : param.delayFunc(step)
+				(param.delayFunc == null) ? param.delay : param.delayFunc(param.delay, step)
 			);
 
 	}

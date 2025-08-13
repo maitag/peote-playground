@@ -14,12 +14,12 @@ class SpawnParam {
 	var sy:Int = 100;
 
 	var spawn:Int = 1; // how many new particles are spawn per timestep
-	var spawnFunc:Int->Int = null; // to mod per step
+	var spawnFunc:Int->Int->Int = null; // to mod per step
 
 	var delay:Int = 1000; // duration (in ms) before next timestep and new ones spawns
-	var delayFunc:Int->Int = null; // to mod per step
+	var delayFunc:Int->Int->Int = null; // to mod per step
 
 	var duration:Int = 3000; // lifetime (in ms) for particles wich spawned per timestep 
-	var durationFunc:Int->Int = null; // to mod per step
+	var durationFunc:Int->Int->Int = null; // to mod per step
 
 }
