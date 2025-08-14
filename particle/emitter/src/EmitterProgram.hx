@@ -10,6 +10,8 @@ import peote.view.*;
 	
 	public var fw = "size";
 	public var fh = "size";
+
+	public var fc = "mix(cs, ce, t)";
 	
 	@:optional public var fa:String;
 	@:optional public var fd:String;
@@ -46,7 +48,7 @@ class EmitterProgram extends Program
 		if (params.fa != null) setFormula("a", params.fa);
 		if (params.fd != null) setFormula("d", params.fd);
 
-		setColorFormula("mix(cs,ce,t)");
+		setColorFormula(params.fc);
 		blendEnabled = true;
 
 		update();
