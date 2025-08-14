@@ -66,19 +66,33 @@ class MainSpawnOnClick extends Application
 				// emitter position
 				ex: Std.int(x/peoteView.xZoom),
 				ey: Std.int(y/peoteView.yZoom),
+				// exFunc:(ex, step, index)->{ return ex; },
+				// eyFunc:(ey, step, index)->{ return ey; },
+
+				// overall size of a particle
+				size: 5,
+				// sizeFunc:(size, step, index)->{ return size + step; },
 
 				// how far the particles goes away over time
 				sx: random(50,300),
 				sy: random(50,300),
+				// sxFunc:(sx, step, index)->{ return sx; },
+				// syFunc:(sy, step, index)->{ return sy; },
+
+				// color at start and end of movement for spawned particles
+				colorStart: Color.YELLOW,
+				colorEnd: 0,
+				colorStartFunc:(colorStart, step, index)->{ return Color.random(); },
+				// colorEndFunc:(colorEnd, step, index)->{ return Color.random(); },
 
 				spawn:random(1,30), // amount of particles what spawn per time-step
-				spawnFunc:(spawn, step)->{return spawn + step*random(-3, 3);}, // to mod spawn in depend of timestep
+				spawnFunc:(spawn, step)->{ return spawn + step*random(-3, 3); }, // to mod spawn in depend of timestep
 
 				delay:random(50,300), // time before next spawn
-				delayFunc:(delay, step)->{return delay + step*random(-3, 3);}, // to mod delay in depend of timestep
+				delayFunc:(delay, step)->{ return delay + step*random(-3, 3); }, // to mod delay in depend of timestep
 
 				duration:random(100,3000), // how long a particlespawn exist
-				durationFunc:(duration, step)->{return duration + step*random(-3, 3);}, // to mod duration in depend of timestep
+				durationFunc:(duration, step)->{ return duration + step*random(-3, 3); }, // to mod duration in depend of timestep
 			}
 		);
 	}	

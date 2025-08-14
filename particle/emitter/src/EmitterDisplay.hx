@@ -35,20 +35,36 @@ class EmitterDisplay extends Display
 		var particles = new Array<Particle>();
 
 		var spawn:Int = (param.spawnFunc == null) ? param.spawn : param.spawnFunc(param.spawn, step);
-		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(param.duration, step);
-
 		spawn = minMax(spawn, 1, 4096);
+		
+		var duration:Int = (param.durationFunc == null) ? param.duration : param.durationFunc(param.duration, step);
 		duration = minMax(duration, 10, 10000);
+
 
 		for (i in 0...spawn) {
 			particles.push(
 				program.addNewParticle(
-					param.ex, param.ey, // emitter spawnpoint
-					param.sx, param.sy, // how far particles go away per duration
-					Color.random(),
-					// Color.RED,
-					peoteView.time, // spawn time
-					duration, // how long particles exists (per spawn)
+					// emitter spawnpoint
+					(param.exFunc == null) ? param.ex : param.exFunc(param.ex, step, i),
+					(param.eyFunc == null) ? param.ey : param.eyFunc(param.ey, step, i),
+					
+					// size of particle
+					minMax( (param.sizeFunc == null) ? param.size : param.sizeFunc(param.size, step, i), 1, 32766), 
+					
+					// how far particles go away per duration
+					(param.sxFunc == null) ? param.sx : param.sxFunc(param.sx, step, i),
+					(param.syFunc == null) ? param.sy : param.syFunc(param.sy, step, i),
+
+					// start and end colors
+					(param.colorStartFunc == null) ? param.colorStart : param.colorStartFunc(param.colorStart, step, i),
+					(param.colorEndFunc == null) ? param.colorEnd : param.colorEndFunc(param.colorEnd, step, i),
+					
+					// spawn time
+					peoteView.time,
+					
+					// how long particles exists in milliseconds (per spawn)
+					duration,
+					
 					Std.random(0x8000) // seed
 				) 
 			);

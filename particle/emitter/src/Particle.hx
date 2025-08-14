@@ -11,12 +11,16 @@ class Particle implements Element
 	@custom public var ex:Int = 0;
 	@custom public var ey:Int = 0;
 
+	// overall size of a particle
+	@custom public var size:Int = 10;
+
 	// sizes (how far particle goes away from spawn point) 
 	@custom public var sx:Int = 0;
 	@custom public var sy:Int = 0;
 
-	// color (RGBA)
-	@color public var c:Color = 0xff0000ff;
+	// color start and end (RGBA)
+	@color public var cs:Color = 0xff0000ff;
+	@color public var ce:Color = 0x0000ffff;
 
 	// seed to use in shader formulas
 	@custom @formula("seed") public var seed:Int = 0;
@@ -25,7 +29,7 @@ class Particle implements Element
 	@custom public var duration:Int = 0;
 
 	// time to use in shader formulas (from 0.0 up to 1.0)
-	@custom public var t:Float = 0.0;
+	@varying @custom public var t:Float = 0.0;
 	
 	// ------ CONST for FORMULAS ---------
 	@custom @const var a:Float; // angle to go
@@ -44,12 +48,14 @@ class Particle implements Element
 
 	// -----------------------------------
 
-	public function new(ex:Int, ey:Int, sx:Int, sy:Int, color:Color, spawnTime:Float, duration:Int, seed:Int) {
+	public function new(ex:Int, ey:Int, size:Int, sx:Int, sy:Int, colorStart:Color, colorEnd:Color, spawnTime:Float, duration:Int, seed:Int) {
 		this.ex = ex;
 		this.ey = ey;
+		this.size = size;
 		this.sx = sx;
 		this.sy = sy;
-		c = color;
+		cs = colorStart;
+		ce = colorEnd;
 		t = spawnTime;
 		this.duration = duration;
 		this.seed = seed;

@@ -5,11 +5,12 @@ import peote.view.*;
 @:structInit class Params {
 	public var ft = "(uTime-t)/(duration*0.001)";
 
-	@:optional public var fx:String;
-	@:optional public var fy:String;
-	@:optional public var fw:String;
-	@:optional public var fh:String;
-
+	public var fx = "ex + t*sx";
+	public var fy = "ey + t*sy";
+	
+	public var fw = "size";
+	public var fh = "size";
+	
 	@:optional public var fa:String;
 	@:optional public var fd:String;
 } 
@@ -36,23 +37,24 @@ class EmitterProgram extends Program
 		true);
 		
 		setFormula("t", params.ft);
-		
-		if (params.fx != null) setFormula("x", params.fx);
-		if (params.fy != null) setFormula("y", params.fy);
-		if (params.fw != null) setFormula("w", params.fw);
-		if (params.fh != null) setFormula("h", params.fh);
 
+		setFormula("x", params.fx);
+		setFormula("y", params.fy);
+		setFormula("w", params.fw);
+		setFormula("h", params.fh);
+		
 		if (params.fa != null) setFormula("a", params.fa);
 		if (params.fd != null) setFormula("d", params.fd);
 
+		setColorFormula("mix(cs,ce,t)");
 		blendEnabled = true;
 
 		update();
 	}
 	
-	public inline function addNewParticle(ex:Int, ey:Int, sx:Int, sy:Int, color:Color, spawnTime:Float, duration:Int, seed:Int):Particle
+	public inline function addNewParticle(ex:Int, ey:Int, size:Int, sx:Int, sy:Int, colorStart:Color, colorEnd:Color, spawnTime:Float, duration:Int, seed:Int):Particle
 	{
-		return buff.addElement( new Particle(ex, ey, sx, sy, color, spawnTime, duration, seed) );
+		return buff.addElement( new Particle(ex, ey, size, sx, sy, colorStart, colorEnd, spawnTime, duration, seed) );
 	}
 
 	public inline function removeParticles(particles:Array<Particle>)
