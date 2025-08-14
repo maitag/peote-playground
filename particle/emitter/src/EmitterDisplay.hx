@@ -8,7 +8,7 @@ import peote.view.*;
 
 class EmitterDisplay extends Display
 {
-	var emitterProgram = new Vector<EmitterProgram>(5);
+	var emitterProgram:Vector<EmitterProgram>;
 
 	public function new(x:Int, y:Int, width:Int, height:Int, color:Color = 0x00000000)
 	{
@@ -16,6 +16,9 @@ class EmitterDisplay extends Display
 
 		// create all emitter programs with its formulas 
 		var formula = new EmitterType.Formula();
+
+		emitterProgram = new Vector<EmitterProgram>(formula.length);
+
 		for (i in 0...formula.length) {
 			var p = new EmitterProgram( formula.get(i) );
 			emitterProgram.set(i, p);

@@ -16,6 +16,7 @@ class SpawnParam {
 
 	// the overall size of a particle
 	var size:Int = 10;
+	// to mod per step and particle-index
 	var sizeFunc:Int->Int->Int->Int = null;
 
 	// how far particle goes away from spawn point and into time->duration
