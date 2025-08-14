@@ -6,6 +6,9 @@ enum abstract EmitterType(Int) from Int to Int {
 }
 
 @:forward abstract Formula( Map<EmitterType, EmitterProgram.Params> ) {
+	public var length(get, never):Int;
+	inline function get_length():Int return Lambda.count(this);
+
 	public function new() {
 		this = [
 			SUNRAYS => {
@@ -23,7 +26,4 @@ enum abstract EmitterType(Int) from Int to Int {
 		];
 	}
 	
-	public var length(get, never):Int;
-	// inline function get_length():Int return 2; // <- do not forget to increase this!
-	inline function get_length():Int return Lambda.count(this); // <- do not forget to increase this!
 }
