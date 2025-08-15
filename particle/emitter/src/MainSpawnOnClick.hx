@@ -58,8 +58,10 @@ class MainSpawnOnClick extends Application
 	// override function onMouseMove (x:Float, y:Float):Void {}	
 	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {
 		emitterDisplay.spawn(
+
 			// SUNRAYS, // type (formula)
-			random(0,1),
+			random(0, emitterDisplay.maxTypes),
+
 			{
 				steps: random(5,50), // timesteps (how often particles spawns)
 

@@ -9,6 +9,10 @@ import peote.view.*;
 class EmitterDisplay extends Display
 {
 	var emitterProgram:Vector<EmitterProgram>;
+	
+	public var maxTypes(get, never):Int;
+	inline function get_maxTypes():Int return emitterProgram.length - 1;
+
 
 	public function new(x:Int, y:Int, width:Int, height:Int, color:Color = 0x00000000)
 	{
