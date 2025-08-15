@@ -3,6 +3,7 @@ package;
 import peote.view.Element;
 import peote.view.Color;
 
+#if hlc @:keep #end
 class Particle implements Element
 {
 	// ------------ INPUTS --------------
