@@ -11,7 +11,8 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<!-- <app main="Main" path="bin" file="Main" /> -->
-	<app main="MainSpawnOnClick" path="bin" file="MainSpawnOnClick" />
+	<!-- <app main="MainSpawnOnClick" path="bin" file="MainSpawnOnClick" /> -->
+	<app main="MainShower" path="bin" file="MainShower" />
 
 	<define name="stats" if="html5" />
 	
