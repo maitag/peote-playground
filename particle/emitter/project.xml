@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="peote-playground: ring particles" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
+	<meta title="peote-playground: particle EMITTER" package="peote.view" version="0.1.0" company="Sylvio Sell - maitag" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->
@@ -10,15 +10,18 @@
 	<window width="800" height="600" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<!-- <app main="Main" path="bin" file="Main" /> -->
+	<app main="Main" path="bin" file="Main" />
 	<!-- <app main="MainShower" path="bin" file="MainShower" /> -->
-	<app main="MainSpawnOnClick" path="bin" file="MainSpawnOnClick" />
+	<!-- <app main="MainSpawnOnClick" path="bin" file="MainSpawnOnClick" /> -->
+	<!-- <app main="MainStar" path="bin" file="MainStar" /> -->
 
-	<define name="stats" if="html5" />
+	<define name="peoteview_fps" />
+	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
 	
-	<haxelib name="lime" />	
+	<haxelib name="lime" />
+	<haxelib name="mtprng" />
 	<haxelib name="peote-view" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
