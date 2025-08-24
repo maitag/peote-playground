@@ -13,6 +13,7 @@
 	<app main="Main" path="bin" file="Main" />
 	
 	<!-- <define name="peoteview_fps" /> -->
+	<!-- <define name="peoteview_fps_size" value="16" /> -->
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />

@@ -17,7 +17,6 @@ class DisplayRings extends Display
 			buffer.addElement(p);
 		}
 
-		// create programs
 		for (i in 0...41) {
 			addTimedFormulaProgram(i*0.092);
 		}
@@ -27,6 +26,8 @@ class DisplayRings extends Display
 	function addTimedFormulaProgram(time:Float) {
 
 		var program = new Program(buffer);
+
+		program.autoUpdate = false;
 
 		program.injectIntoVertexShader(true);
 		
@@ -39,6 +40,7 @@ class DisplayRings extends Display
 		time += Math.random()*0.3;
 		program.setFormula("a", 'a+uTime*0.3+$time');
 
+		// program.update();
 
 		program.blendEnabled = true;
 

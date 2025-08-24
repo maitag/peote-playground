@@ -26,29 +26,40 @@ class MainStar extends lime.app.Application
 		peoteView.addDisplay(emitterDisplay);
 		
 		emitterDisplay.spawn( 
-			SUNRAYS, // type (formula)
+			SPIRAL, // type (formula)
 			{
-				steps: 230, // timesteps (how often particles spawns)
+				steps: 630, // timesteps (how often particles spawns)
 
-				ex: emitterDisplay.width >>1, ey: emitterDisplay.height >>1, // emitter position
+				// emitter position
+				ex: emitterDisplay.width >>1,
 				exFunc:(ex, step, index)->{return
-					ex +  Std.int(new mtprng.MT( step  ).random(100));
+					ex + 7 - Std.int(new mtprng.MT( index  ).random(7));
 				},
-
+				ey: emitterDisplay.height >>1,
+				eyFunc:(ey, step, index)->{return
+					ey + 5 - Std.int(new mtprng.MT( step  ).random(5));
+				},
+				
 
 				// sx: RESOLUTION >>1, sy:RESOLUTION >>1, // how far the particles goes away over time
 				sx: RESOLUTION, sy:RESOLUTION, // how far the particles goes away over time
 
 				size:1,
+				// to size spawn in depend of timestep
+				sizeFunc:(size, step, index)->{return 
+					// size+Std.random(3);
+					size + new mtprng.MT( index*Std.random(0xffff)).random(3);
+				},
 
-				spawn:4, // amount of particles what spawn per time-step
-				spawnFunc:(spawn, step)->{return Std.int(spawn * step* .8);}, // to mod spawn in depend of timestep
+				spawn:1, // amount of particles what spawn per time-step
+				// to mod spawn in depend of timestep
+				spawnFunc:(spawn, step)->{return Std.int(spawn * step* 1.2);},
 
-				// 4.44 now -> time to start to make a COLOR by MT .) ->
+				// time to start to make a COLOR by MT .) ->
 				colorStartFunc:(spawn, step, index)->{return 
 					Color.HSV( 
 						new mtprng.MT( index*Std.random(0xffff)).randomFloat(),
-						new mtprng.MT( step  ).randomFloat(), // saturn .,)
+						new mtprng.MT( step  ).randomFloat(), // saturation
 						1.0 // <- SUN
 					);
 				},
@@ -56,13 +67,15 @@ class MainStar extends lime.app.Application
 				// for the -> FLIXEL -> f r e a k s .)
 				colorEnd:0, // confetti \o/
 				
-				delay:20, // time before next spawn
+				delay:10, // time before next spawn
 				// delayFunc:(delay, step)->{return Std.int(delay - step);}, // to mod delay in depend of timestep
 
-				duration:1200, // how long a particlespawn exist
+				duration:10000, // how long a particlespawn exist
 				// durationFunc:(duration, step)->{return Std.int(duration - step);}, // to mod duration in depend of timestep
 			}
 		);
+		
+		// peoteView.FPS.hide();
 
 		// time to s t a r t:
 		peoteView.start();
