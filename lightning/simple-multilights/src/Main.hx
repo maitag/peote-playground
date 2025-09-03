@@ -10,8 +10,6 @@ import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
-
 
 class Main extends Application
 {
@@ -40,7 +38,7 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		Loader.imageArray(["assets/mandelbulb_light_alpha0001.png", "assets/mandelbulb_normal0001.png"] , true, function (image:Array<Image>)
+		Load.imageArray(["assets/mandelbulb_light_alpha0001.png", "assets/mandelbulb_normal0001.png"] , true, function (image:Array<Image>)
 		{
 			var lightsTexture = new Texture(image[0].width, image[0].height); // , 1, 4, false, 0, 0);
 			lightsTexture.setData(image[0]);

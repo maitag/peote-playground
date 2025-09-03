@@ -8,9 +8,6 @@ import lime.graphics.Image;
 
 import peote.view.*;
 
-import utils.Loader;
-
-
 class Main extends Application
 {
 	override function onWindowCreate():Void
@@ -38,7 +35,7 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		Loader.image ("assets/heart.png", true, function (image:Image) 
+		Load.image ("assets/heart.png", true, function (image:Image)
 		{
 			//var texture = new Texture(image.width, image.height);
 			// important is to set min/mag filter

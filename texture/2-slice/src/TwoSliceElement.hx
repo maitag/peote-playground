@@ -1,3 +1,5 @@
+package;
+
 import peote.view.*;
 
 class TwoSliceElement implements Element {

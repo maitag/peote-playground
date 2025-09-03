@@ -15,7 +15,7 @@ import peote.view.Buffer;
 import peote.view.Element;
 import peote.view.Texture;
 import peote.view.Color;
-import utils.Loader;
+import peote.view.Load;
 
 
 class Main extends Sprite {
@@ -46,7 +46,7 @@ class Main extends Sprite {
 		var buffer  = new Buffer<PeoteSprite>(100);
 		var program = new Program(buffer);
 		
-		Loader.image ("assets/openfl.png", true, function (image:Image) 
+		Load.image ("assets/openfl.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setData(image);

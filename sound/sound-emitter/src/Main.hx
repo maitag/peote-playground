@@ -13,8 +13,7 @@ import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
 import peote.view.Color;
-
-import utils.Loader;
+import peote.view.Load;
 
 class Main extends Application {
 	var sources:Array<AudioSource>;
@@ -61,14 +60,17 @@ class Main extends Application {
 		fileType = "mp3"; // blame apple ;-)
 		#end
 
-		Loader.bytesArray([
+		Load.bytesArray([
 				'assets/01' + '.$fileType',
 				'assets/02' + '.$fileType',
 				'assets/04' + '.$fileType',
 				'assets/05' + '.$fileType',
 				'assets/06' + '.$fileType',
 				'assets/09' + '.$fileType',
-		], false, // --------------------- progress handler ---------------------
+		],
+		true, // <- better to see if some `assets` is missing!
+		
+			// --------------------- progress handler ---------------------
 
 			function(index:Int, loaded:Int, size:Int) {
 				trace(' $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');

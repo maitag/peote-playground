@@ -10,7 +10,6 @@ import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 import fb_light.*;
 
@@ -40,13 +39,13 @@ class Main extends Application
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
 
-		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
+		Load.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
 		{
 			//-----------------------------------------------------
 			// ----- create Textures from the loaded images -------
 			//-----------------------------------------------------
 
-			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, tilesX:8, tilesY:3});
+			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true, tilesX:8, tilesY:3});
 			normalDepthTexture.setData(image[0]);
 
 			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true, tilesX:8, tilesY:3});
@@ -96,6 +95,7 @@ class Main extends Application
 			
 			
 			var tentacle2 = new ElementTentacle(64, 64, 128, 128, 180, 64, 64);
+			// var tentacle2 = new ElementTentacle(264, 264, 500, 500, 180, 64, 64);
 			// tentacle2.depth= 0.1;
 			tentacle2.animTile(0, 24);    // params: start-tile, end-tile
 			tentacle2.timeTile(0.0, 1.9); // params: start-time, duration
@@ -122,7 +122,7 @@ class Main extends Application
 			// ----------------------------------------------------			
 			// ----------------------------------------------------		
 
-			peoteView.zoom = 2;
+			peoteView.zoom = 4;
 			peoteView.start();
 			
 			// add mouse events to move the light (to not run before it was instantiated):
@@ -175,6 +175,7 @@ class Main extends Application
 	// ----------------- KEYBOARD EVENTS ---------------------------
 	override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
 		if (keyCode == KeyCode.LEFT_SHIFT) isShift = true;
+		else if (keyCode == KeyCode.SPACE) if (peoteView.isRun) peoteView.stop() else peoteView.start();
 	}	
 	override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
 		if (keyCode == KeyCode.LEFT_SHIFT) isShift = false;

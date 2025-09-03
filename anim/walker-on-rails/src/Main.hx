@@ -8,7 +8,6 @@ import lime.graphics.Image;
 
 import peote.view.*;
 import peote.view.TextureData;
-import utils.Loader;
 
 class Main extends Application
 {
@@ -33,7 +32,7 @@ class Main extends Application
 
 		var display = new Display(0, 0, window.width, window.height);
 		
-		var buffer = new Buffer<Walker>(320000, 4096, true);
+		var buffer = new Buffer<Walker>(32000, 4096, true);
 		var program = new Program(buffer);
 
 		var bufferRail = new Buffer<Rail>(256, 32, true);
@@ -44,7 +43,7 @@ class Main extends Application
 		display.addProgram(programRail);
 		display.addProgram(program);
 		
-		Loader.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
+		Load.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
 		{
 			var texture = new Texture(1024, 384, {format:TextureFormat.LUMINANCE_ALPHA});
 			texture.setData( TextureData.fromFormatPNG(bytes) );
@@ -61,9 +60,9 @@ class Main extends Application
 				var rail = new Rail(y, Color.random(), peoteView.width);
 				bufferRail.addElement(rail);
 				
-				for (i in 0...10000) {
+				for (i in 0...128) {
 					var walker = new Walker(y, Color.random(), s);
-					walker.goLeftOrRight(window.width, Math.random() * 2.3 + 1.4);
+					walker.goLeftOrRight(window.width, Math.random() * 7.5 + 3.14 );
 					buffer.addElement(walker);
 				}
 

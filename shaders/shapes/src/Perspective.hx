@@ -1,7 +1,6 @@
 package;
 
 import lime.graphics.Image;
-import utils.Loader;
 import peote.view.*;
 
 class Perspective implements Element
@@ -54,7 +53,7 @@ class Perspective implements Element
 		display.addProgram(program);
 		
 		// load grid test-image:
-		Loader.image("assets/grid.png", true, function (image:Image) 
+		Load.image("assets/grid.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setSmooth(false,false);

@@ -16,8 +16,7 @@ import lime.media.AudioBuffer;
 import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Color;
-
-import utils.Loader;
+import peote.view.Load;
 
 class Main extends Application {
 	override function onWindowCreate():Void {
@@ -63,7 +62,7 @@ class Main extends Application {
 	// load multiple sound-waves
 	function loadSound()
 	{
-		Loader.bytesArray( soundWaveFiles, false, // errorhandling/debug
+		Load.bytesArray( soundWaveFiles, false, // errorhandling/debug
 			// --------------------- progress handler ---------------------
 			function(index:Int, loaded:Int, size:Int) {
 				trace(' $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');

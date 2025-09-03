@@ -7,7 +7,6 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 // works 100% only on html5
 // typedef Glyph = GlyphES3;

@@ -4,7 +4,6 @@ import lime.app.Application;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 class Main extends Application
 {	
@@ -21,7 +20,7 @@ class Main extends Application
 				var buffer = new Buffer<Semmi>(4, 4, true);
 				var program = new Program(buffer);
 				
-				Loader.image("assets/semmi_colors_by_yenoPenn.png", true, function(image:Image)
+				Load.image("assets/semmi_colors_by_yenoPenn.png", true, function(image:Image)
 				{
 					var texture = new Texture(image.width, image.height);
 					texture.setData(image);

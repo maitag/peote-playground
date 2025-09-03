@@ -7,11 +7,8 @@ import lime.app.Application;
 import lime.ui.Window;
 import lime.ui.KeyModifier;
 import lime.ui.KeyCode;
-import lime.graphics.Image;
 
 import peote.view.*;
-
-import utils.Loader;
 
 @:publicFields
 class ElemPaint implements Element

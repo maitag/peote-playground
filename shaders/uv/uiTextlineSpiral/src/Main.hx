@@ -7,7 +7,6 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 import peote.text.Font;
 
@@ -57,7 +56,7 @@ class Main extends Application
 	
 	public function startSample()
 	{
-		Loader.image("assets/spiral8bpc.png", true, function(image:Image) {		
+		Load.image("assets/spiral8bpc.png", true, function(image:Image) {		
 			new Font<MyFontStyle>("assets/hackfont/config.json").load( function(font:Font<MyFontStyle>) {
 				allLoaded(image, font);
 			});

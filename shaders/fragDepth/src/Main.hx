@@ -13,9 +13,7 @@ import peote.view.PeoteView;
 import peote.view.Display;
 import peote.view.Color;
 import peote.view.Texture;
-
-import utils.Loader;
-
+import peote.view.Load;
 
 class Main extends Application
 {
@@ -43,7 +41,7 @@ class Main extends Application
 		var display = new Display(0, 0, window.width, window.height);
 		peoteView.addDisplay(display);
 		
-		Loader.image("assets/object_bw_depth_alpha.png", true, function (image:Image)
+		Load.image("assets/object_bw_depth_alpha.png", true, function (image:Image)
 		{
 			var tilesTexture = new Texture(image.width, image.height); // , 1, 4, false, 0, 0);
 			tilesTexture.setData(image);

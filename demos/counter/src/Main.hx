@@ -28,7 +28,7 @@ class Main extends Application
 
 		speed = new UniformFloat("uSpeed", 0.000000000000005);
 
-		utils.Loader.image("assets/peote_font.png", true, function(image:Image)
+		Load.image("assets/peote_font.png", true, function(image:Image)
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setData(image);

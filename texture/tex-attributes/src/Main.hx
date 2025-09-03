@@ -1,18 +1,18 @@
 package;
 
-import peote.view.Texture;
-import lime.graphics.Image;
-import utils.Loader;
 import haxe.CallStack;
 
-import lime.app.Application;
 import lime.ui.Window;
+import lime.app.Application;
+import lime.graphics.Image;
 
 import peote.view.PeoteView;
 import peote.view.Buffer;
 import peote.view.Display;
 import peote.view.Program;
+import peote.view.Texture;
 import peote.view.Color;
+import peote.view.Load;
 
 
 class Main extends Application
@@ -44,7 +44,7 @@ class Main extends Application
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
-		Loader.image("assets/test.png", (image:Image) -> {
+		Load.image("assets/test.png", (image:Image) -> {
 
 			// program.addTexture(Texture.fromData(TextureData.RGBAfrom(image)), "test");
 			program.addTexture(Texture.fromData(image), "test");

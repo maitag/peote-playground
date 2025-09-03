@@ -5,12 +5,8 @@ import haxe.Resource; // to include "shaderPasses.glsl" file
 
 import lime.app.Application;
 import lime.ui.Window;
-import lime.graphics.Image;
 
 import peote.view.*;
-
-import utils.Loader;
-
 
 class Main extends Application
 {

@@ -10,7 +10,6 @@ import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 import fb_light.*;
 
@@ -40,7 +39,7 @@ class Benchmark extends Application
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
 
-		Loader.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
+		Load.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
 		{
 			//-----------------------------------------------------
 			// ----- create Textures from the loaded images -------

@@ -3,7 +3,6 @@ import lime.app.Application;
 import lime.graphics.Image;
 import peote.view.*;
 import peote.view.text.*;
-import utils.Loader;
 
 class MainMap extends Application {
 	var buffer:Buffer<TileWave>;
@@ -85,7 +84,7 @@ class MainMap extends Application {
 		program.addToDisplay(display);
 
 		// load tiles asset and set up the demo
-		Loader.image("assets/48.png", (textureData:Image) -> {
+		Load.image("assets/48.png", (textureData:Image) -> {
 			var texture = Texture.fromData(textureData);
 			texture.tilesX = Std.int(textureData.width / tileSize);
 			texture.tilesY = Std.int(textureData.height / tileSize);
@@ -143,7 +142,7 @@ class MainMap extends Application {
 					label.y = Std.int(tile.y + (tileHeight / 2));
 					label.text = '${point.column},${point.row}:$i';
 
-					glyphs.update(label);
+					glyphs.updateText(label);
 					i++;
 				}
 			}
@@ -273,7 +272,7 @@ class MainMap extends Application {
 				point.changeGrid(isoCol, isoRow);
 				var text = labels[i];
 				text.text = '${point.column},${point.row}:$i';
-				glyphs.update(text);
+				glyphs.updateText(text);
 
 				// update the tile
 				var tile = tiles[i];

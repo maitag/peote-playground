@@ -1,6 +1,5 @@
 package;
 
-import utils.Loader;
 import peote.view.*;
 import echo.Line;
 import echo.Body;
@@ -222,7 +221,7 @@ class MainSemmi extends Application {
 		view.darkness.aF = 0.9;
 
 		// load background image and let update is_ready!
-		Loader.image("assets/test0.png", (image:Image) -> {
+		Load.image("assets/test0.png", (image:Image) -> {
 			var buffer_ = new Buffer<Shape>(1);
 			var program_ = new Program(buffer_);
 			program_.setTexture(Texture.fromData(image), "background");

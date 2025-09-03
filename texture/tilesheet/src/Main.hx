@@ -13,8 +13,7 @@ import peote.view.Program;
 import peote.view.Texture;
 import peote.view.TextureConfig;
 import peote.view.Color;
-
-import utils.Loader;
+import peote.view.Load;
 
 
 class Main extends Application
@@ -45,7 +44,7 @@ class Main extends Application
 		peoteView.addDisplay(display);
 		display.addProgram(program);
 
-		Loader.image("assets/spritesheet.png", true, function(image:Image)
+		Load.image("assets/spritesheet.png", true, function(image:Image)
 		{
 			var textureConfig:TextureConfig = {
 				tilesX:18,

@@ -80,7 +80,7 @@ class Main extends Application
 		
 		
 
-		Perspective.init( [mouseX, mouseY], display);
+		Perspective.init( [mouseX, mouseY, rotation], display);
 		var perspective = new Perspective(400, 500, 200, 200,  0.25);
 
 		peoteView.start();

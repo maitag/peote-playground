@@ -1,7 +1,6 @@
 package;
 
 import lime.graphics.Image;
-import utils.Loader;
 import peote.view.*;
 
 class Test implements Element
@@ -69,7 +68,7 @@ class Test implements Element
 
 
 		// load grid test-image:
-		Loader.image("assets/grid.png", true, function (image:Image) 
+		Load.image("assets/grid.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setData(image);

@@ -7,8 +7,6 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
-
 
 class Main extends Application
 {
@@ -35,7 +33,7 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		Loader.image ("assets/raindrop.png", true, function (image:Image) 
+		Load.image ("assets/raindrop.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			//var texture = new Texture(image.width, image.height, 1, 4, true);

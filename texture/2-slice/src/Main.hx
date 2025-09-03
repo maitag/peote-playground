@@ -1,5 +1,6 @@
+package;
+
 import peote.view.*;
-import utils.Loader;
 import lime.graphics.Image;
 import lime.app.Application;
 
@@ -14,7 +15,7 @@ class Main extends Application {
 		var display = new Display(0, 0, window.width, window.height, Color.GREY3);
 		peoteView.addDisplay(display);
 
-		Loader.image('assets/tail.png', (image:Image) -> {
+		Load.image('assets/tail.png', (image:Image) -> {
 			buffer = new Buffer<TwoSliceElement>(256, 256);
 
 			var tilesX = 10;

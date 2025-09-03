@@ -8,9 +8,6 @@ import lime.graphics.Image;
 
 import peote.view.*;
 
-import utils.Loader;
-
-
 class Main extends Application
 {
 	override function onWindowCreate():Void
@@ -36,7 +33,7 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		Loader.image ("assets/test0.png", true, function (image:Image) 
+		Load.image ("assets/test0.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height, 2);
 			

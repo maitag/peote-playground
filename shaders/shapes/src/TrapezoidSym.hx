@@ -1,7 +1,6 @@
 package;
 
 import lime.graphics.Image;
-import utils.Loader;
 import peote.view.*;
 
 class TrapezoidSym implements Element
@@ -28,7 +27,7 @@ class TrapezoidSym implements Element
 		display.addProgram(program);
 		
 		// load grid test-image:
-		Loader.image("assets/grid.png", true, function (image:Image) 
+		Load.image("assets/grid.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setSmooth(true,true);

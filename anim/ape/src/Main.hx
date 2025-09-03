@@ -7,7 +7,6 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 class ElementTexSlot implements Element
 {
@@ -79,7 +78,7 @@ class Main extends Application
 		
 
 		// loads all images into the corresponding texture-slot and starts the Animation afterwards
-		Loader.imageArray
+		Load.imageArray
 		(
 			[for (i in 0...16) 'assets/crop$i.jpg'],
 			// true, // debug output

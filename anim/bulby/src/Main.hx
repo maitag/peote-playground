@@ -4,7 +4,6 @@ import lime.app.Application;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
 
 class Bulby implements Element
 {
@@ -47,7 +46,7 @@ class Main extends Application
 		
 				var frameSize = 64;
 
-				Loader.image("assets/bulby_spritesheet.png", true, function(image:Image)
+				Load.image("assets/bulby_spritesheet.png", true, function(image:Image)
 				{
 					var texture = new Texture(image.width, image.height);
 					// define texture tiles

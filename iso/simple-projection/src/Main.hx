@@ -3,7 +3,6 @@ import lime.app.Application;
 import lime.graphics.Image;
 import peote.view.*;
 import peote.view.text.*;
-import utils.Loader;
 
 class Main extends Application {
 	var buffer:Buffer<Tile>;
@@ -51,7 +50,7 @@ class Main extends Application {
 		buffer = new Buffer<Tile>(bufferSize);
 
 		// load tiles asset and set up the demo
-		Loader.image("assets/48.png", (textureData:Image) -> {
+		Load.image("assets/48.png", (textureData:Image) -> {
 			var texture = Texture.fromData(textureData);
 			texture.tilesX = Std.int(textureData.width / tileSize);
 			texture.tilesY = Std.int(textureData.height / tileSize);

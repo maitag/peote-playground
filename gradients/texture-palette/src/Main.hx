@@ -8,7 +8,6 @@ import lime.graphics.Image;
 
 import peote.view.*;
 
-import utils.Loader;
 
 /**
 
@@ -106,7 +105,7 @@ class Main extends Application
 		elementPalette.h *= 64;
 		bufferPalette.updateElement(elementPalette);
 		
-		Loader.image("assets/circle-greys-rgba.png", true, function(image:Image) {
+		Load.image("assets/circle-greys-rgba.png", true, function(image:Image) {
 
 			// init grayscale texture with Image loaded from disk
 			spriteTexture = new Texture(image.width, image.height);

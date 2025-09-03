@@ -10,8 +10,6 @@ import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
 
 import peote.view.*;
-import utils.Loader;
-
 
 class Main extends Application
 {
@@ -40,7 +38,7 @@ class Main extends Application
 
 		peoteView.addDisplay(display);
 		
-		Loader.imageArray(["assets/statue_light_alpha.png", "assets/statue_normal.png"] , true, function (image:Array<Image>)
+		Load.imageArray(["assets/statue_light_alpha.png", "assets/statue_normal.png"] , true, function (image:Array<Image>)
 		{
 			var lightsTexture = new Texture(image[0].width, image[0].height); // , 1, 4, false, 0, 0);
 			lightsTexture.setData(image[0]);

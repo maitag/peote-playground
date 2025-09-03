@@ -39,7 +39,7 @@ class Tile implements Element {
 
 	var OPTIONS = {blend: true};
 
-	function new(x:Float = 0, y:Float = 0, width:Float, height:Float, tile:Int = 0, ) {
+	function new(x:Float = 0, y:Float = 0, width:Float, height:Float, tile:Int = 0 ) {
 		this.x = Std.int(x);
 		this.y = Std.int(y);
 		this.width = Std.int(width);

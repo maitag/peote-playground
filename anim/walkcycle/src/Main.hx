@@ -8,7 +8,6 @@ import lime.graphics.Image;
 
 import peote.view.*;
 import peote.view.TextureData;
-import utils.Loader;
 
 class Main extends Application
 {
@@ -39,7 +38,7 @@ class Main extends Application
 		display.addProgram(program);
 		
 		// Loader.image("assets/walk.png", true, function(image:Image)
-		Loader.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
+		Load.bytes("assets/walkGreyAlpha.png", true, function(bytes:haxe.io.Bytes)
 		{
 			// var texture = new Texture(1024, 384);
 			// texture.setData(image);
