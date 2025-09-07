@@ -49,8 +49,8 @@ class Main extends Application
 			
 		});
 		
+		peoteView.zoom=0.5;
 		
-		peoteView.start();
 	}
 		
 }
