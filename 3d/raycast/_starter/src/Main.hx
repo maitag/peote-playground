@@ -148,8 +148,8 @@ class Main extends Application
 			verticalOffset: 0
 		}
 
-		var rayDisplay:RayDisplay;
-		rayDisplay = {
+		var rayView:RayViewConfig;
+		rayView = {
 			resWidth: resWidth,
 			resHeight: resHeight,
 			tileSize: 128,
@@ -249,11 +249,11 @@ class Main extends Application
 		addWatch(() -> 'ray x: ${rayCast.x}');
 		addWatch(() -> 'ray y: ${rayCast.y}');
 		addWatch(() -> 'ray rotation: ${rayCast.angle}');
-		addWatch(() -> 'ray dir x: ${rays[rayDisplay.centerRayIndex]?.vectorX}');
-		addWatch(() -> 'ray dir y: ${rays[rayDisplay.centerRayIndex]?.vectorY}');
-		addWatch(() -> 'focus id: ${rays[rayDisplay.centerRayIndex]?.mapId}');
-		addWatch(() -> 'focus facing: ${rays[rayDisplay.centerRayIndex]?.facing}');
-		addWatch(() -> 'focus axis: ${rays[rayDisplay.centerRayIndex]?.axis}');
+		addWatch(() -> 'ray dir x: ${rays[rayView.centerRayIndex]?.vectorX}');
+		addWatch(() -> 'ray dir y: ${rays[rayView.centerRayIndex]?.vectorY}');
+		addWatch(() -> 'focus id: ${rays[rayView.centerRayIndex]?.mapId}');
+		addWatch(() -> 'focus facing: ${rays[rayView.centerRayIndex]?.facing}');
+		addWatch(() -> 'focus axis: ${rays[rayView.centerRayIndex]?.axis}');
 
 		// for rendering the floor framebuffer without the perspective shader
 		var debugFloor = true;
@@ -281,7 +281,6 @@ class Main extends Application
 						worldX: xy[0] + 0.5, // add 0.5 to center in map cell
 						worldY: xy[1] + 0.5,
 						tileId: entityIds[key],
-						angleSlots: 1,
 						element: billboards.init()
 					});
 				}
@@ -361,10 +360,10 @@ class Main extends Application
 			rayCast.verticalOffset = osc * headBobHeight;
 
 			// cast rays while rendering walls
-			rays = renderWalls(rayCast, rayDisplay, tilemap.wallTileAt, hitTest, walls.drawStripe);
+			rays = renderWalls(rayCast, rayView, tilemap.wallTileAt, hitTest, walls.drawStripe);
 
 			// use rays to determine billboard rendering
-			renderBillboards(rayCast, rayDisplay, rays, entities, billboards.drawBillboard);
+			renderBillboards(rayCast, rayView, rays, entities, billboards.drawBillboard);
 
 			// sync floor with perspective
 			floor.renderTiles(rayCast, vectorX, vectorY, tilemap.widthTiles, tilemap.heightTiles, tilemap.floorTileAt);

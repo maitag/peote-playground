@@ -2,7 +2,6 @@
  * Huge source of inspiration for the code -> https://lodev.org/cgtutor/raycasting.html
  * The page lots of nice diagrams and explanations about how these algorithms work!
  */
-
 @:structInit
 @:publicFields
 class RayCast
@@ -45,7 +44,7 @@ class RayCast
 
 @:structInit
 @:publicFields
-class RayDisplay
+class RayViewConfig
 {
 	/**
 	 * width of resolution in pixels
@@ -92,16 +91,59 @@ class RayDisplay
 @:publicFields
 class Sighting<E>
 {
+	/**
+	 * the entity that was "seen" by the ray
+	 */
 	var entity:Entity<E>;
+
+	/**
+	 * distance to entity, in world/map space
+	 */
 	var distance:Float;
+
+	/**
+	 * angle relative to fov, in radians
+	 */
 	var relativeAngle:Float;
-	var viewAngle:Float;
+
+	/**
+	 * angle relative to camera, in radians
+	 */
+	var angleToCamera:Float;
+
+	/**
+	 * percentage to start trimming at (for wall occlusion)
+	 */
 	var visibleStart:Float;
+
+	/**
+	 * percentage to stop trimming at (for wall occlusion)
+	 */
 	var visibleEnd:Float;
+
+	/**
+	 * left pixel of element, relative to display
+	 */
 	var x:Float;
+
+	/**
+	 * top pixel of element, relative to display
+	 */
 	var y:Float;
+
+	/**
+	 * alpha reduction based on proximity (transparent when camera is passing through)
+	 */
 	var proximityAlpha:Float;
+
+	/**
+	 * how lit is the entity
+	 */
 	var lightFallOff:Float;
+
+	/**
+	 * for z index/sort order
+	 */
 	var z:Int = 0;
 }
 
@@ -109,13 +151,30 @@ class Sighting<E>
 @:publicFields
 class Entity<E>
 {
+	/**
+	 * x position in world/map
+	 */
 	var worldX:Float;
+
+	/**
+	 * y position in world/map
+	 */
 	var worldY:Float;
-	var facingAngle = Math.PI / 2;
+
+	/**
+	 * index of tile on texture
+	 */
 	var tileId:Int;
-	var angleSlots:Int;
-	var element:E;
+
+	/**
+	 * is entity visible or hiding?
+	 */
 	var isVisible:Bool = false;
+
+	/**
+	 * type parameter for the graphic Element
+	 */
+	var element:E;
 }
 
 enum Axis
@@ -153,7 +212,7 @@ typedef HitTest = Int->Bool;
 typedef DrawStripe = (x:Int, y:Float, width:Int, height:Float, stripeIndex:Int, tileIndex:Int, fallOff:Float) -> Void;
 typedef DrawBillboard<E> = Sighting<E>->Void;
 
-function renderWalls(rayCast:RayCast, display:RayDisplay, map:TileMap, isHit:HitTest, drawStripe:DrawStripe):Array<Ray>
+function renderWalls(rayCast:RayCast, display:RayViewConfig, map:TileMap, isHit:HitTest, drawStripe:DrawStripe):Array<Ray>
 {
 	var rayBuffer:Array<Ray> = [];
 
@@ -177,7 +236,6 @@ function renderWalls(rayCast:RayCast, display:RayDisplay, map:TileMap, isHit:Hit
 		var stripeY = wallTop;
 		var stripeWidth = display.rayStep;
 		var stripeHeight = wallBottom - wallTop;
-
 		// flip textureX to prevent the texture being reversed
 		var textureX = ray.wallX;
 		if ((ray.axis == VERTICAL && ray.vectorX < 0) || (ray.axis == HORIZONTAL && ray.vectorY > 0))
@@ -313,7 +371,7 @@ function castRay(rayX:Float, rayY:Float, rayAngle:Float, fov:Float, totalRays:In
 	};
 }
 
-function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Array<Ray>, entities:Array<Entity<E>>, drawBillboard:DrawBillboard<E>)
+function renderBillboards<E>(raycast:RayCast, display:RayViewConfig, rayBuffer:Array<Ray>, entities:Array<Entity<E>>, drawBillboard:DrawBillboard<E>)
 {
 	// all entities sighted will be returned
 	var sightings:Array<Sighting<E>> = [];
@@ -326,7 +384,8 @@ function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Arra
 		var worldDistance = Math.sqrt(dx * dx + dy * dy);
 
 		// Skip if too far away (optional optimization)
-		if (worldDistance > (raycast.darkAfter + 0.5)){
+		if (worldDistance > (raycast.darkAfter + 0.5))
+		{
 			entity.isVisible = false;
 			continue; // too far, don't need to render
 		}
@@ -382,11 +441,10 @@ function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Arra
 		var entityStartX = screenX - entityWidth / 2; // center horizontally
 		var entityEndX = screenX + entityWidth / 2; // center vertically
 
-		var angleToCamera = angleToEntity + Math.PI;
 		var sighting:Sighting<E> = {
 			entity: entity,
 			relativeAngle: relativeAngle,
-			viewAngle:  angleToCamera - entity.facingAngle,
+			angleToCamera: angleToEntity + Math.PI,
 			distance: distance,
 			proximityAlpha: proximityAlpha,
 			lightFallOff: fallOff,
@@ -415,12 +473,12 @@ function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Arra
 	return sightings;
 }
 
-function occlude<E>(rayBuffer:Array<Ray>, sighting:Sighting<E>, display:RayDisplay, raycast:RayCast, entityStartX:Float, entityEndX:Float, entityWidth:Float)
+function occlude<E>(rayBuffer:Array<Ray>, sighting:Sighting<E>, display:RayViewConfig, raycast:RayCast, entityStartX:Float, entityEndX:Float, entityWidth:Float)
 {
 	// convert to column indices
 	var startColumn = Math.floor(entityStartX / display.rayStep);
 	var endColumn = Math.ceil(entityEndX / display.rayStep);
-	
+
 	// check if any part of the entity is visible
 	var hasAnyVisible = false;
 	for (col in startColumn...endColumn + 1)
@@ -444,11 +502,11 @@ function occlude<E>(rayBuffer:Array<Ray>, sighting:Sighting<E>, display:RayDispl
 	for (col in startColumn...endColumn + 1)
 	{
 		if (col >= 0 && col < rayBuffer.length && sighting.distance < rayBuffer[col].distance)
-			{
-				leftEdge = col;
-				break;
-			}
+		{
+			leftEdge = col;
+			break;
 		}
+	}
 
 	// scan from right to left to find right edge
 	var col = endColumn;
@@ -463,7 +521,7 @@ function occlude<E>(rayBuffer:Array<Ray>, sighting:Sighting<E>, display:RayDispl
 		col--;
 	}
 
-	// determine where to trim 
+	// determine where to trim
 	var visibleStartX = (leftEdge) * display.rayStep;
 	var visibleEndX = (rightEdge + display.rayStep) * display.rayStep;
 	// convert to percentage
