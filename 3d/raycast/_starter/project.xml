@@ -11,7 +11,6 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
-	<app main="MainPipeline" path="bin" file="Main" />
 	
 	<!-- <define name="peoteview_fps" /> -->
 	<!-- <define name="peoteview_fps_size" value="16" /> -->

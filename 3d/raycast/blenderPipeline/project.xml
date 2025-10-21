@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="bunny3d" package="peote.view" version="0.1.0" company="" />
+	<meta title="pipeline3d" package="peote.view" version="0.1.0" company="" />
 	
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="714" /> --> <!-- let set the buildnumber manual (android) -->

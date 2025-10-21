@@ -42,8 +42,6 @@ class Billboard implements Element
 	**/
 	@color public var tint:Color = 0xffffffFF;
 
-	@texSlot public var slot:Int = 0;
-
 	// extra tex attributes for clipping
 	@texX var clipX:Int = 0;
 	@texY var clipY:Int = 0;
@@ -152,8 +150,6 @@ class Billboards
 	public function drawBillboard(sighting:Sighting<Billboard>)
 	{
 		var billboard = sighting.entity.element;
-		var normalized = (sighting.viewAngle + Math.PI) / (Math.PI * 2);
-		billboard.slot = Math.floor((normalized + 0.5) * sighting.entity.angleSlots) % sighting.entity.angleSlots;
 		billboard.z = sighting.z;
 		billboard.tint = Color.WHITE;
 		billboard.tint.aF = sighting.entity.isVisible ? sighting.proximityAlpha : 0;

@@ -14,6 +14,7 @@ class Main extends Application
 {
 	var turningDirection:Int = 0;
 	var movingDirection:Int = 0;
+	var strafingDirection:Int = 0;
 	var distanceTraveled:Float = 0;
 
 	var rays:Array<Ray> = [];
@@ -112,7 +113,8 @@ class Main extends Application
 		var performance = 2;
 		#if html5
 		var parts = js.Browser.location.search.split("?");
-		if(parts.length == 2){
+		if (parts.length == 2)
+		{
 			var num = Std.parseInt(parts[1]);
 			performance = num;
 		}
@@ -146,8 +148,8 @@ class Main extends Application
 			verticalOffset: 0
 		}
 
-		var rayDisplay:RayDisplay;
-		rayDisplay = {
+		var rayView:RayViewConfig;
+		rayView = {
 			resWidth: resWidth,
 			resHeight: resHeight,
 			tileSize: 128,
@@ -172,9 +174,13 @@ class Main extends Application
 				turningDirection = 1;
 			case LEFT:
 				turningDirection = -1;
-			case DOWN:
+			case D:
+				strafingDirection = 1;
+			case A:
+				strafingDirection = -1;
+			case DOWN | S:
 				movingDirection = -1;
-			case UP:
+			case UP | W:
 				movingDirection = 1;
 			case _:
 		});
@@ -185,9 +191,13 @@ class Main extends Application
 				turningDirection = 0;
 			case LEFT:
 				turningDirection = 0;
-			case DOWN:
+			case D:
+				strafingDirection = 0;
+			case A:
+				strafingDirection = 0;
+			case DOWN | S:
 				movingDirection = 0;
-			case UP:
+			case UP | W:
 				movingDirection = 0;
 			case _:
 		});
@@ -195,17 +205,7 @@ class Main extends Application
 		// window resize
 		////////////////
 
-		var centerDisplay = (width:Int, height:Int) ->
-		{
-			var wMid = resWidth / 2;
-			var hMid = resHeight / 2;
-			var scaledWidthMid = (width / peoteView.zoom) / 2;
-			var scaledHeightMid = (height / peoteView.zoom) / 2;
-			display.x = Std.int(scaledWidthMid - wMid);
-			display.y = Std.int(scaledHeightMid - hMid);
-		}
-
-		window.onResize.add((width, height) ->
+		var resize = (width:Int, height:Int) ->
 		{
 			// determine scale factors for x and y
 			var scaleX = (width / resWidth);
@@ -215,12 +215,19 @@ class Main extends Application
 			peoteView.zoom = Math.min(scaleX, scaleY);
 
 			// offset the display to keep in the center of window
-			centerDisplay(width, height);
-		});
+			var wMid = resWidth / 2;
+			var hMid = resHeight / 2;
+			var scaledWidthMid = (width / peoteView.zoom) / 2;
+			var scaledHeightMid = (height / peoteView.zoom) / 2;
+			display.x = Std.int(scaledWidthMid - wMid);
+			display.y = Std.int(scaledHeightMid - hMid);
+		}
+
+		window.onResize.add(resize);
 
 		#if html5
 		// in browser we may need to center the display
-		centerDisplay(window.width, window.height);
+		resize(window.width, window.height);
 		#end
 
 		// debugging
@@ -242,11 +249,11 @@ class Main extends Application
 		addWatch(() -> 'ray x: ${rayCast.x}');
 		addWatch(() -> 'ray y: ${rayCast.y}');
 		addWatch(() -> 'ray rotation: ${rayCast.angle}');
-		addWatch(() -> 'ray dir x: ${rays[rayDisplay.centerRayIndex]?.vectorX}');
-		addWatch(() -> 'ray dir y: ${rays[rayDisplay.centerRayIndex]?.vectorY}');
-		addWatch(() -> 'focus id: ${rays[rayDisplay.centerRayIndex]?.mapId}');
-		addWatch(() -> 'focus facing: ${rays[rayDisplay.centerRayIndex]?.facing}');
-		addWatch(() -> 'focus axis: ${rays[rayDisplay.centerRayIndex]?.axis}');
+		addWatch(() -> 'ray dir x: ${rays[rayView.centerRayIndex]?.vectorX}');
+		addWatch(() -> 'ray dir y: ${rays[rayView.centerRayIndex]?.vectorY}');
+		addWatch(() -> 'focus id: ${rays[rayView.centerRayIndex]?.mapId}');
+		addWatch(() -> 'focus facing: ${rays[rayView.centerRayIndex]?.facing}');
+		addWatch(() -> 'focus axis: ${rays[rayView.centerRayIndex]?.axis}');
 
 		// for rendering the floor framebuffer without the perspective shader
 		var debugFloor = true;
@@ -274,7 +281,6 @@ class Main extends Application
 						worldX: xy[0] + 0.5, // add 0.5 to center in map cell
 						worldY: xy[1] + 0.5,
 						tileId: entityIds[key],
-						angleSlots: 1,
 						element: billboards.init()
 					});
 				}
@@ -300,24 +306,47 @@ class Main extends Application
 			rayCast.angle = ((rayCast.angle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
 
 			// calculate movement
-			var vectorX = Math.cos(rayCast.angle);
-			var vectorY = Math.sin(rayCast.angle);
-			static var moveSpeed = 3;
+			static var moveSpeed = 2.5;
+
 			var movementDelta = (moveSpeed * movingDirection) * deltaTime;
+			var forwardX = Math.cos(rayCast.angle);
+			var forwardY = Math.sin(rayCast.angle);
 
-			// check collision
-			var collisionPadding = 0.3 * movingDirection;
-			var overReach = movementDelta + collisionPadding;
-			var nextX = rayCast.x + vectorX * overReach;
-			var nextY = rayCast.y + vectorY * overReach;
-			var tileAtNextPosition = tilemap.wallTileAt(Math.floor(nextX), Math.floor(nextY));
+			var strafeDelta = (moveSpeed * strafingDirection) * deltaTime;
+			static var PImid = Math.PI / 2;
+			var strafeX = Math.cos(rayCast.angle + PImid);
+			var strafeY = Math.sin(rayCast.angle + PImid);
 
-			// update position if there is no collision
-			if (!hitTest(tileAtNextPosition))
+			var vectorX = forwardX * movementDelta + strafeX * strafeDelta;
+			var vectorY = forwardY * movementDelta + strafeY * strafeDelta;
+
+			// if there is movement
+			if (vectorX != 0 || vectorY != 0)
 			{
-				rayCast.x += Math.cos(rayCast.angle) * movementDelta;
-				rayCast.y += Math.sin(rayCast.angle) * movementDelta;
-				distanceTraveled += movementDelta;
+				var distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+
+				// cap movement speed to prevent diagonal speed increase
+				var maxDistance = moveSpeed * deltaTime;
+				if (distance > maxDistance)
+				{
+					vectorX = (vectorX / distance) * maxDistance;
+					vectorY = (vectorY / distance) * maxDistance;
+					distance = maxDistance;
+				}
+
+				// check collision
+				static var collisionPadding = 0.3;
+				var nextX = Math.floor(rayCast.x + vectorX + (vectorX / distance) * collisionPadding);
+				var nextY = Math.floor(rayCast.y + vectorY + (vectorY / distance) * collisionPadding);
+				var tileAtNextPosition = tilemap.wallTileAt(nextX, nextY);
+
+				// update position if there is no collision
+				if (!hitTest(tileAtNextPosition))
+				{
+					rayCast.x += vectorX;
+					rayCast.y += vectorY;
+					distanceTraveled += Math.abs(distance);
+				}
 			}
 
 			// graphics
@@ -331,10 +360,10 @@ class Main extends Application
 			rayCast.verticalOffset = osc * headBobHeight;
 
 			// cast rays while rendering walls
-			rays = renderWalls(rayCast, rayDisplay, tilemap.wallTileAt, hitTest, walls.drawStripe);
+			rays = renderWalls(rayCast, rayView, tilemap.wallTileAt, hitTest, walls.drawStripe);
 
 			// use rays to determine billboard rendering
-			renderBillboards(rayCast, rayDisplay, rays, entities, billboards.drawBillboard);
+			renderBillboards(rayCast, rayView, rays, entities, billboards.drawBillboard);
 
 			// sync floor with perspective
 			floor.renderTiles(rayCast, vectorX, vectorY, tilemap.widthTiles, tilemap.heightTiles, tilemap.floorTileAt);
