@@ -15,3 +15,8 @@ It does not have animated sprites or a proper physics system because I wanted to
 Many thanks to these articles, which document the techniques and algorithms used...
 
 https://lodev.org/cgtutor/raycasting.html
+
+
+# Asset Pipeline (Blender 3D Tool)
+
+Install image magick and look into blender-file for python script!
