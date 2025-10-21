@@ -1,3 +1,4 @@
+import assets.Pipeline;
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
@@ -10,10 +11,11 @@ import util.Watch;
 import Billboard;
 import Raycaster;
 
-class Main extends Application
+class MainPipeline extends Application
 {
 	var turningDirection:Int = 0;
 	var movingDirection:Int = 0;
+	var strafingDirection:Int = 0;
 	var distanceTraveled:Float = 0;
 
 	var rays:Array<Ray> = [];
@@ -50,8 +52,8 @@ class Main extends Application
 
 		var map:Array<String> = [
 			"###################",
-			"#       #      #  #",
-			"#       #         #",
+			"#              #  #",
+			"#  3              #",
 			"#               1 #",
 			"#     A       # 2 #",
 			"#         #   # 3 #",
@@ -83,12 +85,13 @@ class Main extends Application
 
 		var entityIds:Map<String, Int> = [
 			//////
-			"0" => 10,
-			"1" => 1,
-			"2" => 17,
-			"3" => 2,
-			"4" => 13,
-			"5" => 7,
+			"0" => Pipeline.Cube,
+			"1" => Pipeline.Icosphere,
+			"2" => Pipeline.Cone,
+			"3" => Pipeline.Suzanne,
+			"4" => Pipeline.Gem,
+			"5" => Pipeline.Brilliant,
+			"6" => Pipeline.Diamond,
 		];
 
 		var tilemap = new StringTilemap(map, wallIds, floorIds, entityIds);
@@ -112,7 +115,8 @@ class Main extends Application
 		var performance = 2;
 		#if html5
 		var parts = js.Browser.location.search.split("?");
-		if(parts.length == 2){
+		if (parts.length == 2)
+		{
 			var num = Std.parseInt(parts[1]);
 			performance = num;
 		}
@@ -125,10 +129,17 @@ class Main extends Application
 		// billboard graphics
 		/////////////////////
 
-		var tileSize = 32;
-		var tilesX = 16;
+		var tileSize = 128;
+		var tilesX = 4;
+		var texWidth = tileSize * tilesX;
+		var texHeight = tileSize * 2;
 		var numBillboards = tilemap.entityCount;
-		var texture = Texture.fromData(Assets.getImage("assets/peote_tiles_bunnys.png"));
+		var angles = 24;
+		var texture = new Texture(texWidth, texHeight, angles);
+		for (slot in 0...angles)
+		{
+			texture.setData(Assets.getImage('assets/pipeline$slot.png'), slot);
+		}
 		var billboards = new Billboards(numBillboards, texture, tilesX, tileSize, resHeight);
 		billboards.addToDisplay(display);
 
@@ -172,6 +183,10 @@ class Main extends Application
 				turningDirection = 1;
 			case LEFT:
 				turningDirection = -1;
+			case D:
+				strafingDirection = 1;
+			case A:
+				strafingDirection = -1;
 			case DOWN:
 				movingDirection = -1;
 			case UP:
@@ -185,6 +200,10 @@ class Main extends Application
 				turningDirection = 0;
 			case LEFT:
 				turningDirection = 0;
+			case D:
+				strafingDirection = 0;
+			case A:
+				strafingDirection = 0;
 			case DOWN:
 				movingDirection = 0;
 			case UP:
@@ -274,7 +293,7 @@ class Main extends Application
 						worldX: xy[0] + 0.5, // add 0.5 to center in map cell
 						worldY: xy[1] + 0.5,
 						tileId: entityIds[key],
-						angleSlots: 1,
+						angleSlots: 24,
 						element: billboards.init()
 					});
 				}
@@ -300,11 +319,15 @@ class Main extends Application
 			rayCast.angle = ((rayCast.angle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
 
 			// calculate movement
-			var vectorX = Math.cos(rayCast.angle);
-			var vectorY = Math.sin(rayCast.angle);
-			static var moveSpeed = 3;
+			var forwardX = Math.cos(rayCast.angle);
+			var forwardY = Math.sin(rayCast.angle);
+			var strafeX = Math.cos(rayCast.angle + Math.PI / 2);
+			var strafeY = Math.sin(rayCast.angle + Math.PI / 2);
+			static var moveSpeed = 2.5;
 			var movementDelta = (moveSpeed * movingDirection) * deltaTime;
-
+			var strafeDelta = (moveSpeed * strafingDirection) * deltaTime;
+			var vectorX = forwardX * movementDelta + strafeX * strafeDelta;
+			var vectorY = forwardY * movementDelta + strafeY * strafeDelta;
 			// check collision
 			var collisionPadding = 0.3 * movingDirection;
 			var overReach = movementDelta + collisionPadding;
@@ -315,8 +338,8 @@ class Main extends Application
 			// update position if there is no collision
 			if (!hitTest(tileAtNextPosition))
 			{
-				rayCast.x += Math.cos(rayCast.angle) * movementDelta;
-				rayCast.y += Math.sin(rayCast.angle) * movementDelta;
+				rayCast.x += vectorX;
+				rayCast.y += vectorY;
 				distanceTraveled += movementDelta;
 			}
 
