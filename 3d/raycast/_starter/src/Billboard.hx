@@ -42,6 +42,8 @@ class Billboard implements Element
 	**/
 	@color public var tint:Color = 0xffffffFF;
 
+	@texSlot public var slot:Int = 0;
+
 	// extra tex attributes for clipping
 	@texX var clipX:Int = 0;
 	@texY var clipY:Int = 0;
@@ -121,7 +123,7 @@ class Billboards
 	var tileSize:Int;
 	var resHeight:Int;
 
-	public function new(bufferSize:Int, textureData:TextureData, tilesX:Int, tileSize:Int, resHeight:Int)
+	public function new(bufferSize:Int, texture:Texture, tilesX:Int, tileSize:Int, resHeight:Int)
 	{
 		this.tilesX = tilesX;
 		this.tileSize = tileSize;
@@ -134,7 +136,7 @@ class Billboards
 		// this is quick way to hide an element that the camera is passing through
 		program.discardAtAlpha(0.1, false);
 
-		program.addTexture(Texture.fromData(textureData), true);
+		program.addTexture(texture, true);
 	}
 
 	public function addToDisplay(display:Display)
@@ -150,6 +152,8 @@ class Billboards
 	public function drawBillboard(sighting:Sighting<Billboard>)
 	{
 		var billboard = sighting.entity.element;
+		var normalized = (sighting.viewAngle + Math.PI) / (Math.PI * 2);
+		billboard.slot = Math.floor((normalized + 0.5) * sighting.entity.angleSlots) % sighting.entity.angleSlots;
 		billboard.z = sighting.z;
 		billboard.tint = Color.WHITE;
 		billboard.tint.aF = sighting.entity.isVisible ? sighting.proximityAlpha : 0;
@@ -159,7 +163,8 @@ class Billboards
 		updateElement(billboard);
 	}
 
-	public function init():Billboard {
+	public function init():Billboard
+	{
 		return buffer.addElement(new Billboard());
 	}
 }

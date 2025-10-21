@@ -95,6 +95,7 @@ class Sighting<E>
 	var entity:Entity<E>;
 	var distance:Float;
 	var relativeAngle:Float;
+	var viewAngle:Float;
 	var visibleStart:Float;
 	var visibleEnd:Float;
 	var x:Float;
@@ -110,7 +111,9 @@ class Entity<E>
 {
 	var worldX:Float;
 	var worldY:Float;
+	var facingAngle = Math.PI / 2;
 	var tileId:Int;
+	var angleSlots:Int;
 	var element:E;
 	var isVisible:Bool = false;
 }
@@ -333,7 +336,8 @@ function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Arra
 		var relativeAngle = angleToEntity - raycast.angle;
 
 		// normalise relative angle to -PI to PI to keep things sane
-		relativeAngle = ((relativeAngle + Math.PI) % (Math.PI * 2) + (Math.PI * 2)) % (Math.PI * 2) - Math.PI;
+		static var PI2 = Math.PI * 2;
+		relativeAngle = ((relativeAngle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
 
 		// used to fade an entity when passing through it
 		var proximityAlpha = 1.0;
@@ -377,10 +381,12 @@ function renderBillboards<E>(raycast:RayCast, display:RayDisplay, rayBuffer:Arra
 		var entityScreenY = display.verticalCenter - entityHeight / 2 + raycast.verticalOffset;
 		var entityStartX = screenX - entityWidth / 2; // center horizontally
 		var entityEndX = screenX + entityWidth / 2; // center vertically
-		
+
+		var angleToCamera = angleToEntity + Math.PI;
 		var sighting:Sighting<E> = {
 			entity: entity,
 			relativeAngle: relativeAngle,
+			viewAngle:  angleToCamera - entity.facingAngle,
 			distance: distance,
 			proximityAlpha: proximityAlpha,
 			lightFallOff: fallOff,
