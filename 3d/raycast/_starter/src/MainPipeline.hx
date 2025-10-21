@@ -129,10 +129,10 @@ class MainPipeline extends Application
 		// billboard graphics
 		/////////////////////
 
-		var tileSize = 128;
-		var tilesX = 4;
-		var texWidth = tileSize * tilesX;
-		var texHeight = tileSize * 2;
+		var tileSize = Pipeline.tileHeight;
+		var tilesX = Pipeline.tilesX;
+		var texWidth = Pipeline.width;
+		var texHeight = Pipeline.height;
 		var numBillboards = tilemap.entityCount;
 		var angles = 24;
 		var texture = new Texture(texWidth, texHeight, angles);
@@ -187,9 +187,9 @@ class MainPipeline extends Application
 				strafingDirection = 1;
 			case A:
 				strafingDirection = -1;
-			case DOWN:
+			case DOWN | S:
 				movingDirection = -1;
-			case UP:
+			case UP | W:
 				movingDirection = 1;
 			case _:
 		});
@@ -204,9 +204,9 @@ class MainPipeline extends Application
 				strafingDirection = 0;
 			case A:
 				strafingDirection = 0;
-			case DOWN:
+			case DOWN | S:
 				movingDirection = 0;
-			case UP:
+			case UP | W:
 				movingDirection = 0;
 			case _:
 		});
@@ -214,17 +214,7 @@ class MainPipeline extends Application
 		// window resize
 		////////////////
 
-		var centerDisplay = (width:Int, height:Int) ->
-		{
-			var wMid = resWidth / 2;
-			var hMid = resHeight / 2;
-			var scaledWidthMid = (width / peoteView.zoom) / 2;
-			var scaledHeightMid = (height / peoteView.zoom) / 2;
-			display.x = Std.int(scaledWidthMid - wMid);
-			display.y = Std.int(scaledHeightMid - hMid);
-		}
-
-		window.onResize.add((width, height) ->
+		var resize = (width:Int, height:Int) ->
 		{
 			// determine scale factors for x and y
 			var scaleX = (width / resWidth);
@@ -234,12 +224,19 @@ class MainPipeline extends Application
 			peoteView.zoom = Math.min(scaleX, scaleY);
 
 			// offset the display to keep in the center of window
-			centerDisplay(width, height);
-		});
+			var wMid = resWidth / 2;
+			var hMid = resHeight / 2;
+			var scaledWidthMid = (width / peoteView.zoom) / 2;
+			var scaledHeightMid = (height / peoteView.zoom) / 2;
+			display.x = Std.int(scaledWidthMid - wMid);
+			display.y = Std.int(scaledHeightMid - hMid);
+		}
+
+		window.onResize.add(resize);
 
 		#if html5
 		// in browser we may need to center the display
-		centerDisplay(window.width, window.height);
+		resize(window.width, window.height);
 		#end
 
 		// debugging
@@ -319,28 +316,47 @@ class MainPipeline extends Application
 			rayCast.angle = ((rayCast.angle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
 
 			// calculate movement
+			static var moveSpeed = 2.5;
+
+			var movementDelta = (moveSpeed * movingDirection) * deltaTime;
 			var forwardX = Math.cos(rayCast.angle);
 			var forwardY = Math.sin(rayCast.angle);
-			var strafeX = Math.cos(rayCast.angle + Math.PI / 2);
-			var strafeY = Math.sin(rayCast.angle + Math.PI / 2);
-			static var moveSpeed = 2.5;
-			var movementDelta = (moveSpeed * movingDirection) * deltaTime;
+
 			var strafeDelta = (moveSpeed * strafingDirection) * deltaTime;
+			static var PImid = Math.PI / 2;
+			var strafeX = Math.cos(rayCast.angle + PImid);
+			var strafeY = Math.sin(rayCast.angle + PImid);
+
 			var vectorX = forwardX * movementDelta + strafeX * strafeDelta;
 			var vectorY = forwardY * movementDelta + strafeY * strafeDelta;
-			// check collision
-			var collisionPadding = 0.3 * movingDirection;
-			var overReach = movementDelta + collisionPadding;
-			var nextX = rayCast.x + vectorX * overReach;
-			var nextY = rayCast.y + vectorY * overReach;
-			var tileAtNextPosition = tilemap.wallTileAt(Math.floor(nextX), Math.floor(nextY));
 
-			// update position if there is no collision
-			if (!hitTest(tileAtNextPosition))
+			// if there is movement
+			if (vectorX != 0 || vectorY != 0)
 			{
-				rayCast.x += vectorX;
-				rayCast.y += vectorY;
-				distanceTraveled += movementDelta;
+				var distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+
+				// cap movement speed to prevent diagonal speed increase
+				var maxDistance = moveSpeed * deltaTime;
+				if (distance > maxDistance)
+				{
+					vectorX = (vectorX / distance) * maxDistance;
+					vectorY = (vectorY / distance) * maxDistance;
+					distance = maxDistance;
+				}
+
+				// check collision
+				static var collisionPadding = 0.3;
+				var nextX = Math.floor(rayCast.x + vectorX + (vectorX / distance) * collisionPadding);
+				var nextY = Math.floor(rayCast.y + vectorY + (vectorY / distance) * collisionPadding);
+				var tileAtNextPosition = tilemap.wallTileAt(nextX, nextY);
+
+				// update position if there is no collision
+				if (!hitTest(tileAtNextPosition))
+				{
+					rayCast.x += vectorX;
+					rayCast.y += vectorY;
+					distanceTraveled += Math.abs(distance);
+				}
 			}
 
 			// graphics
