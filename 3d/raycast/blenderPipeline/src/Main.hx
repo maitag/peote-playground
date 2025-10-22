@@ -53,7 +53,7 @@ class Main extends Application
 		var map:Array<String> = [
 			"###################",
 			"#              #  #",
-			"#  3              #",
+			"#  7            0 #",
 			"#               1 #",
 			"#     A       # 2 #",
 			"#         #   # 3 #",
@@ -81,6 +81,8 @@ class Main extends Application
 			"3" => 3,
 			"4" => 4,
 			"5" => 5,
+			"6" => 6,
+			"7" => 7,
 		];
 
 		var entityIds:Map<String, Int> = [
@@ -92,6 +94,7 @@ class Main extends Application
 			"4" => Pipeline.Gem,
 			"5" => Pipeline.Brilliant,
 			"6" => Pipeline.Diamond,
+			"7" => Pipeline.Human,
 		];
 
 		var tilemap = new StringTilemap(map, wallIds, floorIds, entityIds);
@@ -134,7 +137,7 @@ class Main extends Application
 		var texWidth = Pipeline.width;
 		var texHeight = Pipeline.height;
 		var numBillboards = tilemap.entityCount;
-		var angles = 24;
+		var angles = Pipeline.degrees;
 		var texture = new Texture(texWidth, texHeight, angles);
 		for (slot in 0...angles)
 		{

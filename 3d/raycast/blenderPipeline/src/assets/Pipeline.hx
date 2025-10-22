@@ -6,6 +6,7 @@ enum abstract Pipeline(Int) from Int to Int {
 	var Cube = 0;
 	var Diamond = 6;
 	var Gem = 4;
+	var Human = 7;
 	var Icosphere = 1;
 	var Suzanne = 3;
 
@@ -17,4 +18,5 @@ enum abstract Pipeline(Int) from Int to Int {
 	public static var tileWidth:Int = 128;
 	public static var tileHeight:Int = 128;
 	public static var gap:Int = 0;
+	public static var degrees:Int = 24;
 }
