@@ -53,7 +53,7 @@ class Main extends Application
 		var map:Array<String> = [
 			"###################",
 			"#              #  #",
-			"#  7            0 #",
+			"#  0  8         7 #",
 			"#               1 #",
 			"#     A       # 2 #",
 			"#         #   # 3 #",
@@ -83,6 +83,7 @@ class Main extends Application
 			"5" => 5,
 			"6" => 6,
 			"7" => 7,
+			"8" => 8,
 		];
 
 		var entityIds:Map<String, Int> = [
@@ -95,6 +96,7 @@ class Main extends Application
 			"5" => Pipeline.Brilliant,
 			"6" => Pipeline.Diamond,
 			"7" => Pipeline.Human,
+			"8" => Pipeline.CubeBorder,
 		];
 
 		var tilemap = new StringTilemap(map, wallIds, floorIds, entityIds);
@@ -293,7 +295,7 @@ class Main extends Application
 						worldX: xy[0] + 0.5, // add 0.5 to center in map cell
 						worldY: xy[1] + 0.5,
 						tileId: entityIds[key],
-						angleSlots: 24,
+						angleSlots: Pipeline.degrees,
 						facingAngle: Math.PI / 2, // entity facing South
 						element: billboards.init()
 					});
