@@ -102,14 +102,9 @@ class Sighting<E>
 	var distance:Float;
 
 	/**
-	 * angle relative to fov, in radians
+	 * which texture slot to use, when each slot is a different angle
 	 */
-	var relativeAngle:Float;
-
-	/**
-	 * angle relative to camera, in radians
-	 */
-	var angleToCamera:Float;
+	var angleSlot:Int;
 
 	/**
 	 * percentage to start trimming at (for wall occlusion)
@@ -294,7 +289,7 @@ function castRay(rayX:Float, rayY:Float, rayAngle:Float, fov:Float, totalRays:In
 	// directions for stepping through the tilemap
 	var dirX, dirY = 0;
 
-	// initialise sideDists and dirs for the DDA
+	// initialize sideDists and dirs for the DDA
 	if (vectorX < 0)
 	{
 		dirX = -1;
@@ -361,7 +356,7 @@ function castRay(rayX:Float, rayY:Float, rayAngle:Float, fov:Float, totalRays:In
 		wallX = rayX + perpWallDist * vectorX;
 	}
 
-	// get fractional part for texture coordinate
+	// get fractional part for texture coord
 	wallX = wallX - Math.floor(wallX);
 
 	// compass side of wall when facing it
@@ -393,25 +388,31 @@ function renderBillboards<E>(raycast:RayCast, display:RayViewConfig, rayBuffer:A
 		var dy = entity.worldY - raycast.y;
 		var worldDistance = Math.sqrt(dx * dx + dy * dy);
 
-		// Skip if too far away (optional optimization)
+		// skip if too far away
 		if (worldDistance > (raycast.darkAfter + 0.5))
 		{
 			entity.isVisible = false;
 			continue; // too far, don't need to render
 		}
 
-		// Check FOV
+		// fov
 		var angleToEntity = Math.atan2(dy, dx);
-		var relativeAngle = angleToEntity - raycast.angle;
-
-		// normalise relative angle to -PI to PI to keep things sane
-		static var PI2 = Math.PI * 2;
-		relativeAngle = ((relativeAngle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
+		// determine angle relative to ray, normalized between -PI and PI
+		var relativeAngle = normalizePI(angleToEntity - raycast.angle);
+		
+		// determine angle relative to view, normalised between -PI and PI
+		var entityAngleToCamera = angleToEntity + Math.PI;
+		var viewAngle = normalizePI(entityAngleToCamera - entity.facingAngle);
+		
+		// determine slot to use for angle
+		var angleNormalized = (viewAngle + Math.PI) / PI2; // normalize to range 0-1 instead of 0-4
+		var angleSlot = Math.round(angleNormalized * entity.angleSlots) % entity.angleSlots;
+		// trace(angleSlot);
 
 		// used to fade an entity when passing through it
 		var proximityAlpha = 1.0;
-		static var fadeStartDistance = 1.0; // Start fading
-		static var fadeEndDistance = 0.3; // Fully transparent
+		static var fadeStartDistance = 1.0; // distance to start fading
+		static var fadeEndDistance = 0.3;   // distance where it is fully transparent
 
 		// fish eye correction
 		var distance = worldDistance * Math.cos(relativeAngle);
@@ -453,8 +454,7 @@ function renderBillboards<E>(raycast:RayCast, display:RayViewConfig, rayBuffer:A
 
 		var sighting:Sighting<E> = {
 			entity: entity,
-			relativeAngle: relativeAngle,
-			angleToCamera: angleToEntity + Math.PI,
+			angleSlot: angleSlot,
 			distance: distance,
 			proximityAlpha: proximityAlpha,
 			lightFallOff: fallOff,
@@ -540,4 +540,13 @@ function occlude<E>(rayBuffer:Array<Ray>, sighting:Sighting<E>, display:RayViewC
 	// clamp to 1.0
 	sighting.visibleStart = Math.min(leftClip, 1);
 	sighting.visibleEnd = 1 - Math.min(rightClip, 1);
+}
+
+var PI2 = Math.PI * 2;
+
+/**
+ * normalize to range -PI to PI
+ */
+function normalizePI(v:Float):Float{
+	return ((v + Math.PI) % PI2 + PI2) % PI2 - Math.PI;	
 }

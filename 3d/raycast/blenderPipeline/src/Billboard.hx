@@ -85,23 +85,23 @@ class Billboard implements Element
 	 * @param leftCut percentage of the element to hide on the left side
 	 * @param rightCut percentage of the element to hide on the right side
 	 */
-	public function setTileAndTrim(tileIndex:Int, tileSize:Int, tilesX:Int, x:Float, y:Float, leftCut:Float, rightCut:Float)
+	public function setTileAndTrim(tileIndex:Int, tileWidth:Int, tileHeight:Int, tilesX:Int, x:Float, y:Float, leftCut:Float, rightCut:Float)
 	{
 		var column = Std.int(tileIndex % tilesX);
 		var row = Std.int(tileIndex / tilesX);
-		var texX = (column * tileSize);
-		var texY = row * tileSize;
+		var texX = (column * tileWidth);
+		var texY = row * tileHeight;
 
-		var xOffset = tileSize * leftCut;
+		var xOffset = tileWidth * leftCut;
 		clipX = Std.int(texX + xOffset);
 		clipY = Std.int(texY);
 
 		var visiblePercent = rightCut - leftCut;
-		var croppedWidth = Std.int(tileSize * visiblePercent);
+		var croppedWidth = Std.int(tileWidth * visiblePercent);
 		clipWidth = croppedWidth;
-		clipHeight = tileSize;
+		clipHeight = tileHeight;
 		clipSizeX = croppedWidth;
-		clipSizeY = tileSize;
+		clipSizeY = tileHeight;
 
 		width = Std.int(height * visiblePercent);
 		this.x = x + (leftCut * height);
@@ -123,13 +123,15 @@ class Billboards
 	var program(default, null):Program;
 	var buffer:Buffer<Billboard>;
 	var tilesX:Int;
-	var tileSize:Int;
+	var tileWidth:Int;
+	var tileHeight:Int;
 	var resHeight:Int;
 
-	public function new(bufferSize:Int, texture:Texture, tilesX:Int, tileSize:Int, resHeight:Int)
+	public function new(bufferSize:Int, texture:Texture, tileWidth:Int, tileHeight:Int, tilesX:Int, resHeight:Int)
 	{
+		this.tileWidth = tileWidth;
+		this.tileHeight = tileHeight;
 		this.tilesX = tilesX;
-		this.tileSize = tileSize;
 		this.resHeight = resHeight;
 
 		buffer = new Buffer<Billboard>(bufferSize, bufferSize);
@@ -158,15 +160,22 @@ class Billboards
 
 		if (sighting.entity.isVisible)
 		{
-			var viewAngle = sighting.angleToCamera - sighting.entity.facingAngle;
-			var normalized = (viewAngle + Math.PI) / (Math.PI * 2);
-			billboard.slot = Math.floor((normalized + 0.5) * sighting.entity.angleSlots) % sighting.entity.angleSlots;
+			billboard.slot = sighting.angleSlot;
 			billboard.z = sighting.z;
 			billboard.tint = Color.WHITE;
 			billboard.tint.aF = sighting.proximityAlpha;
 			billboard.tint.valueHSV = sighting.lightFallOff;
 			billboard.setSize(resHeight, sighting.distance);
-			billboard.setTileAndTrim(sighting.entity.tileId, tileSize, tilesX, sighting.x, sighting.y, sighting.visibleStart, sighting.visibleEnd);
+			billboard.setTileAndTrim(
+				sighting.entity.tileId,
+				tileWidth,
+				tileHeight,
+				tilesX,
+				sighting.x,
+				sighting.y,
+				sighting.visibleStart,
+				sighting.visibleEnd
+			);
 		}
 		else
 		{
