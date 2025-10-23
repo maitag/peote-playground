@@ -52,11 +52,11 @@ class Main extends Application
 
 		var map:Array<String> = [
 			"###################",
-			"#              #  #",
-			"#  0  8         7 #",
+			"#                 #",
+			"#    8          7 #",
 			"#               1 #",
-			"#     A       # 2 #",
-			"#         #   # 3 #",
+			"#             A 2 #",
+			"#         #     3 #",
 			"####      #     4 #",
 			"BBBB#########   5 #",
 			"B 0               #",
@@ -134,18 +134,14 @@ class Main extends Application
 		// billboard graphics
 		/////////////////////
 
-		var tileSize = Pipeline.tileHeight;
-		var tilesX = Pipeline.tilesX;
-		var texWidth = Pipeline.width;
-		var texHeight = Pipeline.height;
 		var numBillboards = tilemap.entityCount;
 		var angles = Pipeline.degrees;
-		var texture = new Texture(texWidth, texHeight, angles);
+		var texture = new Texture(Pipeline.width, Pipeline.height, angles);
 		for (slot in 0...angles)
 		{
 			texture.setData(Assets.getImage('assets/pipeline$slot.png'), slot);
 		}
-		var billboards = new Billboards(numBillboards, texture, tilesX, tileSize, resHeight);
+		var billboards = new Billboards(numBillboards, texture, Pipeline.tileWidth, Pipeline.tileHeight, Pipeline.tilesX, resHeight);
 		billboards.addToDisplay(display);
 
 		// ray casting
@@ -196,6 +192,19 @@ class Main extends Application
 				movingDirection = -1;
 			case UP | W:
 				movingDirection = 1;
+			case NUMBER_0:
+				// center in map cell
+				rayCast.x = Math.ceil(rayCast.x / 0.5) * 0.5;
+				rayCast.y = Math.ceil(rayCast.y / 0.5) * 0.5;
+			case NUMBER_1:
+				// face North
+				rayCast.angle = -Math.PI / 2;
+			case NUMBER_8:
+				// step West a little
+				rayCast.x -= 0.2;
+			case NUMBER_9:
+				// step East a little
+				rayCast.x += 0.2;
 			case _:
 		});
 
@@ -296,7 +305,7 @@ class Main extends Application
 						worldY: xy[1] + 0.5,
 						tileId: entityIds[key],
 						angleSlots: Pipeline.degrees,
-						facingAngle: Math.PI / 2, // entity facing South
+						facingAngle: 3 * (Math.PI / 2), // entity facing South
 						element: billboards.init()
 					});
 				}
@@ -316,10 +325,7 @@ class Main extends Application
 			// calculate turning
 			static var turnSpeed = 2;
 			var rotationDelta = (turnSpeed * turningDirection) * deltaTime;
-			rayCast.angle += rotationDelta;
-			// normalise angle to keep things sane
-			static var PI2 = Math.PI * 2;
-			rayCast.angle = ((rayCast.angle + Math.PI) % PI2 + PI2) % PI2 - Math.PI;
+			rayCast.angle = normalizePI(rayCast.angle + rotationDelta);
 
 			// calculate movement
 			static var moveSpeed = 2.5;
