@@ -74,13 +74,17 @@ class QuadBuffer extends Buffer<Quad>
 {
 	public var program(default, null):Program;
 
-	public function new(size:Int, textureData:TextureData = null, tileWidth:Null<Int> = null, tileHeight:Null<Int> = null)
+	public function new(size:Int, textureData:TextureData = null, texture:Texture = null, tileWidth:Null<Int> = null, tileHeight:Null<Int> = null)
 	{
 		super(size, size);
 		this.program = new Program(this);
 		this.program.discardAtAlpha(0.0, false);
 
-		if (textureData != null)
+		if (texture != null)
+		{
+			this.program.addTexture(texture, true);
+		}
+		else if (textureData != null)
 		{
 			var texture = Texture.fromData(textureData);
 			texture.setSmooth(true, true, true);
@@ -102,9 +106,9 @@ class QuadBuffer extends Buffer<Quad>
 
 class QuadRingBuffer extends QuadBuffer
 {
-	public function new(size:Int, textureData:TextureData = null, tileWidth:Null<Int> = null, tileHeight:Null<Int> = null, isCenterPivot:Bool = false)
+	public function new(size:Int, textureData:TextureData = null, texture:Texture = null, tileWidth:Null<Int> = null, tileHeight:Null<Int> = null, isCenterPivot:Bool = false)
 	{
-		super(size, textureData, tileWidth, tileHeight);
+		super(size, textureData, texture, tileWidth, tileHeight);
 
 		for (n in 0...size)
 		{
