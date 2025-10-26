@@ -83,6 +83,7 @@ class QuadBuffer extends Buffer<Quad>
 		if (texture != null)
 		{
 			this.program.addTexture(texture, true);
+			texture.setSmooth(true, true, true);
 		}
 		else if (textureData != null)
 		{

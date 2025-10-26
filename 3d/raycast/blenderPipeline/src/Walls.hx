@@ -10,7 +10,7 @@ class Walls
 	var tileSize:Int;
 	var quads:QuadRingBuffer;
 
-	public function new(numStripes:Int, texData:TextureData, ?tileTexture:Texture, tileSize:Int, wallHeight:Float)
+	public function new(numStripes:Int, ?texData:TextureData, ?tileTexture:Texture, tileSize:Int, wallHeight:Float)
 	{
 		// stripeWidth is the width of each "sub" tile
 		static var stripeWidth = 1;

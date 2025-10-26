@@ -104,12 +104,19 @@ class Main extends Application
 		var visibleMapSize = 16;
 		// var visibleMapSize = Std.int(Math.max(tilemap.widthTiles, tilemap.heightTiles)) + 8; // for debug
 
+
+		// load some images into a great texture atlas
+		//////////////////////////////////////////////
+		// var textureData = Assets.getImage("assets/test-128.png");
+		// var generatedTexture = Texture.fromData( Assets.getImage("assets/test-128.png") ); generatedTexture.tilesX = 8; generatedTexture.tilesY = 8;
+		var generatedTexture = TextureAtlasTool.generate(peoteView, 1024, 1024, 8, 8);
+
 		// floor graphics
 		/////////////////
 
 		var tileSize = 128;
-		var textureData = Assets.getImage("assets/test-128.png");
-		var floor = new Floor(peoteView, tileSize, textureData, visibleMapSize, resWidth, resHeight);
+		// var floor = new Floor(peoteView, tileSize, textureData, visibleMapSize, resWidth, resHeight);
+		var floor = new Floor(peoteView, tileSize, null, generatedTexture, visibleMapSize, resWidth, resHeight);
 		floor.addToDisplay(display);
 
 		// wall graphics
@@ -128,7 +135,8 @@ class Main extends Application
 		#end
 		var numStripes = Std.int(resWidth / performance);
 		var wallTilesHigh = 2.5;
-		var walls = new Walls(numStripes, textureData, tileSize, wallTilesHigh);
+		// var walls = new Walls(numStripes, textureData, tileSize, wallTilesHigh);
+		var walls = new Walls(numStripes, null, generatedTexture, tileSize, wallTilesHigh);
 		walls.addToDisplay(display);
 
 		// billboard graphics

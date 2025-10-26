@@ -32,7 +32,7 @@ class Floor
 	public var uLitBefore:UniformFloat;
 	public var uDarkAfter:UniformFloat;
 
-	public function new(peoteView:PeoteView, texTileSize:Int, tileTextureData:TextureData, ?tileTexture:Texture, visibleMapSize:Int, resWidth:Int, resHeight:Int)
+	public function new(peoteView:PeoteView, texTileSize:Int, ?tileTextureData:TextureData, ?tileTexture:Texture, visibleMapSize:Int, resWidth:Int, resHeight:Int)
 	{
 		this.visibleMapSize = visibleMapSize;
 		drawDistance = Std.int(visibleMapSize / 2);
