@@ -22,7 +22,7 @@ class TextureAtlasTool {
 	static var buffer:Buffer<Elem>;
 	static var tileElem:Elem;
 
-	public static function generate(peoteView:PeoteView, width:Int, height:Int, tilesX:Int, tilesY:Int):Texture {
+	public static function generate(peoteView:PeoteView, width:Int, height:Int, tilesX:Int, tilesY:Int, imageLinks:Array<String>):Texture {
 
 		TextureAtlasTool.peoteView = peoteView;
 		
@@ -43,18 +43,9 @@ class TextureAtlasTool {
 
 		peoteView.setFramebuffer(display, fbTexture);
 
-		Load.imageArray([
-			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_01010111_05.blend.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-13.blend.png",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_1001f.blend.png",
-			"http://maitag.de/semmi/blender/spheresfractal_07_lights.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-19.blend.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/volume-fake_07.blend.png",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_10.blend.jpg",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_11.blend.jpg",
-			"http://maitag.de/semmi/blender/hxMeat.jpg",
-			"http://maitag.de/semmi/blender/blenderconsole-telnet.png",
-			], // true,
+		Load.imageArray(
+			imageLinks,
+			//, true, // <-- enable this to see the default load-debugger 
 			function(index:Int, loaded:Int, size:Int) {
 				// trace(' File number $index progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)');
 			},
@@ -64,12 +55,24 @@ class TextureAtlasTool {
 			function(index:Int, image:Image) { // after every single image is loaded
 				// trace('File number $index loaded completely.');
 				
-				// would it also work from here ?
+				var texture = Texture.fromData( image );
+				program.setTexture(texture);
 
+				var x = index % tilesX;
+				var y = Std.int(index/tilesX);
+				
+				tileElem.x = x * Std.int(width/tilesX);
+				tileElem.y = y * Std.int(height/tilesY);
+
+				buffer.updateElement(tileElem);
+
+				trace('render tile $index into Texture at:', tileElem.x, tileElem.y);
+				peoteView.renderToTexture(display);
+				
 			},
 			function(images:Array<Image>) { // after all images is loaded
 				trace(' --- all images loaded ---');
-
+				/*
 				var texture:Texture;
 
 				for (y in 0...tilesY)
@@ -91,7 +94,7 @@ class TextureAtlasTool {
 							peoteView.renderToTexture(display);
 						}
 					}
-
+				*/
 
 			}
 		);

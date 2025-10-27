@@ -67,8 +67,8 @@ class Main extends Application
 			//////
 			" " => -1, // empty (floor)
 			"#" => 1,
-			"A" => 33,
-			"B" => 35,
+			"A" => 3,
+			"B" => 5,
 		];
 
 		var floorIds:Map<String, Int> = [
@@ -104,17 +104,30 @@ class Main extends Application
 		var visibleMapSize = 16;
 		// var visibleMapSize = Std.int(Math.max(tilemap.widthTiles, tilemap.heightTiles)) + 8; // for debug
 
+		var tileSize = 512; // much more would not make more sense (really*lol:;)
 
-		// load some images into a great texture atlas
-		//////////////////////////////////////////////
+		// load some images into the great texture atlas
+		// ---------------------------------------------
 		// var textureData = Assets.getImage("assets/test-128.png");
 		// var generatedTexture = Texture.fromData( Assets.getImage("assets/test-128.png") ); generatedTexture.tilesX = 8; generatedTexture.tilesY = 8;
-		var generatedTexture = TextureAtlasTool.generate(peoteView, 1024, 1024, 8, 8);
+		var generatedTexture = TextureAtlasTool.generate(peoteView, tileSize*8, tileSize*8, 8, 8,
+		[
+			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_01010111_05.blend.png",
+			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-13.blend.png",
+			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_1001f.blend.png",
+			"http://maitag.de/semmi/blender/spheresfractal_07_lights.png",
+			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-19.blend.png",
+			"http://maitag.de/semmi/blender/lyapunov/example_images/volume-fake_07.blend.png",
+			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_10.blend.jpg",
+			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_11.blend.jpg",
+			"http://maitag.de/semmi/blender/hxMeat.jpg",
+			"http://maitag.de/semmi/blender/blenderconsole-telnet.png",
+			]
+		);
 
 		// floor graphics
 		/////////////////
 
-		var tileSize = 128;
 		// var floor = new Floor(peoteView, tileSize, textureData, visibleMapSize, resWidth, resHeight);
 		var floor = new Floor(peoteView, tileSize, null, generatedTexture, visibleMapSize, resWidth, resHeight);
 		floor.addToDisplay(display);
@@ -170,7 +183,7 @@ class Main extends Application
 		rayView = {
 			resWidth: resWidth,
 			resHeight: resHeight,
-			tileSize: 128,
+			tileSize: tileSize,
 			verticalCenter: resHeight / 2,
 			totalRays: numStripes,
 			rayStep: Std.int(resWidth / numStripes),
