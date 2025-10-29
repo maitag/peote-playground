@@ -19,5 +19,5 @@ enum abstract Pipeline(Int) from Int to Int {
 	public static var tileWidth:Int = 256;
 	public static var tileHeight:Int = 235;
 	public static var gap:Int = 0;
-	public static var degrees:Int = 8;
+	public static var degrees:Int = 12;
 }

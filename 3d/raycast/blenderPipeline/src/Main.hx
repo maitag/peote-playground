@@ -39,6 +39,21 @@ class Main extends Application
 
 	public function startSample(window:Window)
 	{
+		SemmisImgs.get(
+			[
+			"http://maitag.de/semmi/blender/mandelbulb",
+			"http://maitag.de/semmi/blender/lyapunov/example_images/",
+			"http://maitag.de/semmi/blender/circdots/example_images/",
+			"http://maitag.de/semmi/stable-diffusion/space_01/",
+			],
+			100,  // min KB
+			1024, // max KB
+			(imgUrls:Array<String>,_) -> start(imgUrls)
+		);
+	}
+
+	public function start(imgUrls:Array<String>)
+	{	
 		// hard coding the w/h of the resolution because html windows do not have a set size
 		static var resWidth = 800;
 		static var resHeight = 600;
@@ -51,16 +66,16 @@ class Main extends Application
 		////////////
 
 		var map:Array<String> = [
-			"###################",
-			"#                 #",
-			"#    8          7 #",
-			"#    8          1 #",
-			"#    8        A 2 #",
-			"#         #     3 #",
-			"####      #     4 #",
-			"BBBB#########   5 #",
-			"B 0               #",
-			"BBBB###############",
+			"#ABCDEFGHIJKLMNOPF#",
+			"LabcdefghijklmnopqB",
+			"Hbcbc3mmtdcrisll7aF",
+			"Ehikogntttlmbcda1bP",
+			"Bhkoa7aatpmmmpAp2cN",
+			"CsemmiqkrtJmpmes3dN",
+			"IFEDqpon mMlkjih4fA",
+			"BBBB#AC#MMI#Nprt5eG",
+			"Bo0nmlkjihgfedcbagH",
+			"#BBBKNNCCPKIHJGKLL#",
 		];
 
 		var wallIds:Map<String, Int> = [
@@ -69,6 +84,7 @@ class Main extends Application
 			"#" => 1,
 			"A" => 3,
 			"B" => 5,
+			"C" => 29, "D" => 30, "E" => 31, "F" => 32, "G" => 33, "H" => 34, "I" => 35, "J" => 36, "K" => 37, "L" => 38, "M" => 39, "N" => 40, "O" => 41, "P" => 42,
 		];
 
 		var floorIds:Map<String, Int> = [
@@ -84,6 +100,7 @@ class Main extends Application
 			"6" => 6,
 			"7" => 7,
 			"8" => 8,
+			"a" => 9, "b" => 10, "c" => 11, "d" => 12, "e" => 13, "f" => 14, "g" => 15, "h" => 16, "i" => 17, "j" => 18, "k" => 19, "l" => 20, "m" => 21, "n" => 22, "o" => 23, "p" => 24, "q" => 25, "r" => 26, "s" => 27, "t" => 28,
 		];
 
 		var entityIds:Map<String, Int> = [
@@ -110,20 +127,7 @@ class Main extends Application
 		// ---------------------------------------------
 		// var textureData = Assets.getImage("assets/test-128.png");
 		// var generatedTexture = Texture.fromData( Assets.getImage("assets/test-128.png") ); generatedTexture.tilesX = 8; generatedTexture.tilesY = 8;
-		var generatedTexture = TextureAtlasTool.generate(peoteView, tileSize*8, tileSize*8, 8, 8,
-		[
-			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_01010111_05.blend.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-13.blend.png",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelbulb_volume_1001f.blend.png",
-			"http://maitag.de/semmi/blender/spheresfractal_07_lights.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/displace-FOSSIL-19.blend.png",
-			"http://maitag.de/semmi/blender/lyapunov/example_images/volume-fake_07.blend.png",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_10.blend.jpg",
-			"http://maitag.de/semmi/blender/mandelbulb/mandelverse_11.blend.jpg",
-			"http://maitag.de/semmi/blender/hxMeat.jpg",
-			"http://maitag.de/semmi/blender/blenderconsole-telnet.png",
-			]
-		);
+		var generatedTexture = TextureAtlasTool.generate(peoteView, tileSize*8, tileSize*8, 8, 8, SemmisImgs.pickRandom(imgUrls, 43));
 
 		// floor graphics
 		/////////////////

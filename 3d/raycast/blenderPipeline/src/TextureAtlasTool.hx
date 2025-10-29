@@ -22,7 +22,7 @@ class TextureAtlasTool {
 	static var buffer:Buffer<Elem>;
 	static var tileElem:Elem;
 
-	public static function generate(peoteView:PeoteView, width:Int, height:Int, tilesX:Int, tilesY:Int, imageLinks:Array<String>):Texture {
+	public static function generate(peoteView:PeoteView, width:Int, height:Int, tilesX:Int, tilesY:Int, imageLinks:Array<String>, bgColor = Color.BLACK):Texture {
 
 		TextureAtlasTool.peoteView = peoteView;
 		
@@ -39,6 +39,8 @@ class TextureAtlasTool {
 		buffer.addElement(tileElem);
 		
 		fbTexture = new Texture(width, height, 1, {tilesX:tilesX, tilesY:tilesY});
+		
+		fbTexture.setData(new TextureData(width, height, bgColor));
 		fbTexture.clearOnRenderInto = false; // <- this is IMPORTANT to renderOVER :)
 
 		peoteView.setFramebuffer(display, fbTexture);
@@ -56,6 +58,8 @@ class TextureAtlasTool {
 				// trace('File number $index loaded completely.');
 				
 				var texture = Texture.fromData( image );
+				texture.setSmooth(true,true,true);
+
 				program.setTexture(texture);
 
 				var x = index % tilesX;
@@ -72,6 +76,9 @@ class TextureAtlasTool {
 			},
 			function(images:Array<Image>) { // after all images is loaded
 				trace(' --- all images loaded ---');
+
+				fbTexture.setSmooth(true,true,true);
+				
 				/*
 				var texture:Texture;
 
