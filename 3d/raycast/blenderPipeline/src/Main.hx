@@ -18,6 +18,11 @@ class Main extends Application
 	var strafingDirection:Int = 0;
 	var distanceTraveled:Float = 0;
 
+	var turnSpeed = 2.0;
+	var turnSpeedMax = 3.0;
+	var moveSpeed = 2.5;
+	var moveSpeedMax = 3.5;
+
 	var rays:Array<Ray> = [];
 
 	var watchLines:TextProgram;
@@ -285,8 +290,8 @@ class Main extends Application
 		display.addProgram(watchLines);
 		var addWatch:(getText:() -> String) -> Void = getText ->
 		{
-			static var watchX = 10;
-			static var watchY = 10;
+			static var watchX = 8;
+			static var watchY = 16;
 			static var lineHeight = 10;
 			var lineCount = watching.length;
 			var line = new Text(watchX, watchY + (lineHeight * lineCount), getText());
@@ -348,13 +353,10 @@ class Main extends Application
 			///////////
 
 			// calculate turning
-			static var turnSpeed = 2;
 			var rotationDelta = (turnSpeed * turningDirection) * deltaTime;
 			rayCast.angle = normalizePI(rayCast.angle + rotationDelta);
 
 			// calculate movement
-			static var moveSpeed = 2.5;
-
 			var movementDelta = (moveSpeed * movingDirection) * deltaTime;
 			var forwardX = Math.cos(rayCast.angle);
 			var forwardY = Math.sin(rayCast.angle);
@@ -421,5 +423,51 @@ class Main extends Application
 				watch.update(watchLines);
 			}
 		});
+
 	}
+
+	// ----------------- MOUSE EVENTS ------------------------------
+	var isMoveMode = false;
+	var moveModeStartX:Float = 0.0;
+	var moveModeStartY:Float = 0.0;
+
+	override function onMouseMove (x:Float, y:Float):Void {
+		if (isMoveMode)
+		{
+			// camera angle
+			var dx =  2.1 * 2*(moveModeStartX-x)/window.width;
+			turnSpeed = Math.min(turnSpeedMax, Math.abs(dx));
+			if (dx > -0.1 && dx < 0.1) turningDirection = 0;
+			else if (dx >= 0.1) turningDirection = -1;
+			else turningDirection = 1;
+
+			// movement forward/backward
+			var dy =  2.1 * 2*(moveModeStartY-y)/window.height;
+			moveSpeed = Math.min(moveSpeedMax, Math.abs(dy));
+			if (dy > -0.1 && dy < 0.1) movingDirection = 0;
+			else if (dy >= 0.1) movingDirection = 1;
+			else movingDirection = -1;
+		}
+	}
+
+	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {
+		moveModeStartX = x;
+		moveModeStartY = y;
+		isMoveMode = true;
+	}
+
+	override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {
+		isMoveMode = false;
+		turningDirection = 0;
+		movingDirection = 0;
+	}
+
+	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
+	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
+
+	// ----------------- TOUCH EVENTS ------------------------------
+	// override function onTouchStart (touch:lime.ui.Touch):Void {}
+	// override function onTouchMove (touch:lime.ui.Touch):Void	{}
+	// override function onTouchEnd (touch:lime.ui.Touch):Void {}
+
 }
