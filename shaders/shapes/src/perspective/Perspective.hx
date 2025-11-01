@@ -1,4 +1,4 @@
-package;
+package perspective;
 
 import lime.graphics.Image;
 import peote.view.*;

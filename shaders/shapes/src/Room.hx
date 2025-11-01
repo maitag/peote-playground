@@ -2,6 +2,7 @@ import lime.ui.KeyModifier;
 import lime.ui.KeyCode;
 import lime.ui.MouseWheelMode;
 import peote.view.*;
+import perspective.*;
 
 class Room extends Display
 {
