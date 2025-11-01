@@ -28,7 +28,8 @@ class Main extends Application
 	var mouseX:UniformFloat;
 	var mouseY:UniformFloat;
 	var rotation:UniformFloat;
-		
+	var perspective:Perspective;
+
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window);
@@ -80,8 +81,9 @@ class Main extends Application
 		
 		
 
-		Perspective.init( [mouseX, mouseY, rotation], display);
-		var perspective = new Perspective(400, 500, 200, 200,  0.25);
+		Perspective.init(display, 1);
+		perspective = new Perspective(400, 500, 200, 200);
+		
 
 		peoteView.start();
 	}
@@ -99,12 +101,20 @@ class Main extends Application
 		
 		mouseX.value = x / window.width;
 		mouseY.value = y / window.height;
+
+		perspective.tipX = mouseX.value;
+		perspective.tipY = mouseY.value;
+		Perspective.buffer.updateElement(perspective);
 		
 		// trace(mouseY.value);
 	}
 
 	override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {
 		rotation.value += ((deltaY>0) ? 1 : -1 ) * 15.0;
+
+		perspective.rotation = rotation.value;
+		Perspective.buffer.updateElement(perspective);
+
 		trace(rotation.value);
 	}
 	
