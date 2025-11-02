@@ -83,25 +83,25 @@ class PerspectiveXY implements Element {
 		});
 	}
 
-	public function update(x:Float, y:Float, w:Float, h:Float, tipX:Float, tipY:Float) {
+
+	// ------------ constructor --------------
+
+	public function new(x:Float, y:Float, w:Float, h:Float, tipX:Float, tipY:Float) {
+		set(x, y, w, h, tipX, tipY);
+		buffer.addElement(this);
+	}
+
+	public function set(x:Float, y:Float, w:Float, h:Float, tipX:Float, tipY:Float) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
 		this.tipX = tipX;
 		this.tipY = tipY;
-
+	}
+	
+	public function update() {
 		buffer.updateElement(this);
 	}
 
-	public function new(x:Float, y:Float, w:Float, h:Float, tipX:Float, tipY:Float) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = h;
-		this.tipX = tipX;
-		this.tipY = tipY;
-
-		buffer.addElement(this);
-	}
 }
