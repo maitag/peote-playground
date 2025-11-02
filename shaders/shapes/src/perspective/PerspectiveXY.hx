@@ -6,16 +6,16 @@ import peote.view.*;
 class PerspectiveXY implements Element {
 	
 	// how much procent the tip of trapezoid have
-	@custom @varying @formula("tipX") var tipX:Float = 0.5;
-	@custom @varying @formula("tipY") var tipY:Float = 1.0;
+	@custom @varying @formula("tipX") public var tipX:Float = 1.0;
+	@custom @varying @formula("tipY") public var tipY:Float = 1.0;
 
 	// tilt the tip:
-	@custom @const @formula("(tipX-0.5)*w") var tiltX:Float;
-	@custom @const @formula("(tipY-0.5)*h") var tiltY:Float;
+	@custom @formula("(tiltX-0.5)*w") public var tiltX:Float = 0.5;
+	@custom @formula("(tiltY-0.5)*h") public var tiltY:Float = 0.5;
 
 	// position
-	@posX @formula("x + tiltX*(1.0-aPosition.y)") public var x:Float;
-	@posY @formula("y + tiltY*(1.0-aPosition.x)") public var y:Float;
+	@posX @formula("x + tiltX*(0.5-aPosition.y)") public var x:Float;
+	@posY @formula("y + tiltY*(0.5-aPosition.x)") public var y:Float;
 
 	// size
 	@sizeX @formula("w - (w-(w*tipY))*(1.0-aPosition.y)") public var w:Float; // width
