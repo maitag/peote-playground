@@ -33,6 +33,7 @@ class TestPerspectiveXY extends Application
 
 		PerspectiveXY.init(display, 1);
 		element = new PerspectiveXY(0, 0, 400, 300, 1.0, 1.0);
+		// element.py = 150;
 		
 	}
 	
@@ -68,29 +69,54 @@ class TestPerspectiveXY extends Application
 	}
 	
 	override function onKeyDown(code:KeyCode, modifier:KeyModifier):Void
-		{
-			switch code {
-				case RIGHT:
-					element.tipX += 0.1;
-				case LEFT:
-					element.tipX -= 0.1;
-				case DOWN:
-					element.tipY += 0.1;
-				case UP:
-					element.tipY -= 0.1;
-				case NUMPAD_0:
-					element.tipX = element.tipY = 1.0;
-					element.tiltX =  element.tiltY = 0.5;
-				case _:
-			}
-	
-			element.update();
+	{
+		switch code {
+			case RIGHT:
+				element.tipX *= 1.05;
+			case LEFT:
+				element.tipX /= 1.05;
+			case DOWN:
+				element.tipY += 0.1;
+			case UP:
+				element.tipY -= 0.1;
+			case NUMPAD_0:
+				element.tipX = element.tipY = 1.0;
+				element.tiltX =  element.tiltY = 0.5;
+				element.w = 400;
+				element.h = 300;
+				element.r = 0;
+				rotation = 0;
+			case NUMPAD_6: element.px += 0.1;
+			case NUMPAD_4: element.px -= 0.1;
+			case NUMPAD_8: element.py += 0.1;
+			case NUMPAD_2: element.py -= 0.1;
+			case Q:
+				element.r -= 5;
+			case E:
+				element.r += 5;
+			case _:
 		}
+
+		// element.w = 400*Math.cos( (Math.abs(element.tipX-1))*Math.PI/1.0 );
+		element.update();
+	}
 	
+	var rotation:Float = 0.0;
+
 	override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {
 		if (element == null) return;
 
+		rotation = ( rotation + 5 * ((deltaY>0)?1:-1) ) % 360;
+		if (rotation < 0) rotation = 360 + rotation; 
+		trace(rotation);
+
+		element.tipX = 1 + Math.abs(  Math.sin( rotation/360 * Math.PI *2 ) );
 		
+		element.w = 400 * Math.cos( rotation/360 * Math.PI *2) ;
+		// element.h = 300 / element.tipX; // rotate about left side
+		element.h = 300 / (1+(element.tipX-1)*0.5);
+
+		element.update();
 	}
 	
 	// -------------- other WINDOWS EVENTS ----------------------------

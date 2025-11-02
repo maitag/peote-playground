@@ -23,8 +23,9 @@ class PerspectiveXY implements Element {
 
 	@color public var tint:Color = 0xffffffFF;
 
-	@pivotX @const @formula("w/2.0") var px:Float;
-	@pivotY @const @formula("h/2.0") var py:Float;
+	// pivot
+	@pivotX @formula("w*px") public var px:Float=0.5;
+	@pivotY @formula("h*py") public var py:Float=0.5;
 
 	// REMAP the ORIGIN QUAD texture-COORDS:
 	#if html5
@@ -32,9 +33,14 @@ class PerspectiveXY implements Element {
 	@custom @varying @const @formula("0.0; webglTexCoordX = (aPosition.x * size.x - pivot.x)/aSize.x") var texCoordX:Float;
 	@custom @varying @const @formula("0.0; webglTexCoordY = (aPosition.y * size.y - pivot.y)/aSize.y") var texCoordY:Float;
 	#else
-	@custom @varying @const @formula("(aPosition.x * size.x - pivot.x)/aSize.x") var texCoordX:Float;
-	@custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/aSize.y") var texCoordY:Float;
+	@custom @varying @const @formula("(aPosition.x * size.x - w/2.0)/aSize.x") var texCoordX:Float;
+	@custom @varying @const @formula("(aPosition.y * size.y - h/2.0)/aSize.y") var texCoordY:Float;
+	// @custom @varying @const @formula("(aPosition.x * size.x - pivot.x)/aSize.x") var texCoordX:Float;
+	// @custom @varying @const @formula("(aPosition.y * size.y - pivot.y)/aSize.y") var texCoordY:Float;
 	#end
+
+	// rotation
+	@rotation public var r:Float = 0.0;
 
 	static public var buffer:Buffer<PerspectiveXY>;
 	static public var program:Program;
@@ -72,10 +78,10 @@ class PerspectiveXY implements Element {
 				tx = 0.5 + tx / mix(tipY, 1.0, vTexCoord.y);
 				ty = 0.5 + ty / mix(tipX, 1.0, vTexCoord.x);
 				
-				return getTextureColor( textureID, vec2(tx, ty ));
+				// return getTextureColor( textureID, vec2(tx, ty ));
 
 				// to let texture scale smaller on trapezoids tip
-				// return getTextureColor( textureID, vec2(texCoordX, pow(vTexCoord.y,tip) ));
+				return getTextureColor( textureID, vec2( pow(tx,tipX), pow(ty,tipY) ));
 			}
 			' // ,uniforms // TAKE CARE, on webgl sometimes the same uniform can not shared between vertex and fragment shader
 			);
