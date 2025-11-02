@@ -89,10 +89,10 @@ class TestPerspectiveXY extends Application
 				element.r = 0;
 				rotationX = 0;
 				rotationY = 0;
-			case NUMPAD_6: element.px += 0.1;
-			case NUMPAD_4: element.px -= 0.1;
-			case NUMPAD_8: element.py += 0.1;
-			case NUMPAD_2: element.py -= 0.1;
+			case D: element.px += 0.1;
+			case A: element.px -= 0.1;
+			case S: element.py += 0.1;
+			case W: element.py -= 0.1;
 			case Q:
 				element.r -= 5;
 			case E:

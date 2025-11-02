@@ -30,8 +30,8 @@ class PerspectiveXY implements Element {
 	// REMAP the ORIGIN QUAD texture-COORDS:
 	#if html5
 	// dirty webgl-HACK to avoid "flat"
-	@custom @varying @const @formula("0.0; webglTexCoordX = (aPosition.x * size.x - pivot.x)/aSize.x") var texCoordX:Float;
-	@custom @varying @const @formula("0.0; webglTexCoordY = (aPosition.y * size.y - pivot.y)/aSize.y") var texCoordY:Float;
+	@custom @varying @const @formula("0.0; webglTexCoordX = (aPosition.x * size.x - w/2.0)/aSize.x") var texCoordX:Float;
+	@custom @varying @const @formula("0.0; webglTexCoordY = (aPosition.y * size.y - h/2.0)/aSize.y") var texCoordY:Float;
 	#else
 	@custom @varying @const @formula("(aPosition.x * size.x - w/2.0)/aSize.x") var texCoordX:Float;
 	@custom @varying @const @formula("(aPosition.y * size.y - h/2.0)/aSize.y") var texCoordY:Float;
@@ -52,8 +52,7 @@ class PerspectiveXY implements Element {
 		program = new Program(buffer);
 
 		if (PeoteGL.Version.isES3) {
-			program.injectIntoVertexShader("out float webglTexCoordX;"); // dirty webgl-HACK to avoid "flat"
-			program.injectIntoVertexShader("out float webglTexCoordY;");
+			program.injectIntoVertexShader("out float webglTexCoordX; out float webglTexCoordY;"); // dirty webgl-HACK to avoid "flat"
 		}
 
 		program.blendEnabled = true;
@@ -72,8 +71,8 @@ class PerspectiveXY implements Element {
 			vec4 transformTexture(int textureID, float texCoordX, float texCoordY, float tipX, float tipY) {				
 				
 				// dirty webgl-HACK to avoid "flat"
-				float tx = ${(PeoteGL.Version.isES3) ? "webglTexCoordX" :"texCoordX"};
-				float ty = ${(PeoteGL.Version.isES3) ? "webglTexCoordY" :"texCoordY"};
+				float tx = ${(PeoteGL.Version.isES3) ? "webglTexCoordX" : "texCoordX"};
+				float ty = ${(PeoteGL.Version.isES3) ? "webglTexCoordY" : "texCoordY"};
 				
 				tx = 0.5 + tx / mix(tipY, 1.0, vTexCoord.y);
 				ty = 0.5 + ty / mix(tipX, 1.0, vTexCoord.x);
@@ -81,7 +80,7 @@ class PerspectiveXY implements Element {
 				// return getTextureColor( textureID, vec2(tx, ty ));
 
 				// to let texture scale smaller on trapezoids tip
-				return getTextureColor( textureID, vec2( pow(tx,tipX), pow(ty,tipY) ));
+				return getTextureColor( textureID, vec2( pow(tx, tipX), pow(ty, tipY) ));
 			}
 			' // ,uniforms // TAKE CARE, on webgl sometimes the same uniform can not shared between vertex and fragment shader
 			);
