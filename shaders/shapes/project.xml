@@ -10,9 +10,10 @@
 	<window width="800" height="600" fps="61" allowHighDPI="false" />
 	<window if="html5||android" width="0" height="0" />
 	
-	<app main="Main" path="bin" file="Main" />
+	<!-- <app main="Main" path="bin" file="Main" /> -->
 	<!-- <app main="MainStage" path="bin" file="MainStage" /> -->
-	<app main="perspective.TestPerspectiveXY" path="bin" file="TestPerspectiveXY" />
+	<!-- <app main="perspective.TestPerspectiveXY" path="bin" file="TestPerspectiveXY" /> -->
+	<app main="perspective.TestElement3D" path="bin" file="TestElement3D" />
 	
 	<source path="src" />
 	
