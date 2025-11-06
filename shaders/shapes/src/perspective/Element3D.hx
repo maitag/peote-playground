@@ -10,7 +10,7 @@ class Element3D implements Element {
 	@custom @varying @formula("tipY") public var tipY:Float = 0.0;
 	
 	// procentual diff of opposite side-lengths (like FieldOfView)
-	@custom @varying var FOV:Float = 0.4;
+	@custom @varying var FOV:Float = 1.0;
 
 
 	// tilt at the tip:
@@ -25,8 +25,8 @@ class Element3D implements Element {
 	@posY @formula("y") public var y:Float;
 
 	// size
-	@sizeX @formula("w + tipX*w*FOV*aPosition.y") public var w:Float; // width
-	@sizeY @formula("h + tipY*h*FOV*aPosition.x") public var h:Float; // height
+	@sizeX @formula("w + w*tipX*FOV*(aPosition.y-0.5)") public var w:Float; // width
+	@sizeY @formula("h + h*tipY*FOV*(aPosition.x-0.5)") public var h:Float; // height
 
 	@color public var tint:Color = 0xffffffFF;
 
@@ -68,7 +68,7 @@ class Element3D implements Element {
 		// load grid test-image:
 		Load.image("assets/grid.png", true, function(image:Image) {
 			var texture = new Texture(image.width, image.height);
-			texture.setSmooth(false, false);
+			texture.setSmooth(true, true, true);
 			texture.setData(image);
 			program.setTexture(texture);
 			
@@ -81,15 +81,22 @@ class Element3D implements Element {
 				float tx = ${(PeoteGL.Version.isES3) ? "webglTexCoordX" : "texCoordX"};
 				float ty = ${(PeoteGL.Version.isES3) ? "webglTexCoordY" : "texCoordY"};
 				
-				// tx = 0.5 + tx / mix(1.0 ,1.0 + tipX*FOV, vTexCoord.y);
-				// ty = 0.5 + ty / mix(1.0 ,1.0 + tipY*FOV, vTexCoord.x);
-				tx = 0.5 + tx / (1.0 + tipX*FOV * vTexCoord.y);
-				ty = 0.5 + ty / (1.0 + tipY*FOV * vTexCoord.x);
+				tx = 0.5 + tx / mix(1.0 - tipX*FOV*0.5 ,1.0 + tipX*FOV*0.5, vTexCoord.y);
+				ty = 0.5 + ty / mix(1.0 - tipY*FOV*0.5 ,1.0 + tipY*FOV*0.5, vTexCoord.x);
 				
 				// return getTextureColor( textureID, vec2(tx, ty ));
 
 				// to let texture scale smaller on trapezoids tip
-				return getTextureColor( textureID, vec2( pow(tx, 1.0 - tipY*FOV), pow(ty, 1.0 - tipX*FOV) ));
+				// return getTextureColor( textureID, vec2( pow(tx, 1.0 - tipY*FOV), pow(ty, 1.0 - tipX*FOV) ));
+				
+				if (tipX>0) ty = 1-pow(1-ty, (1.0 + tipX*FOV));
+				else ty = pow(ty, 1.0 - tipX*FOV);
+				
+				if (tipY>0) tx = 1-pow(1-tx, (1.0 + tipY*FOV));
+				else tx = pow(tx, 1.0 - tipY*FOV);
+				
+				return getTextureColor( textureID, vec2( tx, ty )  );
+				
 			}
 			' // ,uniforms // TAKE CARE, on webgl sometimes the same uniform can not shared between vertex and fragment shader
 			);

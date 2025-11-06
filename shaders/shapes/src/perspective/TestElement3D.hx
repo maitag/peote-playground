@@ -70,13 +70,13 @@ class TestElement3D extends Application
 		switch code {
 			case LEFT_SHIFT: isShift = true;
 			case RIGHT:
-				if (element.tipX<1.0) element.tipX += 0.1;
+				if (element.tipX<0.99) element.tipX += 0.1;
 			case LEFT:
-				if (element.tipX>-1.0) element.tipX -= 0.1;
+				if (element.tipX>-0.99) element.tipX -= 0.1;
 			case UP:
-				if (element.tipY<1.0) element.tipY += 0.1;
+				if (element.tipY<0.99) element.tipY += 0.1;
 			case DOWN:
-				if (element.tipY>-1.0)element.tipY -= 0.1;
+				if (element.tipY>-0.99) element.tipY -= 0.1;
 			case NUMPAD_0:
 				element.tipX = element.tipY = 0.0;
 				element.w = 400;
@@ -95,7 +95,7 @@ class TestElement3D extends Application
 			case _:
 		}
 
-		// trace('tipX:${element.tipX}, tipY:${element.tipY}, ');
+		trace('tipX:${element.tipX}, tipY:${element.tipY}, ');
 
 		element.update();
 	}
@@ -124,14 +124,14 @@ class TestElement3D extends Application
 		else
 		{
 			rotationY = ( rotationY + 5 * ((deltaY>0)?1:-1) ) % 360;
-			if (rotationY < 0) rotationY = 360 + rotationY; 
+			if (rotationY < 0) rotationY = 360 + rotationY;
 
 			element.tipY = Math.sin( rotationY/360 * Math.PI *2 );
 
 			element.w = 400 * Math.cos( rotationY/360 * Math.PI *2) ;
 		}
 
-		trace('rotationX:$rotationX, rotationY:$rotationY');
+		trace('rotationX:$rotationX, rotationY:$rotationY','tipX:${element.tipX}, tipY:${element.tipY}');
 
 		element.update();
 	}
