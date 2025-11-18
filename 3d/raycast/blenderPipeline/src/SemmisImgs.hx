@@ -4,7 +4,7 @@ import peote.view.Load;
 
 class SemmisImgs {
 
-	static var indexREG = ~/<a href="(.+\.png|.+\.jpg)">.+?<td align="right">([\d\w-: ]+)<\/td><td align="right">(\d+\.?\d*)(K|M)<\/td>/;
+	static var indexREG = ~/<a href="(.+\.png|.+\.jpg)">.+?<td align="right">([\d\w\-: ]+)<\/td><td align="right">(\d+\.?\d*)(K|M)<\/td>/;
 
 	public static function get(urls:Array<String>, minSizeKB:Int=0, maxSizeKB:Int=2048, onLoad:Array<String>->Array<{name:String, date:String, size:Int}>->Void)
 	{	
