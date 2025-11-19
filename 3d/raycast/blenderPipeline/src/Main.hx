@@ -468,6 +468,8 @@ class Main extends Application
 		isMoveMode = false;
 		turningDirection = 0;
 		movingDirection = 0;
+		turnSpeed = 2.0;
+		moveSpeed = 2.5;
 	}
 
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
