@@ -1,4 +1,11 @@
+package;
+
+#if blender5
+import assets.PipelineB5 as Pipeline;
+#else
 import assets.Pipeline;
+#end
+
 import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
@@ -47,11 +54,12 @@ class Main extends Application
 		SemmisImgs.get(
 			[
 			"http://maitag.de/semmi/blender/mandelbulb",
+			"http://maitag.de/semmi/malteart/bilder/", // <- ??
 			"http://maitag.de/semmi/blender/lyapunov/example_images/",
 			"http://maitag.de/semmi/blender/circdots/example_images/",
 			"http://maitag.de/semmi/stable-diffusion/space_01/",
 			],
-			100,  // min KB
+			0,  // min KB
 			1024, // max KB
 			(imgUrls:Array<String>,_) -> start(imgUrls)
 		);
@@ -169,7 +177,7 @@ class Main extends Application
 		var texture = new Texture(Pipeline.width, Pipeline.height, angles);
 		for (slot in 0...angles)
 		{
-			texture.setData(Assets.getImage('assets/pipeline$slot.png'), slot);
+			texture.setData(Assets.getImage(Pipeline.fileName+'$slot.png'), slot);
 		}
 		var billboards = new Billboards(numBillboards, texture, Pipeline.tileWidth, Pipeline.tileHeight, Pipeline.tilesX, resHeight);
 		billboards.addToDisplay(display);
