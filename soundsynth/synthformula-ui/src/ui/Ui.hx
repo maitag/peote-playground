@@ -8,11 +8,13 @@ class UiParam {
 	var instrumentSynthParam:InstrumentSynthParam;
 }
 
+
 @:structInit @:publicFields
 class UiCallback {
 	var onInit:Void->Void;
 	var instrumentSynthCallback:InstrumentSynthCallback;
 }
+
 
 class Ui
 {
@@ -48,14 +50,15 @@ class Ui
 		
 		// now the F U N will _start :;)
 		var myInstrument = new InstrumentSynth(200, 20, 400, 300,
-			param.instrumentSynthParam, callback.instrumentSynthCallback);
+			param.instrumentSynthParam,
+			callback.instrumentSynthCallback
+		);
+
 		peoteUiDisplay.add(myInstrument);
 		
 		// let it drag for testing
 		myInstrument.onPointerDown = (_, e:PointerEvent)-> myInstrument.startDragging(e);
 		myInstrument.onPointerUp = (_, e:PointerEvent)-> myInstrument.stopDragging(e);
-
-
 
 
 		// ---------------------------------------------------------

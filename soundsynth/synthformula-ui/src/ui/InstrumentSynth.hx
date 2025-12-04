@@ -5,7 +5,7 @@ class InstrumentSynthParam {
 	var name:String = "Sinus";
 	var duration:Float = 1.0;
 	var mainFormula:Formula = null;
-	var mainFormulaValue:String = "sin(x)"; //-1/4*sin(3*pi*t)\n+1/4*sin(pi*t)\n+sqrt(3)/2*cos(pi*t)
+	var mainFormulaValue:String = "sin(x)";
 
 	// TODO:
 	// var subFormula:Array<Formula> = [];
@@ -93,8 +93,7 @@ class InstrumentSynth extends UIAreaList
 			updateLayout();
 		}
 
-		onResizeWidth = (_, width:Int, deltaWidth:Int) -> {			
-		}		
+		// onResizeWidth = (_, width:Int, deltaWidth:Int) -> {}		
 
 	}
 

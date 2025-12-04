@@ -10,7 +10,6 @@ import peote.view.Texture;
 import peote.view.TextureFormat;
 import peote.view.Program;
 import peote.view.Buffer;
-import peote.view.Color;
 
 class SynthElement implements Element
 {
@@ -21,8 +20,7 @@ class SynthElement implements Element
 	// size
 	@sizeX public var size:Int;
 	@sizeY @const @formula("size") var _h:Int;
-		
-	
+			
 	public function new(size:Int)
 	{
 		this.size = size;
@@ -58,13 +56,31 @@ class SynthDisplay extends Display
 		
 		program.setColorFormula( 'synth(vTexCoord)');
 
-		updateShader(sampleRate, formula, duration);
+		// updateShader(sampleRate, formula, duration);
 		
 		addProgram(program);
 
 		var element = new SynthElement(size);
 		buffer.addElement(element);
+
+		updateSynthData(sampleRate, formula, duration);
 	}
+
+
+	public function updateSynthData(sampleRate:Int, formula:Formula, duration:Float)
+	{
+		updateShader(sampleRate, formula, duration);
+		
+		// render into texture
+		peoteView.renderToTexture(this);
+	}
+
+
+	public function getSynthData():Float32Array
+	{
+		return fbTexture.readPixelsFloat32(0, 0, size, size);
+	}  
+
 
 	public function updateShader(sampleRate:Int, formula:Formula, duration:Float)
 	{
@@ -102,9 +118,4 @@ class SynthDisplay extends Display
 		);	
 	}
 	
-	public function getSynthData():Float32Array {
-
-		return fbTexture.readPixelsFloat32(0, 0, size, size);
-	}  
-
 }
