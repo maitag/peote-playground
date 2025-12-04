@@ -1,15 +1,31 @@
 package ui;
 
+import ui.InstrumentSynth.InstrumentSynthParam;
+import ui.InstrumentSynth.InstrumentSynthCallback;
+
+@:structInit @:publicFields
+class UiParam {
+	var instrumentSynthParam:InstrumentSynthParam;
+}
+
+@:structInit @:publicFields
+class UiCallback {
+	var onInit:Void->Void;
+	var instrumentSynthCallback:InstrumentSynthCallback;
+}
+
 class Ui
 {
 	var peoteView:PeoteView;
 	var peoteUiDisplay:PeoteUIDisplay;
-	var onInit:Void->Void;
+	var param:UiParam;
+	var callback:UiCallback;
 
-	public function new(peoteView:PeoteView, onInit:Void->Void)
+	public function new(peoteView:PeoteView, param:UiParam, callback:UiCallback)
 	{
 		this.peoteView = peoteView;
-		this.onInit = onInit;
+		this.param = param;
+		this.callback = callback;
 		new Fnt("assets/fonts/tiled/hack_ascii.json").load( onFontLoaded );
 	}
 	
@@ -31,7 +47,8 @@ class Ui
 		// ------------------------------------------
 		
 		// now the F U N will _start :;)
-		var myInstrument = new InstrumentSynth(10, 20, 400, 300);
+		var myInstrument = new InstrumentSynth(200, 20, 400, 300,
+			param.instrumentSynthParam, callback.instrumentSynthCallback);
 		peoteUiDisplay.add(myInstrument);
 		
 		// let it drag for testing
@@ -44,7 +61,7 @@ class Ui
 		// ---------------------------------------------------------
 		PeoteUIDisplay.registerEvents(peoteView.window);
 
-		onInit();
+		callback.onInit();
 	}
 }
 

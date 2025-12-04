@@ -40,8 +40,8 @@
 	<!--<haxedef name="peoteview_debug_view" />-->
 	<!--<haxedef name="peoteview_debug_display" />-->
 	<!--<haxedef name="peoteview_debug_program" />-->
-	<haxedef name="peoteview_debug_texture" />
-	<haxedef name="peoteview_debug_shader" />
+	<!-- <haxedef name="peoteview_debug_texture" /> -->
+	<!-- <haxedef name="peoteview_debug_shader" /> -->
 
 	<haxeflag name="-dce" value="full" />
 	

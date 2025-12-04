@@ -1,26 +1,28 @@
 package ui;
 
-@:structInit
-@:publicFields
+@:structInit @:publicFields
 class InstrumentSynthParam {
 	var name:String = "Sinus";
-	var length:Float = 1.0;
-	var mainFormulaValue:String = "sin(x)"; //-1/4*sin(3*pi*t)\n+1/4*sin(pi*t)\n+sqrt(3)/2*cos(pi*t)
-	var subFormulaValue:Array<String> = [];
+	var duration:Float = 1.0;
 	var mainFormula:Formula = null;
-	var subFormula:Array<Formula> = [];
+	var mainFormulaValue:String = "sin(x)"; //-1/4*sin(3*pi*t)\n+1/4*sin(pi*t)\n+sqrt(3)/2*cos(pi*t)
+
+	// TODO:
+	// var subFormula:Array<Formula> = [];
+	// var subFormulaValue:Array<String> = [];
 }
 
 
-@:structInit
-@:publicFields
+@:structInit @:publicFields
 class InstrumentSynthCallback {
-	var onPlay:Void->Void = function() {trace("onPlay");};
+	var onPlay:Bool->Void = function(_) {trace("onPlay");};
 }
 
 
 class InstrumentSynth extends UIAreaList
 {
+	var formulaChanged = false;
+
 	public function new(x:Int, y:Int, w:Int, h:Int, z:Int = 0,
 		?config:AreaListConfig,
 		?param:InstrumentSynthParam,
@@ -53,19 +55,28 @@ class InstrumentSynth extends UIAreaList
 		inputPage_mainFormula.onPointerDown = function(t:TextPage, e:PointerEvent) {
 			t.setInputFocus(e);
 			t.startSelection(e);
-		}
+		};
 		inputPage_mainFormula.onPointerUp = function(t:TextPage, e:PointerEvent) {
 			t.stopSelection(e);
-		}
+		};
+		inputPage_mainFormula.onInsertText =
+		inputPage_mainFormula.onDeleteText = function(t:TextPage, _, _, _, _, s:String) {
+			// TODO: only change mainFormula if term changed
+			try {
+				param.mainFormula = t.text;
+				formulaChanged = true;
+			} catch(e) trace("Error in formula:", e);
+		};
 		addResizable(inputPage_mainFormula);
 
 
 		// play button
-		var playButton = new TextLine(202, 0, 50, 0, 1, "PLAY",
-			StyleConf.font, StyleConf.fontStyleInput, StyleConf.textInputConfig);
+		var playButton = new TextLine(202, 0, 50, 20, 1, "play",
+			StyleConf.font, StyleConf.fontStyleButton, StyleConf.buttonConfig);
 		playButton.onPointerDown = function(t:TextLine, e:PointerEvent) {
-			callback.onPlay();
-		}
+			callback.onPlay(formulaChanged);
+			formulaChanged = false;
+		};
 		addFixed(playButton);
 		
 
@@ -83,8 +94,7 @@ class InstrumentSynth extends UIAreaList
 		}
 
 		onResizeWidth = (_, width:Int, deltaWidth:Int) -> {			
-		}
-		
+		}		
 
 	}
 

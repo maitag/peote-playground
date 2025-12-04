@@ -1,4 +1,4 @@
-package;
+package audio;
 
 import haxe.io.Float32Array;
 
@@ -23,9 +23,10 @@ class AudioBackend
 	{
 		this.sampleRate = sampleRate;
 
-		if (context == null) context = new AudioContext();
+		if (context == null) context = new AudioContext({sampleRate: sampleRate});
+		// if (context == null) context = new AudioContext();
 		
-		buffer = context.createBuffer(1, sampleRate, sampleRate);
+		// buffer = context.createBuffer(1, sampleRate*3, sampleRate);
 		
 	}
 
@@ -40,7 +41,9 @@ class AudioBackend
 		
 		source = context.createBufferSource();
 		
+		buffer = context.createBuffer(1, data.view.buffer.length, sampleRate);
 		buffer.copyToChannel( cast data, 0, 0);
+
 		source.buffer = buffer;
 		source.connect(context.destination);
 		source.start();
@@ -110,7 +113,13 @@ class AudioBackend
 			bufferBytes.length, sampleRate
 		);
 */		
-		AL.bufferData(buffer, AL_FORMAT_MONO_FLOAT32, lime.utils.Float32Array.fromBytes(data.view.buffer), data.view.buffer.length, sampleRate);
+		// without creating here again it does not update the data
+		// someone knows a better way ?
+		buffer = AL.createBuffer();
+
+		AL.bufferData(buffer, AL_FORMAT_MONO_FLOAT32,
+			lime.utils.Float32Array.fromBytes(data.view.buffer),
+			data.view.buffer.length, sampleRate);
 		
 		AL.sourcei(source, AL.BUFFER, buffer);
 		AL.sourcePlay(source);

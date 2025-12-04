@@ -37,6 +37,7 @@ package ui;
 
 		static var fontStyleInput = fontStyle.copy();
 		static var fontStyleHeader = fontStyle1.copy();
+		static var fontStyleButton = fontStyle.copy(Color.RED2, 10, 16);
 
 
 		// ---------------------------------------------------
@@ -53,6 +54,12 @@ package ui;
 			selectionStyle: selectStyle,
 			cursorStyle: boxStyle1.copy(Color.RED),
 			textSpace: {left:10},
+		};
+
+		static var buttonConfig:TextConfig = {
+			backgroundStyle:roundStyle.copy(Color.GREY5),
+			hAlign:HAlign.CENTER
+			// textSpace: {left:10},
 		};
 
 		static var sliderConfig:SliderConfig = {
