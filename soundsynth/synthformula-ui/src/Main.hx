@@ -26,7 +26,6 @@ class Main extends Application
 	
 	// var sampleRate:Int = 22050;
 	var sampleRate:Int = 44100;
-	var peoteAudio:PeoteAudio;
 
 	var param: UiParam;
 	var callback:UiCallback;
@@ -34,7 +33,7 @@ class Main extends Application
 	public function init(window:Window)
 	{
 		// init audiowrapper
-		peoteAudio = new PeoteAudio(sampleRate);
+		PeoteAudio.init(sampleRate);
 
 		peoteView = new PeoteView(window);
 
@@ -93,7 +92,7 @@ class Main extends Application
 			);
 		
 		// send data to audio
-		peoteAudio.play( synthDisplay.getSynthData() );		
+		PeoteAudio.play( synthDisplay.getSynthData() );		
 	}
 		
 }
