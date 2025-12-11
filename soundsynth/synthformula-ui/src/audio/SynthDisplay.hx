@@ -55,8 +55,6 @@ class SynthDisplay extends Display
 		program.discardAtAlpha(null);
 		
 		program.setColorFormula( 'synth(vTexCoord)');
-
-		// updateShader(sampleRate, formula, duration);
 		
 		addProgram(program);
 
