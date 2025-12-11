@@ -18,11 +18,13 @@ import audio.openAL.BufferOpenAL as BufferBackend;
 @:forwardStatics
 abstract PeoteAudio(AudioBackend) from AudioBackend to AudioBackend
 {
-	public inline function new(sampleRate:Int) 
+	
+	public static inline function init(?defaultSampleRate:Null<Int>) 
 	{
-		this = new AudioBackend(sampleRate);
+		AudioBackend.init(defaultSampleRate);
 	}
 	
+
 	// MORE HERE to wrap around both
 	
 }

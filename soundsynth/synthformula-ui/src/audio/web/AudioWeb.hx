@@ -9,37 +9,29 @@ import js.html.audio.*;
 
 class AudioWeb
 {
-	public static var context:AudioContext = null;
+	public static var context(default, null):AudioContext = null;		
+	public static var sampleRate(default, null):Int = 44100;
 	
-	public var buffer(default, null):AudioBuffer;
-	public var source(default, null):AudioBufferSourceNode;
-	
-	public var sampleRate:Int;
-	
-	public inline function new(sampleRate:Int)
+	public static inline function init(?defaultSampleRate:Null<Int>)
 	{
-		this.sampleRate = sampleRate;
+		if (context != null) throw("WebAudio already initialized");
 
-		if (context == null) context = new AudioContext({sampleRate: sampleRate});
-		
-		buffer = context.createBuffer(1, sampleRate*10, sampleRate); // max 10 seconds
-		
+		if (defaultSampleRate != null) {
+			context = new AudioContext({sampleRate: defaultSampleRate});
+			sampleRate = defaultSampleRate;
+		}
+		else {
+			context = new AudioContext();
+			sampleRate = Std.int(context.sampleRate);
+		}
 	}
 
-	public inline function play(data:Float32Array)
-	{		
-		// to prevent from playing parallele
-		/*if (source != null)
-		{
-			source.stop();
-			source.disconnect(context.destination);
-		}*/
-		
-		source = context.createBufferSource();
-		
-		buffer = context.createBuffer(1, data.view.buffer.length, sampleRate);
+	public static inline function play(data:Float32Array)
+	{			
+		var buffer = context.createBuffer(1, data.view.buffer.length, sampleRate);
 		buffer.copyToChannel( cast data, 0, 0);
-
+		
+		var source = context.createBufferSource();
 		source.buffer = buffer;
 		source.connect(context.destination);
 		source.start();
