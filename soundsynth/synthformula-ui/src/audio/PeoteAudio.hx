@@ -1,13 +1,13 @@
 package audio;
 
-// import haxe.io.Float32Array;
-
 #if html5
 import audio.web.AudioWeb as AudioBackend;
 import audio.web.BufferWeb as BufferBackend;
+import audio.web.SourceWeb as SourceBackend;
 #else
 import audio.openAL.AudioOpenAL as AudioBackend;
 import audio.openAL.BufferOpenAL as BufferBackend;
+import audio.openAL.SourceOpenAL as SourceBackend;
 #end
 
 // ------------------------------------------------
@@ -17,16 +17,13 @@ import audio.openAL.BufferOpenAL as BufferBackend;
 @:forward
 @:forwardStatics
 abstract PeoteAudio(AudioBackend) from AudioBackend to AudioBackend
-{
-	
+{	
 	public static inline function init(?defaultSampleRate:Null<Int>) 
 	{
 		AudioBackend.init(defaultSampleRate);
 	}
 	
-
 	// MORE HERE to wrap around both
-	
 }
 
 
@@ -34,14 +31,23 @@ abstract PeoteAudio(AudioBackend) from AudioBackend to AudioBackend
 @:forwardStatics
 abstract AudioBuffer(BufferBackend) from BufferBackend to BufferBackend
 {
-/*
-	public inline function new(peoteAudio:PeoteAudio, duration:Float) 
+	public inline function new(duration:Float) 
 	{
-		// this = new MonoFloat32BufferBackend(Math.round(sampleRate*duration));
-		this = new BufferBackend(peoteAudio, duration);
+		this = new BufferBackend(duration);
 	}
-*/
-	// MORE HERE to wrap around both
-	
+
+	// MORE HERE to wrap around both	
+}
+
+@:forward
+@:forwardStatics
+abstract AudioSource(SourceBackend) from SourceBackend to SourceBackend
+{
+	public inline function new(audioBuffer:AudioBuffer) 
+	{
+		this = new SourceBackend(audioBuffer);
+	}
+
+	// MORE HERE to wrap around both	
 }
 

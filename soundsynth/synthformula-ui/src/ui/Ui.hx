@@ -61,6 +61,7 @@ class Ui
 		myInstrument.onPointerUp = (_, e:PointerEvent)-> myInstrument.stopDragging(e);
 
 
+
 		// ---------------------------------------------------------
 		PeoteUIDisplay.registerEvents(peoteView.window);
 

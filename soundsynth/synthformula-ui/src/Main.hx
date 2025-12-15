@@ -10,6 +10,8 @@ import ui.Ui.*;
 
 import audio.SynthDisplay;
 import audio.PeoteAudio;
+import audio.PeoteAudio.AudioBuffer;
+import audio.PeoteAudio.AudioSource;
 
 class Main extends Application
 {
@@ -30,6 +32,9 @@ class Main extends Application
 	var param: UiParam;
 	var callback:UiCallback;
 
+	var synthDisplay:SynthDisplay;
+	var audioBuffer:AudioBuffer;
+
 	public function init(window:Window)
 	{
 		// init audiowrapper
@@ -45,6 +50,9 @@ class Main extends Application
 
 		// for organ or piano:
 		// var defaultFormula = "-1/4*sin(3*PI*x*600)\n+1/4*sin(PI*x*600)\n+(3^0.5)/2*cos(PI*x*600)";
+
+		// by Zanzlanz:
+		// var defaultFormula = "((x*x*1000 * 9301 + 49297)%233280)/233280";
 
 		param = {
 			instrumentSynthParam: {
@@ -67,32 +75,48 @@ class Main extends Application
 			param.instrumentSynthParam.mainFormula,
 			param.instrumentSynthParam.duration
 		);
-
 		// to see how the synthDisplay->fbTexture is looking
 		peoteView.addDisplay(synthDisplay, true);
-		
+
+		// create new audio buffer from synthDisplay
+		audioBuffer = new AudioBuffer(param.instrumentSynthParam.duration);
+		audioBuffer.setData( synthDisplay.getSynthData() );
+
 		ui = new Ui(peoteView, param, callback);
 	}
 	
-	var synthDisplay:SynthDisplay;
-
 	public function onUiInit() 
 	{
 		trace("onUiInit");
 	}	
 
+	// glitch on hl-target:
+	// if the source var is local inside the onPlay() function,
+	// after a buffer-change it stops previous playing sources
+	var source:AudioSource;
 	public function onPlay(formulaChanged:Bool):Void
 	{
 		// update formula
-		if (formulaChanged)
+		if (formulaChanged) {
+			trace("onPlay: formula was updated");
+
+			// update synthDisplay for new formula and params
 			synthDisplay.updateSynthData(
 				sampleRate,
 				param.instrumentSynthParam.mainFormula,
 				param.instrumentSynthParam.duration
 			);
-		
-		// send data to audio
-		PeoteAudio.play( synthDisplay.getSynthData() );		
+
+			// create new audio buffer from synthDisplay
+			audioBuffer = new AudioBuffer(param.instrumentSynthParam.duration);
+			audioBuffer.setData( synthDisplay.getSynthData() );
+		}
+
+		source = new AudioSource(audioBuffer);
+		source.play();
+
+		// old:
+		// PeoteAudio.play( synthDisplay.getSynthData() );		
 	}
 		
 }
