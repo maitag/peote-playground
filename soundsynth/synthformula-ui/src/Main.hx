@@ -1,5 +1,6 @@
 package;
 
+import lime.media.openal.AL;
 import lime.app.Application;
 import lime.ui.Window;
 
@@ -90,14 +91,11 @@ class Main extends Application
 		trace("onUiInit");
 	}	
 
-	// glitch on hl-target:
-	// if the source var is local inside the onPlay() function,
-	// after a buffer-change it stops previous playing sources
-	var source:AudioSource;
 	public function onPlay(formulaChanged:Bool):Void
 	{
 		// update formula
 		if (formulaChanged) {
+			
 			trace("onPlay: formula was updated");
 
 			// update synthDisplay for new formula and params
@@ -112,7 +110,7 @@ class Main extends Application
 			audioBuffer.setData( synthDisplay.getSynthData() );
 		}
 
-		source = new AudioSource(audioBuffer);
+		var source = new AudioSource(audioBuffer);
 		source.play();
 
 		// old:

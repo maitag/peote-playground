@@ -15,9 +15,11 @@ class BufferOpenAL
 	public var buffer(default, null):ALBuffer;
 	public var duration(default, null):Float;
 
-	public function new(duration:Float) {
+	public inline function new(duration:Float) {
 		this.duration = duration;
+		AL.getError();
 		buffer = AL.createBuffer();
+		if (AL.getError() != AL.NO_ERROR) trace("AL ERROR: buffer create");
 	}
 
 	public function setData(data:Float32Array, sampleRate:Int = 0) {
@@ -36,9 +38,16 @@ class BufferOpenAL
 			bufferBytes.length, sampleRate
 		);
 		*/
+
+		// hashlink gives error here:
+		// trace(AL.getErrorString());
+		AL.getError();
 		AL.bufferData(buffer, AudioOpenAL.AL_FORMAT_MONO_FLOAT32,
 			lime.utils.Float32Array.fromBytes(data.view.buffer),
 			data.view.buffer.length, (sampleRate > 0) ? sampleRate: AudioOpenAL.sampleRate);
+		
+		if (AL.getError() != AL.NO_ERROR) trace("AL ERROR: buffer set data");
+		// trace(buffer);
 	}
 	
 }

@@ -10,6 +10,7 @@ import haxe.io.Float32Array;
 import lime.media.openal.ALDevice;
 import lime.media.openal.ALContext;
 import lime.media.openal.ALC;
+import lime.media.openal.AL;
 
 class AudioOpenAL
 {
@@ -24,12 +25,16 @@ class AudioOpenAL
 	{
 		if (context != null) throw("OpenAL already initialized");
 		
+		AL.getError(); // clear errorcode
 		device = ALC.openDevice();
 		context = ALC.createContext(device);
 		sampleRate = (defaultSampleRate > 0) ? defaultSampleRate : ALC.getIntegerv(device, ALC.FREQUENCY, 1)[0];
 				
 		ALC.makeContextCurrent(context);
-		ALC.processContext(context);	
+		ALC.processContext(context);
+
+		if (AL.getError() != AL.NO_ERROR) trace("AL ERROR: init");
+		
 	}
 	
 	/*

@@ -17,7 +17,7 @@ class BufferWeb
 		this.duration = duration;
 
 		// TODO: not conform with openAL buffer-backend
-		// buffer = AudioWeb.context.createBuffer(1, data.view.buffer.length, AudioWeb.sampleRate);
+		// buffer = AudioWeb.context.createBuffer(1, Std.int(), AudioWeb.sampleRate);
 	}
 
 	public function setData(data:Float32Array, sampleRate:Int = 0)
