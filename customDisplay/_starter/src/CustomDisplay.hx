@@ -58,7 +58,7 @@ class CustomDisplay extends Display
 		// --------------- FLAGS -----------------
 		// ---------------------------------------
 		
-		//peoteView.setColor(colorEnabled);
+		//peoteView.setColorMask(colorMask);
 		//peoteView.setGLDepth(zIndexEnabled);
 		//peoteView.setGLAlpha(alphaEnabled);
 		//peoteView.setMask(mask, clearMask);

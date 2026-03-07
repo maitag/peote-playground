@@ -36,7 +36,6 @@ o      o-o    /|\     o    o-o
 @:access(peote.view)
 class TriangleDisplay extends Display 
 {
-	public var colorEnabled:Bool = true;
 	public var blendEnabled:Bool = false;
 	public var blendSeparate:Bool = false;
 	public var blendFuncSeparate:Bool = false;
@@ -97,7 +96,11 @@ class TriangleDisplay extends Display
 	var glBlendB:Float;
 	var glBlendA:Float;
 
+	public var colorEnabled:Bool = true;
+	var colorMask:Int = 15;
 	public var zIndexEnabled:Bool = false;
+	public var clearDepth:Bool = false;
+	public var depthMask:Bool = true;
 	public var mask:Mask = Mask.OFF;
 	public var clearMask:Bool = false;
 
@@ -522,8 +525,10 @@ class TriangleDisplay extends Display
 		}
 				
 		// -------- render modes  ----------------		
-		peoteView.setColor(colorEnabled);
+		peoteView.setColorMask(colorEnabled ? colorMask : 0);
 		peoteView.setGLDepth(zIndexEnabled);
+		if (clearDepth && zIndexEnabled) gl.clear(gl.DEPTH_BUFFER_BIT);
+		peoteView.setDepthMask(depthMask);
 		peoteView.setGLBlend(blendEnabled, blendSeparate, glBlendSrc, glBlendDst, glBlendSrcAlpha, glBlendDstAlpha, blendFuncSeparate, glBlendFunc, glBlendFuncAlpha, blendColor, useBlendColor, useBlendColorSeparate, glBlendR, glBlendG, glBlendB, glBlendA);			
 		peoteView.setMask(mask, clearMask);
 				
