@@ -3,6 +3,7 @@ package;
 import haxe.ds.Vector;
 import peote.view.Mask;
 import peote.view.BlendFunc;
+import peote.view.DepthFunc;
 import peote.view.BlendFactor;
 import peote.view.PeoteGL;
 import peote.view.PeoteView;
@@ -99,8 +100,8 @@ class TriangleDisplay extends Display
 	public var colorEnabled:Bool = true;
 	var colorMask:Int = 15;
 	public var zIndexEnabled:Bool = false;
-	public var clearDepth:Bool = false;
 	public var depthMask:Bool = true;
+	public var depthFunc:DepthFunc = DepthFunc.LESS_EQUAL;
 	public var mask:Mask = Mask.OFF;
 	public var clearMask:Bool = false;
 
@@ -526,9 +527,7 @@ class TriangleDisplay extends Display
 				
 		// -------- render modes  ----------------		
 		peoteView.setColorMask(colorEnabled ? colorMask : 0);
-		peoteView.setGLDepth(zIndexEnabled);
-		if (clearDepth && zIndexEnabled) gl.clear(gl.DEPTH_BUFFER_BIT);
-		peoteView.setDepthMask(depthMask);
+		peoteView.setDepth(zIndexEnabled, clearDepth, clearDepthValue, depthMask, depthFunc);
 		peoteView.setGLBlend(blendEnabled, blendSeparate, glBlendSrc, glBlendDst, glBlendSrcAlpha, glBlendDstAlpha, blendFuncSeparate, glBlendFunc, glBlendFuncAlpha, blendColor, useBlendColor, useBlendColorSeparate, glBlendR, glBlendG, glBlendB, glBlendA);			
 		peoteView.setMask(mask, clearMask);
 				
