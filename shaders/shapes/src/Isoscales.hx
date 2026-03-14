@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.StringMap;
 import peote.view.*;
 
 class Isoscales implements Element
@@ -29,7 +30,7 @@ class Isoscales implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(uniforms:Array<UniformFloat>, display:Display)
+	static public function init(uniforms:StringMap<Uniform>, display:Display)
 	{	
 		buffer = new Buffer<Isoscales>(1, 1, true);
 		program = new Program(buffer);

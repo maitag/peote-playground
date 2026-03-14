@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.StringMap;
 import peote.view.*;
 
 class TriColored implements Element
@@ -23,7 +24,7 @@ class TriColored implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(uniforms:Array<UniformFloat>, display:Display)
+	static public function init(uniforms:StringMap<Uniform>, display:Display)
 	{	
 		buffer = new Buffer<TriColored>(1, 1, true);
 		program = new Program(buffer);

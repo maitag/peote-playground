@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.StringMap;
 import peote.view.*;
 
 class Egg implements Element
@@ -17,7 +18,7 @@ class Egg implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(formula:String, uniforms:Array<UniformFloat>, display:Display)
+	static public function init(formula:String, uniforms:StringMap<Uniform>, display:Display)
 	{	
 		buffer = new Buffer<Egg>(1, 1, true);
 		program = new Program(buffer);

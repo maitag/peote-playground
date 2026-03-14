@@ -6,6 +6,7 @@ import lime.app.Application;
 import lime.ui.Window;
 
 import peote.view.*;
+import peote.view.Uniform;
 import perspective.*;
 
 class Main extends Application
@@ -39,44 +40,44 @@ class Main extends Application
 		peoteView.addDisplay(display);
 		
 
-		mouseX = new UniformFloat("mouseX", 0.0);
-		mouseY = new UniformFloat("mouseY", 0.0);
-		rotation = new UniformFloat("rotation", 0.0);
+		mouseX = new UniformFloat(0.0);
+		mouseY = new UniformFloat(0.0);
+		rotation = new UniformFloat(0.0);
 
 		
-		Triangle.init( [mouseX], display); 
+		Triangle.init( ["mouseX" => mouseX], display); 
 		var triangle = new Triangle(0, 0, 200, 200);
 		
-		TriVertex.init( [mouseX], display);
+		TriVertex.init( ["mouseX" => mouseX], display);
 		var triVertex = new TriVertex(200, 200, 200, 200);
 		
-		TriColored.init( [mouseX], display); 
+		TriColored.init( ["mouseX" => mouseX], display); 
 		var triColored = new TriColored(0, 400, 200, 200);
 	
 
 		
-		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", [mouseX, mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
+		Egg.init("pow(abs(x/0.75),0.5+4.0*mouseX)+pow(abs(y),0.5+4.0*mouseY)", ["mouseX" => mouseX, "mouseY" => mouseY], display); // https://en.wikipedia.org/wiki/Superellipse
 		var egg = new Egg(200, 0, 200, 200);
 		
 		
 		
-		Test.init( [mouseX, mouseY, rotation], display); 
+		Test.init( [ "mouseX" => mouseX, "mouseY" => mouseY, "rotation" => rotation], display); 
 		var test = new Test();
 		
 		
 
-		// Isoscales.init( [mouseX, mouseY, rotation], display); 
+		// Isoscales.init( ["mouseX" => mouseX, "mouseY" => mouseY, "rotation" => rotation], display);
 		// var isoscales = new Isoscales();
 		
-		TrapezoidSym.init([], display);
+		TrapezoidSym.init(null, display);
 		var trapezoidSym = new TrapezoidSym(600,30);
 
 		
 
-		// FanbladeDevelop.init( [rotation], display);
+		// FanbladeDevelop.init( ["rotation" => rotation], display);
 		// var fanbladeDevelop = new FanbladeDevelop(400, 300, 400, 100, 400, 0, 0);
 		
-		Fanblade.init( [rotation], display);
+		Fanblade.init( [ "rotation" => rotation], display);
 		//                           x   y   len   h1   h2  p  r 
 		var fanblade = new Fanblade(400, 300, 400, 100, 400, 0, 0);
 		

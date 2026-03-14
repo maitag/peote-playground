@@ -1,7 +1,7 @@
 package;
 
+import haxe.ds.StringMap;
 import lime.graphics.Image;
-import utils.Loader;
 import peote.view.*;
 
 class FanbladeDevelop implements Element
@@ -37,14 +37,14 @@ class FanbladeDevelop implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(uniforms:Array<UniformFloat>, display:Display) {	
+	static public function init(uniforms:StringMap<Uniform>, display:Display) {	
 		buffer = new Buffer<FanbladeDevelop>(1, 1, true);
 		program = new Program(buffer);		
 		program.injectIntoVertexShader(uniforms);
 		display.addProgram(program);
 		
 		// load grid test-image:
-		Loader.image("assets/grid.png", true, function (image:Image) 
+		Load.image("assets/grid.png", true, function (image:Image) 
 		{
 			var texture = new Texture(image.width, image.height);
 			texture.setSmooth(true,true);

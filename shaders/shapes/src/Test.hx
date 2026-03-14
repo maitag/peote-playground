@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.StringMap;
 import lime.graphics.Image;
 import peote.view.*;
 
@@ -56,7 +57,7 @@ class Test implements Element
 
 	// -----------------------------------------------
 	
-	static public function init(uniforms:Array<UniformFloat>, display:Display)
+	static public function init(uniforms:StringMap<Uniform>, display:Display)
 	{	
 		buffer = new Buffer<Test>(1, 1, true);
 		program = new Program(buffer);
