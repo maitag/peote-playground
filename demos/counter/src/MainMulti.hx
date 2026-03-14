@@ -5,6 +5,7 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
+import peote.view.Uniform;
 
 class MainMulti extends Application
 {
@@ -52,10 +53,10 @@ class MainMulti extends Application
 		displayHex.addProgram(programHex);
 
 		
-		speedBin = new UniformFloat("uSpeed", 1.0);
-		speedOct = new UniformFloat("uSpeed", 1.0);
-		speedDec = new UniformFloat("uSpeed", 1.0);
-		speedHex = new UniformFloat("uSpeed", 1.0);
+		speedBin = new UniformFloat(1.0);
+		speedOct = new UniformFloat(1.0);
+		speedDec = new UniformFloat(1.0);
+		speedHex = new UniformFloat(1.0);
 
 
 		Load.image("assets/peote_font.png", true, function(image:Image)
@@ -71,10 +72,10 @@ class MainMulti extends Application
 			programDec.addTexture(texture);
 			programHex.addTexture(texture);
 			
-			programBin.injectIntoVertexShader(true, [speedBin]);
-			programOct.injectIntoVertexShader(true, [speedOct]);
-			programDec.injectIntoVertexShader(true, [speedDec]);
-			programHex.injectIntoVertexShader(true, [speedHex]);
+			programBin.injectIntoVertexShader(true, ["uSpeed" =>speedBin]);
+			programOct.injectIntoVertexShader(true, ["uSpeed" =>speedOct]);
+			programDec.injectIntoVertexShader(true, ["uSpeed" =>speedDec]);
+			programHex.injectIntoVertexShader(true, ["uSpeed" =>speedHex]);
 			
 			programBin.setFormula("n", "n + mod(uTime * min(  pow(  2.0, precision) * uSpeed * 1.0e-15 , 200.0  ),  2.0)");
 			programOct.setFormula("n", "n + mod(uTime * min(  pow(  8.0, precision) * uSpeed * 1.0e-28 , 800.0  ),  8.0)");

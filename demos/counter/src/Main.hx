@@ -5,6 +5,7 @@ import lime.ui.Window;
 import lime.graphics.Image;
 
 import peote.view.*;
+import peote.view.Uniform;
 
 class Main extends Application
 {
@@ -26,7 +27,7 @@ class Main extends Application
 		var program = new Program(buffer);
 		display.addProgram(program);
 
-		speed = new UniformFloat("uSpeed", 0.000000000000005);
+		speed = new UniformFloat(0.000000000000005);
 
 		Load.image("assets/peote_font.png", true, function(image:Image)
 		{
@@ -38,7 +39,7 @@ class Main extends Application
 			
 			program.addTexture(texture, "custom");
 			
-			program.injectIntoVertexShader(true, [speed]);
+			program.injectIntoVertexShader(true, ["uSpeed" => speed]);
 			
 			program.setFormula("n", "n + mod(uTime*min(pow(10.0,precision)*uSpeed,1000.0), 10.0)");
 
