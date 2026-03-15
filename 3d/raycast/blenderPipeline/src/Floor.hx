@@ -1,4 +1,5 @@
 import peote.view.*;
+import peote.view.Uniform;
 import peote.view.intern.Util;
 import util.FramebufferDisplay;
 import util.Quad;
@@ -21,16 +22,14 @@ class Floor
 	public var fbTexture(get, never):Texture;
 	function get_fbTexture():Texture return frameBuffer.fbTexture;
 
-	public var uCameraAngle:UniformFloat;
-	public var uCameraPosX:UniformFloat;
-	public var uCameraPosY:UniformFloat;
-	public var uMapOffsetX:UniformFloat;
-	public var uMapOffsetY:UniformFloat;
-	public var uFov:UniformFloat;
-	public var uVerticalOffset:UniformFloat;
-	public var uTilemapSize:UniformFloat;
-	public var uLitBefore:UniformFloat;
-	public var uDarkAfter:UniformFloat;
+	public var uCameraAngle = new UniformFloat(0.0);
+	public var uCameraPos = new UniformVec2({x:0.0, y:0.0});
+	public var uMapOffset = new UniformVec2({x:0.0, y:0.0});
+	public var uFov = new UniformFloat(0.0);
+	public var uVerticalOffset = new UniformFloat(0.0);
+	public var uTilemapSize = new UniformFloat(0.0);
+	public var uLitBefore = new UniformFloat(0.0);
+	public var uDarkAfter = new UniformFloat(0.0);
 
 	public function new(peoteView:PeoteView, texTileSize:Int, ?tileTextureData:TextureData, ?tileTexture:Texture, visibleMapSize:Int, resWidth:Int, resHeight:Int)
 	{
@@ -55,10 +54,6 @@ class Floor
 
 		vec3 transform(int texId)
 		{
-			// vec2 from some uniform floats
-			vec2 uCameraPos = vec2(uCameraPosX, uCameraPosY);
-			vec2 uMapOffset = vec2(uMapOffsetX, uMapOffsetY);
-			
 			// convert texture coordinates to screen space
 			vec2 screenPos = vTexCoord * uResolution;
 			float horizon = uResolution.y * 0.5;
@@ -88,15 +83,13 @@ class Floor
 			vec2 texCoord = (worldPos - uMapOffset) / $VisibleMapSize;
 			return getTextureColor(texId, texCoord).rgb * lightIntensity;
 		}', [
-			uCameraPosX = new UniformFloat("uCameraPosX", 0.0),
-			uCameraPosY = new UniformFloat("uCameraPosY", 0.0),
-			uMapOffsetX = new UniformFloat("uMapOffsetX", 0.0),
-			uMapOffsetY = new UniformFloat("uMapOffsetY", 0.0),
-			uCameraAngle = new UniformFloat("uCameraAngle", 0.0),
-			uFov = new UniformFloat("uFov", 0.0),
-			uVerticalOffset = new UniformFloat("uVerticalOffset", 0.0),
-			uLitBefore = new UniformFloat("uLitBefore", 0.0),
-			uDarkAfter = new UniformFloat("uDarkAfter", 0.0)
+			"uCameraPos" => uCameraPos,
+			"uMapOffset" => uMapOffset,
+			"uCameraAngle"=> uCameraAngle,
+			"uFov" => uFov,
+			"uVerticalOffset" => uVerticalOffset,
+			"uLitBefore" => uLitBefore,
+			"uDarkAfter" => uDarkAfter
 		]);
 		fbBuffer.program.setColorFormula('vec4(transform(default_ID), tint.a)');
 		fbBuffer.addElement(new Quad(resWidth, resHeight));
@@ -184,10 +177,10 @@ class Floor
 		uVerticalOffset.value = rayCast.verticalOffset;
 		uLitBefore.value = rayCast.litBefore;
 		uDarkAfter.value = rayCast.darkAfter;
-		uCameraPosX.value = rayCast.x;
-		uCameraPosY.value = rayCast.y;
+		uCameraPos.value.x = rayCast.x;
+		uCameraPos.value.y = rayCast.y;
 		uCameraAngle.value = rayCast.angle;
-		uMapOffsetX.value = startCol;
-		uMapOffsetY.value = startRow;
+		uMapOffset.value.x = startCol;
+		uMapOffset.value.y = startRow;
 	}
 }
