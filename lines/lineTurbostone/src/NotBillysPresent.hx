@@ -6,13 +6,7 @@ import haxe.CallStack;
 import lime.app.Application;
 import lime.ui.Window;
 
-import peote.view.PeoteView;
-import peote.view.Buffer;
-import peote.view.Display;
-import peote.view.Program;
-import peote.view.Color;
-
-import utils.Loader;
+import peote.view.*;
 
 class NotBillysPresent extends Application
 {
@@ -46,9 +40,8 @@ class NotBillysPresent extends Application
 		var filepath = "assets/peoteISOsemmi.json";
 		
 		
-		Loader.text( filepath,
+		Load.text( filepath,
 			function(loaded:Int, size:Int) trace('loading progress ' + Std.int(loaded / size * 100) + "%" , ' ($loaded / $size)'),
-			function(errorMsg:String) trace('error $errorMsg'),
 			function(json:String) // on load
 			{
 				var turboLines = TurboData.decode(json, filepath);
@@ -68,9 +61,9 @@ class NotBillysPresent extends Application
 					var y1 = Std.int(end.y);
 
 					buffer.addElement( new TurboLine(x0, y0, x1, y1, Color.GREEN) );
-				}
-				
-			}			
+				}				
+			},
+			function(errorMsg:String) trace('error $errorMsg')			
 		);
 		
 		
