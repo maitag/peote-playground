@@ -74,12 +74,18 @@ class MainPaint extends Application
 
 		paintBuffer = new Buffer<ElemPaint>(10);
 		elemPaint = new ElemPaint(6, 6);
-		// paintBuffer.addElement(elemPaint);
-
+		paintBuffer.addElement(elemPaint);
+		
 		paintProgram = new Program(paintBuffer);
+		paintProgram.renderFramebufferEnabled = false;
 		fallingSand.displayPass1.addProgram(paintProgram);
 
+		// to show the brush:
+		fallingSand.displayView.addProgram(paintProgram);
 
+
+		// debug:
+		// peoteView.addDisplay(fallingSand.displayPass1);
 
 
 
@@ -99,9 +105,13 @@ class MainPaint extends Application
 	// ----------------- MOUSE EVENTS ------------------------------
 	
 	override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {
-		// TODO: need to implement in peoteView to let it work simmiliar as in Display:
-		// paintProgram.renderFramebufferEnabled = true;
-		paintBuffer.addElement(elemPaint);
+		paintProgram.renderFramebufferEnabled = true;
+		// paintBuffer.addElement(elemPaint);
+	}
+
+	override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {
+		paintProgram.renderFramebufferEnabled = false;
+		// paintBuffer.removeElement(elemPaint);
 	}
 
 	override function onMouseMove (x:Float, y:Float):Void {
@@ -110,12 +120,6 @@ class MainPaint extends Application
 			elemPaint.y = Math.round(y/4.68);
 			paintBuffer.update();
 		}
-	}
-
-	override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {
-		// TODO: need to implement in peoteView to let it work simmiliar as in Display:
-		// paintProgram..renderFramebufferEnabled = false;
-		paintBuffer.removeElement(elemPaint);
 	}
 
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
