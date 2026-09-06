@@ -2,23 +2,14 @@ package fb_chain;
 
 import peote.view.*;
 import peote.view.intern.BufferInterface;
+import peote.view.intern.Util;
 
 import fb_chain.light.*;
 
 class ChainElement implements Element
 {
-	// position in pixel (relative to upper left corner of Display)
-	@posX @const public var x:Int = 0;
-	@posY @const public var y:Int = 0;
-	
-	// size in pixel
-	@sizeX public var w:Int;
-	@sizeY public var h:Int;
-	
-	public function new(w:Int, h:Int) {
-		this.w = w;
-		this.h = h;
-	}
+	@sizeX @const public var w:Int;
+	@sizeY @const public var h:Int;
 }
 
 // anyway -> here i am also need another broom *lol
@@ -66,15 +57,18 @@ class Chain extends Display
 
 		program.blendEnabled = true;
 
+		program.setFormula("w", Util.toFloatString(w), false);
+		program.setFormula("h", Util.toFloatString(h), false);
 		program.setTexture(uvAoAlphaDepth, "uvAoAlphaDepth", false);
 		program.setTexture(light, "light", false);
 		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
 				
 		addProgram(program);
 
-		buffer.addElement(new ChainElement(w, h));
+		buffer.addElement(new ChainElement());
 	}
 
+	
 	// ------------- add remove fb displays -----------------------
 
 	override function addToPeoteView(peoteView:PeoteView, ?atDisplay:Display, addBefore:Bool=false)
