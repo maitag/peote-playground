@@ -11,7 +11,6 @@
 	<window if="html5||android" width="0" height="0" />
 	
 	<app main="Main" path="bin" file="Main" />
-	<!-- <app main="Benchmark" path="bin" file="Benchmark" /> -->
 
 	<haxedef name="peoteview_fps" />
 	<!-- <define name="stats" if="html5" /> -->
@@ -36,8 +35,8 @@
 	<!--<haxedef name="peoteview_debug_view" />-->
 	<!--<haxedef name="peoteview_debug_display" />-->
 	<!--<haxedef name="peoteview_debug_program" />-->
-	<haxedef name="peoteview_debug_texture" />
-	<haxedef name="peoteview_debug_shader" />
+	<!-- <haxedef name="peoteview_debug_texture" /> -->
+	<!-- <haxedef name="peoteview_debug_shader" /> -->
 
 	<haxeflag name="-dce" value="full" />
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->

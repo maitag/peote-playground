@@ -1,6 +1,8 @@
 package;
 
 import haxe.CallStack;
+import haxe.Timer;
+
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 
@@ -71,6 +73,7 @@ class Main extends Application
 				normalDepthTexture, uvAoAlphaTexture, haxeUVTexture	
 			);
 			peoteView.addDisplay(chain);
+			// Timer.delay(()->peoteView.removeDisplay(chain),1000); Timer.delay(()->peoteView.addDisplay(chain),3000);
 
 						
 			// ----------------------------------------

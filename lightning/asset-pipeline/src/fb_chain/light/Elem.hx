@@ -2,7 +2,7 @@ package fb_chain.light;
 
 import peote.view.*;
 
-class Elem implements Element // S R Y :;)
+class Elem implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
 	@posX public var x:Int = 0;
