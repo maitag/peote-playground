@@ -12,7 +12,8 @@ abstract FB_Light(Display) to Display
 		
 		var program = new Program(buffer);
 		
-		program.setTexture(normalDepthTexture, "normalDepth", false);
+		program.autoUpdate = false;
+		program.setTexture(normalDepthTexture, "normalDepth");
 		
 		program.injectIntoFragmentShader(
 			"	
@@ -54,10 +55,10 @@ abstract FB_Light(Display) to Display
 	
 				// return vec4(normalTextureRGBZ.rgb, 1.0); // to test the normal-mapping
 				return vec4(intensity, 1.0);
-			}			
+			}
 		");
 				
-		program.setColorFormula( "color*normalLight(normalDepth_ID, depth)" );
+		program.setColorFormula( "color*normalLight(normalDepth_ID, depth)", true);
 
 		// blending to "add" multiple lights
 		program.blendEnabled = true;

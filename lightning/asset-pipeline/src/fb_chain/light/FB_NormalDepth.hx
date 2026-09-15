@@ -6,21 +6,21 @@ import peote.view.intern.BufferInterface;
 @:forward
 abstract FB_NormalDepth(Display) to Display
 {
-	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTexture:Texture)
+	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTextures:Array<Texture>)
 	{	
 		this = new Display(0, 0, w, h);
 		
 		var program = new Program(buffer);
 		
-		program.setTexture(normalDepthTexture, "normalDepth", false);
+		program.autoUpdate = false;
+		program.setMultiTexture(normalDepthTextures, "normalDepth");
 		
 		program.injectIntoFragmentShader(
 			"	
 			vec2 rotate(vec2 v, float a) {
 				float s = sin(a);
-				float c = cos(a);
-				mat2 m = mat2(-c, -s, s, -c);
-				// mat2 m = mat2(c, -s, s, c);
+				float c = -cos(a);
+				mat2 m = mat2(c, -s, s, c);
 				return m * v;
 			}
 
@@ -28,16 +28,23 @@ abstract FB_NormalDepth(Display) to Display
 			{
 				// flip x normal (depends on uv-map generation variants)
 				// normalDepthTex.r = 1.0 - normalDepthTex.r;
+
+				// little hack to mirror horizontally use a negative rotation (to flip x normal)
+				if (vRotZ.x < 0.0) normalDepthTex.r = 1.0 - normalDepthTex.r;
 				
 				vec3 N;
 
 				// z-buffer
 				if (normalDepthTex.a < 1.0)
 				{
+					// TODO: scale factor in depend of size, by split the depth component or by extra attribute!
 					gl_FragDepth = ( normalDepthTex.a / 3.0 + depth);
+					// gl_FragDepth = ( normalDepthTex.a + depth);
 
 					// normalize and rotate vector
-					N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
+					// N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
+					// aah:
+					N = normalize(normalDepthTex.xyz);
 					N.xy = rotate(N.xy, vRotZ.x);
 				}
 				else gl_FragDepth =  1.0; 
@@ -48,7 +55,7 @@ abstract FB_NormalDepth(Display) to Display
 			}
 		");
 				
-		program.setColorFormula( "normalDepthAlpha(normalDepth, depth)" );
+		program.setColorFormula( "normalDepthAlpha(normalDepth, depth)", true);
 		
 		program.zIndexEnabled= true;
 		program.blendEnabled = false;

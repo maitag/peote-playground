@@ -7,7 +7,7 @@ import peote.view.Texture;
 import peote.view.TextureConfig;
 
 class Util {
-	public static function loadTextures(sheets:Array<Sheet>, postfix:String="", ?textureConfig:TextureConfig, ?onLoad:Array<Texture>->Void, debug = true):Array<Texture> {
+	public static function loadTextures(sheets:Array<Sheet>, ?postfix:String, ?textureConfig:TextureConfig, ?onLoad:Array<Texture>->Void, debug = true):Array<Texture> {
 		var textures = new Array<Texture>();
 		var texFileNames = new Array<String>();
 
@@ -21,7 +21,8 @@ class Util {
 			
 			textures.push(new Texture(sheet.width*sheet.tilesX, sheet.height*sheet.tilesY, 1, textureConfig));
 
-			var name = ~/.png$/.replace(sheet.name, postfix+".png");
+			var name = sheet.name;
+			if (name!=null) name = ~/.png$/.replace(name, postfix+".png");
 
 			texFileNames.push("assets/" + name);
 		}

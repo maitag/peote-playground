@@ -8,7 +8,7 @@ class ElemLight implements Element
 	@varying @posX @anim("PosX", "pingpong") public var x:Int = 50;
 	@varying @posY public var y:Int = 50;
 	
-	@varying @custom public var depth:Float = 0.0;
+	@varying @custom public var depth:Float = -0.1;
 	
 	// size in pixel
 	@varying @sizeX public var size:Int = 100;

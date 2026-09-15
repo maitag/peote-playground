@@ -11,8 +11,8 @@ class Elem implements Element
 	@varying @custom public var depth:Float = 0.0;
 	
 	// size in pixel
-	@sizeX public var w:Int = 128;
-	@sizeY public var h:Int = 128;
+	@sizeX public var w:Int = 64;
+	@sizeY public var h:Int = 64;
 	
 	@varying @rotation public var r:Float = 0.0;
 
@@ -22,6 +22,9 @@ class Elem implements Element
 
 	// tile number for animation
 	@texTile("uvAoAlpha", "normalDepth") @anim("Tile", "repeat") var tile:Int = 0;
+
+	// texture unit (sheet index!)
+	@texUnit("uvAoAlpha", "normalDepth") public var sheet:Int=2;
 
 	// var OPTIONS = { texRepeatX:true, texRepeatY:true };
 

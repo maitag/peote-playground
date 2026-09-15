@@ -13,6 +13,11 @@ import lime.graphics.Image;
 
 import peote.view.*;
 
+import asset.Util;
+import asset.generated.Tiles;
+import asset.generated.Tiles.TileID;
+import asset.generated.Tiles.AnimID;
+
 import fb_chain.*;
 import fb_chain.light.*;
 
@@ -42,87 +47,69 @@ class Main extends Application
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
 
-		Load.imageArray(["assets/tentacle_normal_depth.png", "assets/tentacle_uv_ao_alpha.png", "assets/haxe.png"], true, function (image:Array<Image>)
-		{
-			//-----------------------------------------------------
-			// ----- create Textures from the loaded images -------
-			//-----------------------------------------------------
+		var textureConfig:TextureConfig = {
+			format:TextureFormat.RGBA,
+			smoothExpand: true,
+			smoothShrink: true,
+			powerOfTwo: false
+		};
 
-			var normalDepthTexture = new Texture(image[0].width, image[0].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true, tilesX:8, tilesY:3});
-			normalDepthTexture.setData(image[0]);
+		var normalDepthTextures = Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig);
+		var uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig);
 
-			var uvAoAlphaTexture = new Texture(image[1].width, image[1].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true, tilesX:8, tilesY:3});
-			uvAoAlphaTexture.setData(image[1]);
-			
-			var haxeUVTexture = new Texture(image[2].width, image[2].height, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
-			haxeUVTexture.setData(image[2]);
-			
+		var haxeUVTexture = new Texture(256, 256, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
+		Load.image( "assets/haxe.png", true, // debug
+			function(image:Image) { // after image is loaded
+				haxeUVTexture.setData(image);
+			}
+		);
 
-			//----------------------------------------------------
-			// ----- create Buffers for Tentacles and Lights -----
-			//----------------------------------------------------
+		// ------ create Buffers for Elements and Lights ------
 
-			var bufferTentacle = new Buffer<Elem>(1024, 512);
-			bufferLight = new Buffer<ElemLight>(1024, 512);
-			
+		var bufferElem = new Buffer<Elem>(1024, 512);
+		bufferLight = new Buffer<ElemLight>(1024, 512);
 
-			
-			// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
-			var chain = new Chain(peoteView, 0, 0, 512, 512, 
-				bufferTentacle, bufferLight, 
-				normalDepthTexture, uvAoAlphaTexture, haxeUVTexture	
-			);
-			peoteView.addDisplay(chain);
-			// Timer.delay(()->peoteView.removeDisplay(chain),1000); Timer.delay(()->peoteView.addDisplay(chain),3000);
-
-						
-			// ----------------------------------------
-			// ---------- add some tentacles ----------
-			// ----------------------------------------
-
-			var tentacle1 = new Elem();
-			tentacle1.animTile(0, 24);    // params: start-tile, end-tile
-			tentacle1.timeTile(0.0, 2.1); // params: start-time, duration
-			bufferTentacle.addElement(tentacle1);
-			
-			
-			var tentacle2 = new Elem(64, 64, 128, 128, 180, 64, 64);
-			// var tentacle2 = new ElementTentacle(264, 264, 500, 500, 180, 64, 64);
-			// tentacle2.depth= 0.1;
-			tentacle2.animTile(0, 24);    // params: start-tile, end-tile
-			tentacle2.timeTile(0.0, 1.9); // params: start-time, duration
-			bufferTentacle.addElement(tentacle2);
-			
-
-			// --------------------------------------
-			// ---------- add some lights -----------
-			// --------------------------------------
+		// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
+		var chain = new Chain(peoteView, 0, 0, 512, 512, 
+			bufferElem, bufferLight, 
+			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
+		);
+		peoteView.addDisplay(chain);
+		// Timer.delay(()->peoteView.removeDisplay(chain),1000); Timer.delay(()->peoteView.addDisplay(chain),3000);
 
 
-			var light1 = new ElemLight(10, 10, 256, Color.YELLOW);
-			bufferLight.addElement(light1);
-			
-			var light2 = new ElemLight(100, 100, 256, Color.RED);
-			bufferLight.addElement(light2);
-			
-			// global "mouse-control"-light
-			light = new ElemLight(0, 0, 256, 0xffff66ff);
-			bufferLight.addElement(light);
-			
-			
-			// ----------------------------------------------------			
-			// ----------------------------------------------------			
-			// ----------------------------------------------------		
+		// ---------- add elements ----------
 
-			peoteView.zoom = 4;
-			peoteView.start();
-			
-			// add mouse events to move the light (to not run before it was instantiated):
-			window.onMouseMove.add(_onMouseMove);
-			window.onMouseWheel.add(_onMouseWheel);
-		});
+		var e1 = new Elem();
+		e1.animTile(0, 0);    // params: start-tile, end-tile
+		e1.timeTile(0.0, 2.1); // params: start-time, duration
+		bufferElem.addElement(e1);
+		
+				
+
+		// ---------- add lights -----------
+
+
+		var light1 = new ElemLight(10, 10, 256, Color.YELLOW);
+		// bufferLight.addElement(light1);
+		
+		var light2 = new ElemLight(100, 100, 256, Color.RED);
+		// bufferLight.addElement(light2);
+		
+		// global "mouse-control"-light
+		light = new ElemLight(0, 0, 256, 0xffff66ff);
+		bufferLight.addElement(light);
 		
 		
+		// ----------------------------------------------------
+
+		peoteView.zoom = 4;
+		peoteView.start();
+		
+		// add mouse events to move the light (to not run before it was instantiated):
+		window.onMouseMove.add(_onMouseMove);
+		window.onMouseWheel.add(_onMouseWheel);
+
 	}
 	
 

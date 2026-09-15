@@ -27,7 +27,7 @@ class Chain extends Display
 	
 	public function new(peoteView:PeoteView, x:Int, y:Int, w:Int, h:Int, 
 		bufferElem:BufferInterface, bufferLight:BufferInterface,
-		normalDepthTexture:Texture, uvAoAlphaTexture:Texture, haxeUVTexture:Texture)
+		normalDepthTextures:Array<Texture>, uvAoAlphaTextures:Array<Texture>, haxeUVTexture:Texture)
 	{	
 		super(x, y, w, h); // na S U P E R *lol
 		
@@ -36,11 +36,11 @@ class Chain extends Display
 		//-------------------------------------------------
 
 		// --- render all tentacles uv-mapped, ao-prelightned with alpha and in depth ---
-		uvAoAlphaDepthFB = new FB_UvAoAlphaDepth(w, h, bufferElem, normalDepthTexture, uvAoAlphaTexture, haxeUVTexture);
+		uvAoAlphaDepthFB = new FB_UvAoAlphaDepth(w, h, bufferElem, normalDepthTextures, uvAoAlphaTextures, haxeUVTexture);
 		uvAoAlphaDepth = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 		
 		// ------ render all normals together to use for lightning -------
-		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTexture);
+		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures);
 		normalDepth = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 
 		// ------ render all lights while using normalDepthFB texture -----
@@ -62,6 +62,7 @@ class Chain extends Display
 		program.setTexture(uvAoAlphaDepth, "uvAoAlphaDepth", false);
 		program.setTexture(light, "light", false);
 		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
+		// program.setColorFormula( "vec4( vec3(light/1.5), 1.0)");
 				
 		addProgram(program);
 
