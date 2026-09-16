@@ -30,7 +30,7 @@ class Elem implements Element
 
 	// --------------------------------------------------------------------------
 	
-	public function new(x:Int = 0, y:Int = 0, w:Int = 128, h:Int = 128, r:Float = 0.0, px:Int = 0, py:Int = 0)
+	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, r:Float = 0.0, px:Int = 0, py:Int = 0)
 	{
 		this.x = x;
 		this.y = y;

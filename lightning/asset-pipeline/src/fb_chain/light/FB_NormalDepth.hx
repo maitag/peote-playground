@@ -28,9 +28,11 @@ abstract FB_NormalDepth(Display) to Display
 			{
 				// flip x normal (depends on uv-map generation variants)
 				// normalDepthTex.r = 1.0 - normalDepthTex.r;
+				// normalDepthTex.g = 1.0 - normalDepthTex.g;
+				// normalDepthTex.b = 1.0 - normalDepthTex.b;
 
 				// little hack to mirror horizontally use a negative rotation (to flip x normal)
-				if (vRotZ.x < 0.0) normalDepthTex.r = 1.0 - normalDepthTex.r;
+				// if (vRotZ.x < 0.0) normalDepthTex.r = 1.0 - normalDepthTex.r;
 				
 				vec3 N;
 
@@ -40,12 +42,13 @@ abstract FB_NormalDepth(Display) to Display
 					// TODO: scale factor in depend of size, by split the depth component or by extra attribute!
 					gl_FragDepth = ( normalDepthTex.a / 3.0 + depth);
 					// gl_FragDepth = ( normalDepthTex.a + depth);
+					
 
 					// normalize and rotate vector
-					// N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
-					// aah:
-					N = normalize(normalDepthTex.xyz);
-					N.xy = rotate(N.xy, vRotZ.x);
+					// N = normalDepthTex.xyz;
+					N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
+					// TODO: this needs to flip the normals in blender before can rotate here!
+					// N.xy = rotate(N.xy, vRotZ.x);
 				}
 				else gl_FragDepth =  1.0; 
 

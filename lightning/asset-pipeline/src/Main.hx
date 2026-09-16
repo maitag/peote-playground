@@ -49,8 +49,8 @@ class Main extends Application
 
 		var textureConfig:TextureConfig = {
 			format:TextureFormat.RGBA,
-			smoothExpand: true,
-			smoothShrink: true,
+			smoothExpand: false,
+			smoothShrink: false,
 			powerOfTwo: false
 		};
 
@@ -80,7 +80,7 @@ class Main extends Application
 
 		// ---------- add elements ----------
 
-		var e1 = new Elem();
+		var e1 = new Elem(40,30);
 		e1.animTile(0, 0);    // params: start-tile, end-tile
 		e1.timeTile(0.0, 2.1); // params: start-time, duration
 		bufferElem.addElement(e1);
