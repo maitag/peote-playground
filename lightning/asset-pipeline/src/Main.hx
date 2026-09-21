@@ -1,5 +1,6 @@
 package;
 
+import peote.ui.PeoteUIDisplay;
 import haxe.CallStack;
 import haxe.Timer;
 
@@ -18,6 +19,8 @@ import asset.generated.Tiles;
 import asset.generated.Tiles.TileID;
 import asset.generated.Tiles.AnimID;
 
+import ui.Control;
+import ui.ControlItem;
 import fb_chain.*;
 import fb_chain.light.*;
 
@@ -38,14 +41,35 @@ class Main extends Application
 	// --------------- SAMPLE STARTS HERE -------------------------
 	// ------------------------------------------------------------	
 	var peoteView:PeoteView;
+
+	var ui:Control;
+	var chain:Chain;
 	
+	var bufferElem:Buffer<Elem>;
 	var bufferLight:Buffer<ElemLight>;
+
 	var light:ElemLight; // one light is controled by mouse
 
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
+
+		// little ui
+		// i am not 100% satisfactionized at now by the -> "need of size" extra arguments ;) ->inside<-
+		// ANY WAY ;:) -> iAm like IT:
+		ui = new Control("light control", 430, 10, 360, 300, [
+			Col(50, [
+				Button  ("button", 80,  (       )->{ trace("button");} ),
+				Slider  ("label:", 100, (v:Float)->{ trace("slider", v);} ),
+				Label   ("label:", 60),
+				Checkbox("on/off", 60,  (v:Bool) ->{ trace("checkbox", v);} )
+			]),
+			Slider("label:", 50,(v:Float)->{ trace("slider", v);} ),
+			Seperator
+		]);
+		// ^^much T O -> DO \o/ ooooooooooooooooooooooooooooooooooooooo
+
 
 		var textureConfig:TextureConfig = {
 			format:TextureFormat.RGBA,
@@ -66,16 +90,23 @@ class Main extends Application
 
 		// ------ create Buffers for Elements and Lights ------
 
-		var bufferElem = new Buffer<Elem>(1024, 512);
+		bufferElem = new Buffer<Elem>(1024, 512);
 		bufferLight = new Buffer<ElemLight>(1024, 512);
 
 		// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
-		var chain = new Chain(peoteView, 0, 0, 512, 512, 
+		chain = new Chain(peoteView, 0, 0, 512, 512, 
 			bufferElem, bufferLight, 
 			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
 		);
+
+		chain.zoom=4;
+		chain.width *= Std.int(chain.zoom);
+		chain.height*= Std.int(chain.zoom);
+
 		peoteView.addDisplay(chain);
 		// Timer.delay(()->peoteView.removeDisplay(chain),1000); Timer.delay(()->peoteView.addDisplay(chain),3000);
+		
+		peoteView.addDisplay(ui);
 
 
 		// ---------- add elements ----------
@@ -84,6 +115,12 @@ class Main extends Application
 		e1.animTile(0, 0);    // params: start-tile, end-tile
 		e1.timeTile(0.0, 2.1); // params: start-time, duration
 		bufferElem.addElement(e1);
+
+		var e2 = new Elem(80,30);
+		e2.animTile(0, 0);    // params: start-tile, end-tile
+		e2.timeTile(0.0, 2.1); // params: start-time, duration
+		e2.depth = 0.1;
+		bufferElem.addElement(e2);
 		
 				
 
@@ -103,7 +140,16 @@ class Main extends Application
 		
 		// ----------------------------------------------------
 
-		peoteView.zoom = 4;
+		#if android
+		ui.mouseEnabled = false;
+		// uiDisplay.touchEnabled = true;
+		ui.zoom=2;
+		ui.width *= Std.int(ui.zoom); ui.height*= Std.int(ui.zoom);
+		ui.x = width - ui.width;
+		#end
+		PeoteUIDisplay.registerEvents(window);
+
+		// peoteView.zoom = 2;
 		peoteView.start();
 		
 		// add mouse events to move the light (to not run before it was instantiated):
@@ -121,8 +167,8 @@ class Main extends Application
 
 
 	function _onMouseMove (x:Float, y:Float):Void {
-		light.x = Std.int(x/peoteView.zoom);
-		light.y = Std.int(y/peoteView.zoom);
+		light.x = Std.int(x/peoteView.zoom/chain.zoom);
+		light.y = Std.int(y/peoteView.zoom/chain.zoom);
 		bufferLight.updateElement(light);
 	}	
 

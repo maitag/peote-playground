@@ -47,7 +47,8 @@ abstract FB_NormalDepth(Display) to Display
 					// normalize and rotate vector
 					// N = normalDepthTex.xyz;
 					N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
-					// TODO: this needs to flip the normals in blender before can rotate here!
+
+					// TODO: look into blender how to flip the normals for rotation here
 					// N.xy = rotate(N.xy, vRotZ.x);
 				}
 				else gl_FragDepth =  1.0; 
