@@ -20,6 +20,9 @@
 	
 	<haxelib name="lime" />	
 	<haxelib name="peote-view" />
+	<haxelib name="peote-ui" />
+	<haxelib name="peote-ui-extra" />
+	<haxelib name="input2action" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->
 	<!-- this optimizes the build and forces no-runtimecheck for the gl-features -->
@@ -37,7 +40,7 @@
 	<!--<haxedef name="peoteview_debug_display" />-->
 	<!--<haxedef name="peoteview_debug_program" />-->
 	<!-- <haxedef name="peoteview_debug_texture" /> -->
-	<haxedef name="peoteview_debug_shader" />
+	<!-- <haxedef name="peoteview_debug_shader" /> -->
 
 	<haxeflag name="-dce" value="full" />
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->

@@ -2,8 +2,6 @@ package ui;
 
 import peote.ui.config.VAlign;
 import peote.ui.config.HAlign;
-import lime.app.Application;
-import lime.ui.Window;
 
 import peote.view.PeoteView;
 import peote.view.Display;
@@ -28,6 +26,8 @@ import peote.ui.extra.AreaListConfig;
 
 import peote.ui.style.FontStyleTiled;
 
+import ui.ControlValues;
+
 // using macro generated Font and Text-widgets
 // -------------------------------------------
 // typedef Fnt = peote.text.Font<FontStyleTiled>;
@@ -39,6 +39,7 @@ import peote.ui.style.FontStyleTiled;
 typedef Fnt = peote.ui.tiled.FontT;
 typedef TextLine = peote.ui.interactive.UITextLineT;
 typedef TextPage = peote.ui.interactive.UITextPageT;
+
 
 class Control extends PeoteUIDisplay
 {
@@ -62,8 +63,12 @@ class Control extends PeoteUIDisplay
 	var rowConfig:AreaListConfig;
 	var colConfig:AreaListConfig;
 
-	var textTitleConfig:TextConfig;
+	var textHeaderConfig:TextConfig;
+	var textLabelConfig:TextConfig;
+	var textButtonConfig:TextConfig;
+	var textCheckboxConfig:TextConfig;
 	var textInputConfig:TextConfig;
+	var rootSliderConfig:SliderConfig;
 	var sliderConfig:SliderConfig;
 	
 	public function new(title:String, x:Int, y:Int, width:Int, height:Int, color:Color=0x00000000, controlItems:Array<ControlItem>) {
@@ -143,8 +148,23 @@ class Control extends PeoteUIDisplay
 			}
 		}
 
-		textTitleConfig = {
+		textHeaderConfig = {
+			backgroundStyle:roundBorderStyle.copy(Color.RED1-0x84),
+			hAlign:HAlign.CENTER,
+			textSpace: {top:5, bottom:5}
+		};
+		textLabelConfig = {
+			backgroundStyle:null,
+			hAlign:HAlign.CENTER,
+			textSpace: {top:5, bottom:5}
+		};
+		textButtonConfig = {
 			backgroundStyle:roundBorderStyle.copy(Color.RED1-0x44),
+			hAlign:HAlign.CENTER,
+			textSpace: {top:5, bottom:5}
+		};
+		textCheckboxConfig = {
+			backgroundStyle:roundBorderStyle.copy(Color.GREEN1-0x44),
 			hAlign:HAlign.CENTER,
 			textSpace: {top:5, bottom:5}
 		};
@@ -153,18 +173,26 @@ class Control extends PeoteUIDisplay
 			selectionStyle: selectionStyle,
 			cursorStyle: cursorStyle
 		};
-		sliderConfig = {
+		rootSliderConfig = {
 			backgroundStyle: roundBorderStyle.copy(Color.RED1-0x55, 0x00000000, 0.2),
-			draggerStyle: roundBorderStyle.copy(Color.GREY3, Color.GREY2, 0.5),
+			draggerStyle: roundBorderStyle.copy(Color.GREY2, Color.GREY2, 0.5),
 			// draggerSize:16,
 			draggSpace:0,
 			backgroundSpace: {top:8, bottom:8, left:8, right:8},
 			draggerSpace: {top:8, bottom:8, left:8, right:8}
 		};
+		sliderConfig = {
+			backgroundStyle: roundBorderStyle.copy(Color.RED1-0x55, 0x00000000, 0.2),
+			draggerStyle: roundBorderStyle.copy(Color.GREY3, Color.GREY2, 0.5),
+			// draggerSize:16,
+			draggSpace:0,
+			backgroundSpace: {top:8, bottom:8, left:4, right:4},
+			draggerSpace: {top:4, bottom:4, left:4, right:4}
+		};
 
 
 		// -------------- header --------------------
-		var header = new TextLine(0, 0, width, 0, 2, title, font, fontStyleFG, textTitleConfig);
+		var header = new TextLine(0, 0, width, 0, 2, title, font, fontStyleFG, textHeaderConfig);
 		header.onPointerDown = (_, e:PointerEvent)-> startDragging(e);
 		header.onPointerUp = (_, e:PointerEvent)-> stopDragging(e);
 		add(header);
@@ -177,7 +205,7 @@ class Control extends PeoteUIDisplay
 		addContentRecursive(areaList, controlItems);
 
 		// ---- Slider to scroll the Area ----				
-		var vSlider = new UISlider(areaList.width-30, 0, 30, areaList.height, sliderConfig);
+		var vSlider = new UISlider(areaList.width-30, 0, 30, areaList.height, rootSliderConfig);
 		vSlider.onMouseWheel = (_, e:WheelEvent) -> vSlider.setWheelDeltaPixel( e.deltaY, 16 );
 		areaList.addFixed(vSlider);		
 		// bindings for sliders
@@ -217,24 +245,50 @@ class Control extends PeoteUIDisplay
 
 			case Label(name, size):
 				trace("Label " + name, size);
-				var label = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textTitleConfig);
+				var label = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textLabelConfig);
 				label;
 						
 			case Button(name, size, onClick):
 				trace("Button " + name, size);
-				var button = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textTitleConfig);
-				button.onPointerClick = function(b, e) onClick();
+				var button = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textButtonConfig);
+				if (onClick!=null) button.onPointerClick = function(b, e) onClick();
 				button;
 				
-			case Checkbox(name, size, onChange):
-				trace("Checkbox " + name, size);
-				var checkbox = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textTitleConfig);
+			case Checkbox(nameFalse, nameTrue, size, value, onChange):
+				trace("Checkbox " + nameFalse, size);
+				var name = nameFalse;
+				if (value!=null) {
+					if (value.value) name = nameTrue;
+				}
+				var checkbox = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textCheckboxConfig);
+
+				if (value==null) value = new BoolValue(false);
+				else value.onChange = function(v:Bool) {checkbox.setText( (v) ? nameTrue : nameFalse );checkbox.update();}
+
+				checkbox.onPointerClick = function(b, e) {
+					value.value = !value.value;
+					checkbox.setText( (value.value) ? nameTrue : nameFalse );
+					checkbox.update();
+					// if (nameOff!=null) nameOff
+					if (onChange!=null) onChange(value.value);
+				}
 				checkbox;
 						
-			case Slider(name, size, onChange):
-				trace("Slider " + name, size);
-				var slider = new UISlider(0, 0, size, 30, 0, sliderConfig);
+			// case HSlider(name, size, value, valueStart, valueEnd, onChange) | VSlider(name, size, value, valueStart, valueEnd, onChange):
+			case Slider(name, size, value, valueStart, valueEnd, onChange):
+				trace("Slider " + name, size, item.getName());
+				// if (item.getName() == "HSlider")
+				var slider:UISlider = new UISlider(0, 0, size, 30, 0, sliderConfig);
+				slider.setRange((valueStart!=null) ? valueStart : 0.0, (valueEnd!=null) ? valueEnd : 1.0, false, false);
 				slider.onMouseWheel = (_, e:WheelEvent) -> slider.setWheelDeltaPixel( e.deltaY, 16 );
+				slider.onChange = function(_, v:Float, _) {
+					if (value!=null) value.value = v;
+					if (onChange!=null) onChange(v);
+				}				
+				if (value!=null) {
+					slider.value = value;
+					value.onChange = function(v:Float) slider.setValue(v, false, false);
+				}
 				slider;
 		});
 		

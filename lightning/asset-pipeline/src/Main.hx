@@ -21,6 +21,7 @@ import asset.generated.Tiles.AnimID;
 
 import ui.Control;
 import ui.ControlItem;
+import ui.ControlValues;
 import fb_chain.*;
 import fb_chain.light.*;
 
@@ -50,26 +51,32 @@ class Main extends Application
 
 	var light:ElemLight; // one light is controled by mouse
 
+	var testValInt = new IntValue(5);
+	var testValFloat = new FloatValue(13.0);
+	var testValBool = new BoolValue(true);
+	var testValString = new StringValue("test");
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
+		testValInt.value = 7;
+		trace(testValInt);
 
 		// little ui
 		// i am not 100% satisfactionized at now by the -> "need of size" extra arguments ;) ->inside<-
 		// ANY WAY ;:) -> iAm like IT:
 		ui = new Control("light control", 430, 10, 360, 300, [
-			Col(50, [
-				Button  ("button", 80,  (       )->{ trace("button");} ),
-				Slider  ("label:", 100, (v:Float)->{ trace("slider", v);} ),
+			Col(26, [
+				Button  ("button", 70,  (       )->{ trace("button");} ),
+				Slider  ("label:", 130, (v:Float)->{ trace("slider", v);} ),
 				Label   ("label:", 60),
-				Checkbox("on/off", 60,  (v:Bool) ->{ trace("checkbox", v);} )
+				Checkbox("off", "on", 60,  (v:Bool) ->{ trace("checkbox", v);} )
 			]),
-			Slider("label:", 50,(v:Float)->{ trace("slider", v);} ),
+			Slider("label:", 30, testValFloat, 10, 20, (v:Float)->{ trace("slider", testValFloat);} ),
+			Slider("label:", 30, 10, 20, (v:Float)->{ trace("slider", testValFloat);} ),
 			Seperator
 		]);
 		// ^^much T O -> DO \o/ ooooooooooooooooooooooooooooooooooooooo
-
 
 		var textureConfig:TextureConfig = {
 			format:TextureFormat.RGBA,
@@ -159,14 +166,17 @@ class Main extends Application
 	}
 	
 
-	
-	
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
 
+	var mx:Int = 0;
+	var my:Int = 0;
 
 	function _onMouseMove (x:Float, y:Float):Void {
+		mx = Std.int(x);
+		my = Std.int(y);
+		// if (ui.isPointInside(mx, my)) return;
 		light.x = Std.int(x/peoteView.zoom/chain.zoom);
 		light.y = Std.int(y/peoteView.zoom/chain.zoom);
 		bufferLight.updateElement(light);
@@ -175,6 +185,7 @@ class Main extends Application
 	var isShift = false;
 	
 	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void {
+		if (ui.isPointInside(mx, my)) return;
 		if (isShift) {
 			light.size += ( (deltaY > 0) ? 1 : -1  ) * 10;
 		}
