@@ -15,7 +15,9 @@ import peote.ui.interactive.UISlider;
 import peote.ui.interactive.UIArea;
 import peote.ui.style.BoxStyle;
 import peote.ui.style.RoundBorderStyle;
+import peote.ui.style.interfaces.Style;
 import peote.ui.config.ResizeType;
+import peote.ui.config.ElementConfig;
 import peote.ui.config.TextConfig;
 import peote.ui.config.SliderConfig;
 import peote.ui.event.PointerEvent;
@@ -52,22 +54,34 @@ class Control extends PeoteUIDisplay
 	// ---- Styles -----	
 	var boxStyle  = new BoxStyle(0x41144ff);		
 	var roundBorderStyle = RoundBorderStyle.createById(0, 0x4114455);
-	var cursorStyle = BoxStyle.createById(1, Color.RED);
-	var selectionStyle = BoxStyle.createById(2, Color.GREY3);
+	var cursorStyle = BoxStyle.createById(1, Color.RED1);
+	var selectionStyle = BoxStyle.createById(2, Color.GREY2);
 	
-	var fontStyleInput = FontStyleTiled.createById(1,{width:9,height:16,color:Color.GREY1});
-	var fontStyleFG    = FontStyleTiled.createById(2,{width:9,height:16,color:Color.ORANGE});
+	var fontStyle = FontStyleTiled.createById(1,{width:9,height:16,color:0xd68230ff});
+	var fontStyleInput:FontStyleTiled;
+	var fontStyleOutput:FontStyleTiled;
+	var fontStyleFG = FontStyleTiled.createById(2,{width:9,height:16,color:0xd68230ff});
+
+	// specific styles
+	var checkboxBgStyleTrue:Style;
+	var checkboxBgStyleFalse:Style;
 	
 	// ---- Configs -----	
 	var rootConfig:AreaListConfig;
 	var rowConfig:AreaListConfig;
 	var colConfig:AreaListConfig;
+	
+	var separatorConfig:ElementConfig;
 
 	var textHeaderConfig:TextConfig;
 	var textLabelConfig:TextConfig;
 	var textButtonConfig:TextConfig;
-	var textCheckboxConfig:TextConfig;
+	
 	var textInputConfig:TextConfig;
+	var textOutputConfig:TextConfig;
+	
+	var textCheckboxConfig:TextConfig;
+	
 	var rootSliderConfig:SliderConfig;
 	var sliderConfig:SliderConfig;
 	
@@ -100,7 +114,7 @@ class Control extends PeoteUIDisplay
 		this.addStyleProgram(roundBorderStyle);
 		this.addStyleProgram(boxStyle);
 		this.addStyleProgram(selectionStyle);
-		this.addFontStyleProgram(fontStyleInput, font);
+		this.addFontStyleProgram(fontStyle, font);
 		this.addFontStyleProgram(fontStyleFG, font);
 		this.addStyleProgram(cursorStyle);
 
@@ -108,6 +122,7 @@ class Control extends PeoteUIDisplay
 		rootConfig = {
 			backgroundStyle:roundBorderStyle,
 			hAlign:HAlign.LEFT,
+			gap:6,
 			maskSpace: {
 				top:8,
 				right:30,
@@ -115,18 +130,20 @@ class Control extends PeoteUIDisplay
 				bottom:8
 			},
 			backgroundSpace: {
-				// left:5
+				// bottom:8
 			}
 		}
 
+		// TODO: better define all configs from here inside the SWITCH-statements (lesser globally vars!!!)
 		rowConfig = {
 			backgroundStyle:roundBorderStyle,
 			hAlign:HAlign.LEFT,
+			gap:2,
 			maskSpace: {
-				top:0,
-				right:1,
-				left:1,
-				bottom:0
+				top:2,
+				right:0,
+				left:3,
+				bottom:2
 			},
 			backgroundSpace: {
 				// left:5
@@ -135,12 +152,13 @@ class Control extends PeoteUIDisplay
 
 		colConfig = {
 			horizontal:true,
-			backgroundStyle:roundBorderStyle,
+			backgroundStyle:null,
 			vAlign:VAlign.TOP,
+			gap:4,
 			maskSpace: {
 				top:0,
-				right:1,
-				left:1,
+				right:0,
+				left:0,
 				bottom:0
 			},
 			backgroundSpace: {
@@ -149,45 +167,70 @@ class Control extends PeoteUIDisplay
 		}
 
 		textHeaderConfig = {
-			backgroundStyle:roundBorderStyle.copy(Color.RED1-0x84),
-			hAlign:HAlign.CENTER,
-			textSpace: {top:5, bottom:5}
-		};
-		textLabelConfig = {
-			backgroundStyle:null,
-			hAlign:HAlign.CENTER,
-			textSpace: {top:5, bottom:5}
-		};
-		textButtonConfig = {
 			backgroundStyle:roundBorderStyle.copy(Color.RED1-0x44),
 			hAlign:HAlign.CENTER,
 			textSpace: {top:5, bottom:5}
 		};
-		textCheckboxConfig = {
-			backgroundStyle:roundBorderStyle.copy(Color.GREEN1-0x44),
+
+		separatorConfig = {
+			backgroundStyle:boxStyle.copy(0x55667788),
+		}
+
+		textLabelConfig = {
+			backgroundStyle:null,
 			hAlign:HAlign.CENTER,
-			textSpace: {top:5, bottom:5}
+			textSpace: {top:2, bottom:2}
 		};
+
+		textButtonConfig = {
+			backgroundStyle:roundBorderStyle.copy(Color.RED1-0x44),
+			hAlign:HAlign.CENTER,
+			textSpace: {top:2, bottom:2}
+		};
+
+		
+		fontStyleInput = fontStyle.copy(0x070403ff, 9, 16);
+		
 		textInputConfig = {
-			backgroundStyle:boxStyle.copy(Color.GREY5),
+			backgroundStyle:boxStyle.copy(0x736860cc),
 			selectionStyle: selectionStyle,
-			cursorStyle: cursorStyle
+			cursorStyle: cursorStyle,
+			textSpace: {top:2, bottom:2, left:3, right:3}
 		};
+
+		fontStyleOutput = fontStyle.copy(0x070403ff, 9, 16, 0.0, -1);
+
+		textOutputConfig = {
+			backgroundStyle:roundBorderStyle.copy(0x736860cc, 0x736860cc, 0),
+			hAlign:HAlign.RIGHT,
+			textSpace: {top:2, bottom:2, left:3, right:3}
+		};
+
+
+		checkboxBgStyleFalse = roundBorderStyle.copy(Color.RED1-0x44);
+		checkboxBgStyleTrue = roundBorderStyle.copy(0x0a3406cc);
+		textCheckboxConfig = {
+			backgroundStyle:checkboxBgStyleFalse,
+			hAlign:HAlign.CENTER,
+			textSpace: {top:2, bottom:2}
+		};
+
+
 		rootSliderConfig = {
 			backgroundStyle: roundBorderStyle.copy(Color.RED1-0x55, 0x00000000, 0.2),
-			draggerStyle: roundBorderStyle.copy(Color.GREY2, Color.GREY2, 0.5),
+			draggerStyle: roundBorderStyle.copy(0x736860cc, 0x736860cc, 0),
 			// draggerSize:16,
 			draggSpace:0,
-			backgroundSpace: {top:8, bottom:8, left:8, right:8},
-			draggerSpace: {top:8, bottom:8, left:8, right:8}
+			backgroundSpace: {top:6, bottom:6, left:8, right:8},
+			draggerSpace: {top:8, bottom:8, left:10, right:10}
 		};
 		sliderConfig = {
 			backgroundStyle: roundBorderStyle.copy(Color.RED1-0x55, 0x00000000, 0.2),
-			draggerStyle: roundBorderStyle.copy(Color.GREY3, Color.GREY2, 0.5),
+			draggerStyle: roundBorderStyle.copy(0x736860cc, 0x736860cc, 0),
 			// draggerSize:16,
 			draggSpace:0,
-			backgroundSpace: {top:8, bottom:8, left:4, right:4},
-			draggerSpace: {top:4, bottom:4, left:4, right:4}
+			backgroundSpace: {top:3, bottom:3, left:0, right:0},
+			// draggerSpace: {top:0, bottom:0, left:0, right:0}
 		};
 
 
@@ -200,85 +243,208 @@ class Control extends PeoteUIDisplay
 		// --------------- root UIAreaList -----------------------				
 		var areaList = new UIAreaList(0, header.height+2, width, height-(header.height+2), 0, rootConfig);
 
-		add(areaList);
-		
+		add(areaList);		
 		addContentRecursive(areaList, controlItems);
 
 		// ---- Slider to scroll the Area ----				
 		var vSlider = new UISlider(areaList.width-30, 0, 30, areaList.height, rootSliderConfig);
 		vSlider.onMouseWheel = (_, e:WheelEvent) -> vSlider.setWheelDeltaPixel( e.deltaY, 16 );
 		areaList.addFixed(vSlider);		
-		// bindings for sliders
 		areaList.bindVSlider(vSlider, false);
-
 		// scroll to bottom (have to be after "add" because of text-elements!)
-		// areaList.setYOffset(areaList.yOffsetEnd, true, true);					
-
-
-		/*
-		var inputPage = new TextPage(0, 0, 200, 0, 1, "input\ntext by\nUITextPage", font, fontStyleInput, textInputConfig);
-		inputPage.onPointerDown = function(t:TextPage, e:PointerEvent) {
-			t.setInputFocus(e);
-			t.startSelection(e);
-		}
-		inputPage.onPointerUp = function(t:TextPage, e:PointerEvent) {
-			t.stopSelection(e);
-		}
-		
-		areaList.add(inputPage);
-		inputPage.onResizeHeight = areaList.updateChildOnResizeHeight;		
-		*/
+		// areaList.setYOffset(areaList.yOffsetEnd, true, true);
 	}	
 	
 	function addContentRecursive(area:UIAreaList, controlItems:Array<ControlItem>):UIArea
 	{
 		for (item in controlItems) area.add(switch(item) {
 			case Row(size, items):
-				addContentRecursive( new UIAreaList( 0, 0, size, 0, 0, rowConfig), items);
+				if (size == null) size = 200;
+				addContentRecursive( new UIAreaList( 0, 0, size, size, 0, rowConfig), items);
 		
 			case Col(size, items):
-				addContentRecursive( new UIAreaList( 0, 0, 0, size, 0, colConfig), items);
+				if (size == null) size = 20;
+				addContentRecursive( new UIAreaList( 0, 0, size, size, 0, colConfig), items);
 						
-			case Seperator:
-				trace("Seperator");
-				new UIElement(0, 0, 2, 2, 0, roundBorderStyle);
+			case Separator:
+				var area = new UIArea(0, 0, 0, 20);
+				var separator = new UIElement(0, 9, 300, 2, 0, separatorConfig);
+				area.onResizeWidth = (_, w:Int,_) -> separator.width = w;
+				area.add(separator);
+				// separator;
+				area;
 
 			case Label(name, size):
-				trace("Label " + name, size);
-				var label = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textLabelConfig);
+				var label = new TextLine(0, 0, size, 0, 2, name, font, fontStyle, textLabelConfig);
 				label;
 						
 			case Button(name, size, onClick):
-				trace("Button " + name, size);
-				var button = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textButtonConfig);
+				var button = new TextLine(0, 0, size, 0, 2, name, font, fontStyle, textButtonConfig);
 				if (onClick!=null) button.onPointerClick = function(b, e) onClick();
 				button;
-				
+			
+			
+			case InputString(size, align, value, onChange):
+				if (size == null) size = 200;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var input = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleInput, textInputConfig);
+				input.hAlign=hAlign;
+				input.restrictedChars = "a-zA-Z0-9+-*~/\\^.,;:§$%&=?_#\"'`[](){}%&<>| ";
+
+				input.onPointerDown = function(t:TextLine, e:PointerEvent) {
+					t.setInputFocus(e);
+					t.startSelection(e);
+				}
+				input.onPointerUp = function(t:TextLine, e:PointerEvent) {
+					t.stopSelection(e);
+				}
+				input.onInsertText = input.onDeleteText = function(t:TextLine, _, _, _) {
+					if (onChange!=null) onChange(input.text);
+					if (value!=null) @:bypassAccessor value.value = input.text;
+				}
+		
+				if (value!=null) {
+					value.onChange = function(v:String) {input.setText(Std.string(v)); input.xOffset=0; input.hAlign=hAlign; input.update();}
+				}
+				input;
+
+			case OutputString(size, align, value):
+				if (size == null) size = 200;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var output = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleOutput, textOutputConfig);
+				output.hAlign=hAlign;
+
+				if (value!=null) {
+					value.onChange = function(v:String) {output.setText(Std.string(v)); output.xOffset=0; output.hAlign=hAlign; output.update();}
+				}
+				output;
+
+			case InputInt(size, align, value, onChange):
+				if (size == null) size = 46;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var input = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleInput, textInputConfig);
+				input.hAlign=hAlign;
+				input.restrictedChars = "0-9-";
+
+				input.onPointerDown = function(t:TextLine, e:PointerEvent) {
+					t.setInputFocus(e);
+					t.startSelection(e);
+				}
+				input.onPointerUp = function(t:TextLine, e:PointerEvent) {
+					t.stopSelection(e);
+				}
+				input.onInsertText = input.onDeleteText = function(t:TextLine, _, _, _) {
+					if (onChange!=null) onChange(Std.parseInt(input.text));
+					if (value!=null) @:bypassAccessor value.value = Std.parseInt(input.text);
+				}
+		
+				if (value!=null) {
+					value.onChange = function(v:Int) {input.setText(Std.string(v)); input.xOffset=0; input.hAlign=hAlign; input.update();}
+				}
+				input;
+
+			case OutputInt(size, align, value):
+				if (size == null) size = 46;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var output = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleOutput, textOutputConfig);
+				output.hAlign=hAlign;
+
+				if (value!=null) {
+					value.onChange = function(v:Int) {output.setText(Std.string(v)); output.xOffset=0; output.hAlign=hAlign; output.update();}
+				}
+				output;
+
+			case InputFloat(size, align, value, onChange):
+				if (size == null) size = 58;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var input = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleInput, textInputConfig);
+				input.hAlign=hAlign;
+				input.restrictedChars = ".0-9-";
+
+				input.onPointerDown = function(t:TextLine, e:PointerEvent) {
+					t.setInputFocus(e);
+					t.startSelection(e);
+				}
+				input.onPointerUp = function(t:TextLine, e:PointerEvent) {
+					t.stopSelection(e);
+				}
+				input.onInsertText = input.onDeleteText = function(t:TextLine, _, _, _) {
+					if (onChange!=null) onChange(Std.parseFloat(input.text));
+					if (value!=null) @:bypassAccessor value.value = Std.parseFloat(input.text);
+				}
+		
+				if (value!=null) {
+					value.onChange = function(v:Float) {input.setText(Std.string(v)); input.xOffset=0; input.hAlign=hAlign; input.update();}
+				}
+				input;
+
+			case OutputFloat(size, align, value):
+				if (size == null) size = 58;
+				var hAlign:HAlign = switch(align) {
+					case Left:HAlign.LEFT;
+					case Right:HAlign.RIGHT;
+					case Center:HAlign.CENTER;
+					default: HAlign.LEFT;
+				}
+				var output = new TextLine(0, 0, size, 0, 2, (value!=null) ? value : "", font, fontStyleOutput, textOutputConfig);
+				output.hAlign=hAlign;
+
+				if (value!=null) {
+					value.onChange = function(v:Float) {output.setText(Std.string(v)); output.xOffset=0; output.hAlign=hAlign; output.update();}
+				}
+				output;
+
+			
 			case Checkbox(nameFalse, nameTrue, size, value, onChange):
-				trace("Checkbox " + nameFalse, size);
 				var name = nameFalse;
 				if (value!=null) {
 					if (value.value) name = nameTrue;
-				}
-				var checkbox = new TextLine(0, 0, size, 0, 2, name, font, fontStyleFG, textCheckboxConfig);
-
+					textCheckboxConfig.backgroundStyle = (value.value) ? checkboxBgStyleTrue : checkboxBgStyleFalse;
+				} 
+				// else textCheckboxConfig.backgroundStyle = checkboxBgStyleFalse;
+				var checkbox = new TextLine(0, 0, size, 0, 2, name, font, fontStyle, textCheckboxConfig);
+				
 				if (value==null) value = new BoolValue(false);
 				else value.onChange = function(v:Bool) {checkbox.setText( (v) ? nameTrue : nameFalse );checkbox.update();}
 
 				checkbox.onPointerClick = function(b, e) {
 					value.value = !value.value;
 					checkbox.setText( (value.value) ? nameTrue : nameFalse );
+					checkbox.backgroundStyle = (value.value) ? checkboxBgStyleTrue : checkboxBgStyleFalse;
 					checkbox.update();
-					// if (nameOff!=null) nameOff
 					if (onChange!=null) onChange(value.value);
 				}
 				checkbox;
 						
 			// case HSlider(name, size, value, valueStart, valueEnd, onChange) | VSlider(name, size, value, valueStart, valueEnd, onChange):
 			case Slider(name, size, value, valueStart, valueEnd, onChange):
-				trace("Slider " + name, size, item.getName());
 				// if (item.getName() == "HSlider")
-				var slider:UISlider = new UISlider(0, 0, size, 30, 0, sliderConfig);
+				var slider:UISlider = new UISlider(0, 0, size, 20, 0, sliderConfig);
 				slider.setRange((valueStart!=null) ? valueStart : 0.0, (valueEnd!=null) ? valueEnd : 1.0, false, false);
 				slider.onMouseWheel = (_, e:WheelEvent) -> slider.setWheelDeltaPixel( e.deltaY, 16 );
 				slider.onChange = function(_, v:Float, _) {

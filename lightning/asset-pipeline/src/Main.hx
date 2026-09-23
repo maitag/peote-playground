@@ -1,6 +1,5 @@
 package;
 
-import peote.ui.PeoteUIDisplay;
 import haxe.CallStack;
 import haxe.Timer;
 
@@ -22,6 +21,10 @@ import asset.generated.Tiles.AnimID;
 import ui.Control;
 import ui.ControlItem;
 import ui.ControlValues;
+import peote.ui.config.HAlign;
+import peote.ui.PeoteUIDisplay;
+
+
 import fb_chain.*;
 import fb_chain.light.*;
 
@@ -66,15 +69,41 @@ class Main extends Application
 		// i am not 100% satisfactionized at now by the -> "need of size" extra arguments ;) ->inside<-
 		// ANY WAY ;:) -> iAm like IT:
 		ui = new Control("light control", 430, 10, 360, 300, [
-			Col(26, [
+			Col(20, [
 				Button  ("button", 70,  (       )->{ trace("button");} ),
-				Slider  ("label:", 130, (v:Float)->{ trace("slider", v);} ),
+				Slider  ("label:", 120, (v:Float)->{ trace("slider", v);} ),
 				Label   ("label:", 60),
 				Checkbox("off", "on", 60,  (v:Bool) ->{ trace("checkbox", v);} )
 			]),
+			Checkbox("off", "on", 60, testValBool, (v:Bool) ->{ trace("checkbox", v);} ),
+			
+			InputString(new StringValue("hello"), (v:String) ->{ trace("InputFloat", v);}),
+			InputFloat(Right, new FloatValue(32.14), (v:Float) ->{ trace("InputFloat", v);}),		
+			
+			Col(45, [
+				Row(100, [
+					Col([Label("x:", 20), InputInt(Right, new IntValue(31), (v:Int) ->{ trace("InputInt", v);})] ),
+					Col([Label("y:", 20), InputInt(Right, new IntValue(63), (v:Int) ->{ trace("InputInt", v);})] )
+				]),
+				Row(100, [
+					Col([Label("x:", 20), InputInt(Right, new IntValue(19), (v:Int) ->{ trace("InputInt", v);})] ),
+					Col([Label("y:", 20), InputInt(Right, new IntValue(17), (v:Int) ->{ trace("InputInt", v);})] )
+				]),
+			]),
+
+			Col([
+				Button  ("<", 20,  ()->{if (testValInt.value<10) testValInt.value++;} ),
+				OutputInt( 27, Center, testValInt),
+				Button  (">", 20,  ()->{if (testValInt.value>0) testValInt.value--;} )
+			]),
+
 			Slider("label:", 30, testValFloat, 10, 20, (v:Float)->{ trace("slider", testValFloat);} ),
-			Slider("label:", 30, 10, 20, (v:Float)->{ trace("slider", testValFloat);} ),
-			Seperator
+			Separator,
+			Col([Label   ("label:", 60),Slider("label:", 260, 10, 20)]),
+			Slider("label:", 30, 10, 20),
+			Button  ("button", 80,  ()->{ trace("button");} ),
+			Separator,
+			Slider("label:", 30, 10, 20)
 		]);
 		// ^^much T O -> DO \o/ ooooooooooooooooooooooooooooooooooooooo
 
