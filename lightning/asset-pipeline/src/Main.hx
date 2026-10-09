@@ -3,40 +3,30 @@ package;
 import haxe.CallStack;
 import haxe.Timer;
 
-import lime.ui.KeyCode;
-import lime.ui.KeyModifier;
-
 import lime.app.Application;
-import lime.ui.Window;
-import lime.ui.MouseWheelMode;
 import lime.graphics.Image;
+import lime.ui.*;
 
 import peote.view.*;
+import peote.ui.PeoteUIDisplay;
+import peote.ui.config.HAlign;
+import peote.ui.tool.Control;
+import peote.ui.tool.ControlItem;
+import peote.ui.tool.ControlValues;
 
 import asset.Util;
 import asset.generated.Tiles;
 import asset.generated.Tiles.TileID;
 import asset.generated.Tiles.AnimID;
 
-import ui.Control;
-import ui.ControlItem;
-import ui.ControlValues;
-import peote.ui.config.HAlign;
-import peote.ui.PeoteUIDisplay;
-
-
 import fb_chain.*;
 import fb_chain.light.*;
 
 class Main extends Application
 {
-	override function onWindowCreate():Void
-	{
-		switch (window.context.type)
-		{
-			case WEBGL, OPENGL, OPENGLES:
-				try startSample(window)
-				catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
+	override function onWindowCreate():Void {
+		switch (window.context.type) {
+			case WEBGL, OPENGL, OPENGLES: try startSample(window) catch (_) trace(CallStack.toString(CallStack.exceptionStack()), _);
 			default: throw("Sorry, only works with OpenGL.");
 		}
 	}
@@ -49,63 +39,20 @@ class Main extends Application
 	var ui:Control;
 	var chain:Chain;
 	
-	var bufferElem:Buffer<Elem>;
-	var bufferLight:Buffer<ElemLight>;
+	var bufferElem:Buffer<Elem> = new Buffer<Elem>(1024, 512);
+	var bufferLight:Buffer<ElemLight> = new Buffer<ElemLight>(1024, 512);
 
-	var light:ElemLight; // one light is controled by mouse
+	// elements into control
+	var elems = new Array<Elem>();
+	var elem:Elem; function get_elem() return elems[ui_elem.value];
 
-	var testValInt = new IntValue(5);
-	var testValFloat = new FloatValue(13.0);
-	var testValBool = new BoolValue(true);
-	var testValString = new StringValue("test");
+	// lights into control
+	var lights = new Array<ElemLight>();
+	var light(get, never):ElemLight; function get_light() return lights[ui_light.value];
 
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
-		testValInt.value = 7;
-		trace(testValInt);
-
-		// little ui
-		// i am not 100% satisfactionized at now by the -> "need of size" extra arguments ;) ->inside<-
-		// ANY WAY ;:) -> iAm like IT:
-		ui = new Control("light control", 430, 10, 360, 300, [
-			Col(20, [
-				Button  ("button", 70,  (       )->{ trace("button");} ),
-				Slider  ("label:", 120, (v:Float)->{ trace("slider", v);} ),
-				Label   ("label:", 60),
-				Checkbox("off", "on", 60,  (v:Bool) ->{ trace("checkbox", v);} )
-			]),
-			Checkbox("off", "on", 60, testValBool, (v:Bool) ->{ trace("checkbox", v);} ),
-			
-			InputString(new StringValue("hello"), (v:String) ->{ trace("InputFloat", v);}),
-			InputFloat(Right, new FloatValue(32.14), (v:Float) ->{ trace("InputFloat", v);}),		
-			
-			Col(45, [
-				Row(100, [
-					Col([Label("x:", 20), InputInt(Right, new IntValue(31), (v:Int) ->{ trace("InputInt", v);})] ),
-					Col([Label("y:", 20), InputInt(Right, new IntValue(63), (v:Int) ->{ trace("InputInt", v);})] )
-				]),
-				Row(100, [
-					Col([Label("x:", 20), InputInt(Right, new IntValue(19), (v:Int) ->{ trace("InputInt", v);})] ),
-					Col([Label("y:", 20), InputInt(Right, new IntValue(17), (v:Int) ->{ trace("InputInt", v);})] )
-				]),
-			]),
-
-			Col([
-				Button  ("<", 20,  ()->{if (testValInt.value<10) testValInt.value++;} ),
-				OutputInt( 27, Center, testValInt),
-				Button  (">", 20,  ()->{if (testValInt.value>0) testValInt.value--;} )
-			]),
-
-			Slider("label:", 30, testValFloat, 10, 20, (v:Float)->{ trace("slider", testValFloat);} ),
-			Separator,
-			Col([Label   ("label:", 60),Slider("label:", 260, 10, 20)]),
-			Slider("label:", 30, 10, 20),
-			Button  ("button", 80,  ()->{ trace("button");} ),
-			Separator,
-			Slider("label:", 30, 10, 20)
-		]);
-		// ^^much T O -> DO \o/ ooooooooooooooooooooooooooooooooooooooo
 
 		var textureConfig:TextureConfig = {
 			format:TextureFormat.RGBA,
@@ -114,20 +61,11 @@ class Main extends Application
 			powerOfTwo: false
 		};
 
-		var normalDepthTextures = Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig);
-		var uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig);
+		var normalDepthTextures = Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig, false);
+		var uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig, false);
 
 		var haxeUVTexture = new Texture(256, 256, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
-		Load.image( "assets/haxe.png", true, // debug
-			function(image:Image) { // after image is loaded
-				haxeUVTexture.setData(image);
-			}
-		);
-
-		// ------ create Buffers for Elements and Lights ------
-
-		bufferElem = new Buffer<Elem>(1024, 512);
-		bufferLight = new Buffer<ElemLight>(1024, 512);
+		Load.image( "assets/haxe.png", false, function(image:Image) haxeUVTexture.setData(image) );
 
 		// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
 		chain = new Chain(peoteView, 0, 0, 512, 512, 
@@ -135,45 +73,52 @@ class Main extends Application
 			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
 		);
 
-		chain.zoom=4;
+		chain.zoom=2;
 		chain.width *= Std.int(chain.zoom);
 		chain.height*= Std.int(chain.zoom);
 
 		peoteView.addDisplay(chain);
-		// Timer.delay(()->peoteView.removeDisplay(chain),1000); Timer.delay(()->peoteView.addDisplay(chain),3000);
 		
-		peoteView.addDisplay(ui);
-
-
 		// ---------- add elements ----------
+		var x:Int = 10;
+		var y:Int = 10;
 
-		var e1 = new Elem(40,30);
-		e1.animTile(0, 0);    // params: start-tile, end-tile
-		e1.timeTile(0.0, 2.1); // params: start-time, duration
-		bufferElem.addElement(e1);
+		for (tileID in TileID)
+		{
+			trace(TileID.names[tileID]);
 
-		var e2 = new Elem(80,30);
-		e2.animTile(0, 0);    // params: start-tile, end-tile
-		e2.timeTile(0.0, 2.1); // params: start-time, duration
-		e2.depth = 0.1;
-		bufferElem.addElement(e2);
-		
+			var tile = Tiles.tile(tileID);
+			var sheet = Tiles.sheets[tile.sheet];
+
+			for (animID in tile.animID)
+			{
+				trace("  "+ AnimID.names[animID], tile.sheet, tile.anim(animID).start, tile.anim(animID).end);
+
+				var e = new Elem(x, y, sheet.width, sheet.height, sheet.gap, tile.sheet);
 				
+				// TODO: add element fun
+				var anim = tile.anim(animID);
+				e.animTile(anim.start, anim.end);
+				e.timeTile(0, (anim.end - anim.start + 1)/Tiles.FPS);
+		
+				bufferElem.addElement(e);
+
+				x += sheet.width + 10;
+				if (x > chain.width) y += sheet.height + 10;
+			}
+		}
+			
 
 		// ---------- add lights -----------
+		addLight(10, 10, 256, Color.YELLOW);
+		addLight(100, 100, 256, Color.RED);
+		addLight(0, 0, 256, Color.BLUE);//0xffff66ff);
+		chooseLight(2);
 
-
-		var light1 = new ElemLight(10, 10, 256, Color.YELLOW);
-		// bufferLight.addElement(light1);
-		
-		var light2 = new ElemLight(100, 100, 256, Color.RED);
-		// bufferLight.addElement(light2);
-		
-		// global "mouse-control"-light
-		light = new ElemLight(0, 0, 256, 0xffff66ff);
-		bufferLight.addElement(light);
-		
-		
+		// ----------- ui-control -----------
+		ui = ui_control();
+		peoteView.addDisplay(ui);
+	
 		// ----------------------------------------------------
 
 		#if android
@@ -191,9 +136,111 @@ class Main extends Application
 		// add mouse events to move the light (to not run before it was instantiated):
 		window.onMouseMove.add(_onMouseMove);
 		window.onMouseWheel.add(_onMouseWheel);
-
 	}
 	
+	function addLight(x:Int, y:Int, size:Int, color:Color) {
+		lights.push( new ElemLight(x, y, size, color) );
+		ui_light.value = lights.length - 1;
+		bufferLight.addElement(light);
+	}
+
+	function chooseLight(index:Int) {
+		if (index < 0) index = 0 else if (index > lights.length-1) index = lights.length-1;
+		ui_light.value = index;
+		// sry Slushi -> still have to do some repetive work now byside *lol
+		ui_light_x.value = light.x;
+		ui_light_y.value = light.y;
+		ui_light_depth.value = light.depth;
+
+		ui_light_r.value = light.color.rF;
+		ui_light_g.value = light.color.gF;
+		ui_light_b.value = light.color.bF;
+	}
+
+	function chooseElem(index:Int) {
+		if (index < 0) index = 0 else if (index > elems.length-1) index = elems.length-1;
+		ui_elem.value = index;
+		// sry Slushi -> still have to do some repetive work now byside *lol
+		ui_elem_x.value = elem.x;
+		ui_elem_y.value = elem.y;
+		ui_elem_depth.value = elem.depth;
+
+		// ui_elem_r.value = light.color.rF;
+		// ui_elem_g.value = light.color.gF;
+		// ui_elem_b.value = light.color.bF;
+	}
+
+	// -----------------------------------------------------------
+	// ----------------- UI CONTROL ------------------------------
+	// -----------------------------------------------------------
+	var ui_light = new IntValue(0);
+	var ui_light_x = new IntValue(0);
+	var ui_light_y = new IntValue(0);
+	var ui_light_depth = new FloatValue(0);
+
+	var ui_light_r = new FloatValue(0.0);
+	var ui_light_g = new FloatValue(0.0);
+	var ui_light_b = new FloatValue(0.0);
+
+	var ui_elem = new IntValue(0);
+	var ui_elem_x = new IntValue(0);
+	var ui_elem_y = new IntValue(0);
+	var ui_elem_depth = new FloatValue(0);
+	// var ui_elem_r = new FloatValue(0.0);
+	// var ui_elem_g = new FloatValue(0.0);
+	// var ui_elem_b = new FloatValue(0.0);
+
+	function ui_control():Control {
+		return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 150,
+		[
+			Col([ Button  ("Light", 60,  ()->{} ) ]),
+			Col(68, [
+				Row(90, [					
+					Col([
+						Button  ("<", 24, ()->chooseLight(ui_light.value-1) ),
+						OutputInt(27, Center, ui_light),
+						Button  (">", 24, ()->chooseLight(ui_light.value+1) )
+					]),
+					Col([Button  ("Add", 40, ()->{} ), Button  ("Del", 40, ()->{} )]),
+					Col([Label("s", 10), Slider("", 70, 10, 20)] )
+				]),
+				Row(70, [
+					Col([Label("x", 10), InputInt(Right, ui_light_x, (v:Int) ->{ light.x=v; bufferLight.updateElement(light); })] ),
+					Col([Label("y", 10), InputInt(Right, ui_light_y, (v:Int) ->{ light.y=v; bufferLight.updateElement(light); })] ), // looks shit, anyway .)
+					Col([Label("d", 10), InputFloat(Right, ui_light_depth, (v:Float) ->{ trace("depth later into .)", v);})] )
+				]),
+				Row(90, [
+					Col([Label("r", 10), Slider("", 70, ui_light_r, 0.0, 1.0, (v)->{ light.color.rF=v; bufferLight.updateElement(light);} )] ),
+					Col([Label("g", 10), Slider("", 70, ui_light_g, 0.0, 1.0, (v)->{ light.color.gF=v; bufferLight.updateElement(light);} )] ),
+					Col([Label("b", 10), Slider("", 70, ui_light_b, 0.0, 1.0, (v)->{ light.color.bF=v; bufferLight.updateElement(light);} )] )
+				]),
+			]),
+			Col([ Button  ("Element", 60,  ()->{} ) ]),
+			Col(68, [
+				Row(90, [					
+					Col([
+						Button  ("<", 24, ()->chooseElem(ui_elem.value-1) ),
+						OutputInt(27, Center, ui_elem),
+						Button  (">", 24, ()->chooseElem(ui_elem.value+1) )
+					]),
+					Col([Button  ("Add", 40, ()->{} ), Button  ("Del", 40, ()->{} )]),
+					Col([Label("s", 10), Slider("", 70, 10, 20)] )
+				]),
+				Row(70, [
+					Col([Label("x", 10), InputInt(Right, ui_elem_x, (v:Int) ->{ elem.x=v; bufferElem.updateElement(elem); })] ),
+					Col([Label("y", 10), InputInt(Right, ui_elem_y, (v:Int) ->{ elem.y=v; bufferElem.updateElement(elem); })] ),
+					Col([Label("d", 10), InputFloat(Right, ui_elem_depth, (v:Float) ->{ trace("depth later into .)", v);})] )
+				])
+				/*,
+				Row(90, [
+					Col([Label("r", 10), Slider("", 70, ui_elem_r, 0.0, 1.0, (v)->{ elem.color.rF=v; bufferLight.updateElement(elem);} )] ),
+					Col([Label("g", 10), Slider("", 70, ui_elem_g, 0.0, 1.0, (v)->{ elem.color.gF=v; bufferLight.updateElement(elem);} )] ),
+					Col([Label("b", 10), Slider("", 70, ui_elem_b, 0.0, 1.0, (v)->{ elem.color.bF=v; bufferLight.updateElement(elem);} )] )
+				]),*/
+			]),
+		
+		]);
+	}
 
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
@@ -201,17 +248,22 @@ class Main extends Application
 
 	var mx:Int = 0;
 	var my:Int = 0;
-
+	var isMouseDown = false;
+	var downX:Int = 0;
+	var downY:Int = 0;
+	var isShift = false;
+	
 	function _onMouseMove (x:Float, y:Float):Void {
 		mx = Std.int(x);
 		my = Std.int(y);
-		// if (ui.isPointInside(mx, my)) return;
-		light.x = Std.int(x/peoteView.zoom/chain.zoom);
-		light.y = Std.int(y/peoteView.zoom/chain.zoom);
-		bufferLight.updateElement(light);
+		if (isMouseDown) {
+			light.x = Std.int(x/peoteView.zoom/chain.zoom);
+			light.y = Std.int(y/peoteView.zoom/chain.zoom);
+			bufferLight.updateElement(light);
+			ui_light_x.value = light.x;
+			ui_light_y.value = light.y;
+		}	
 	}	
-
-	var isShift = false;
 	
 	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void {
 		if (ui.isPointInside(mx, my)) return;
@@ -226,9 +278,15 @@ class Main extends Application
 	}
 	// ----------------- MOUSE EVENTS ------------------------------
 	
-	// override function onMouseDown (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
-	// override function onMouseMove (x:Float, y:Float):Void {
-	// override function onMouseUp (x:Float, y:Float, button:lime.ui.MouseButton):Void {}	
+	override function onMouseDown (x:Float, y:Float, button:MouseButton):Void {
+		if (ui.isPointInside(Std.int(x), Std.int(y))) return;
+		downX = Std.int(x);
+		downY = Std.int(y);
+		isMouseDown = true;
+	}
+	override function onMouseUp (x:Float, y:Float, button:MouseButton):Void isMouseDown = false;
+
+	// override function onMouseMove (x:Float, y:Float):Void { }
 	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
 	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
 
