@@ -35,15 +35,15 @@ class Chain extends Display
 		//                 LIGHTNING
 		//-------------------------------------------------
 
-		// --- render all tentacles uv-mapped, ao-prelightned with alpha and in depth ---
+		// --- render uv-mapped, ao-prelightned with alpha and in depth ---
 		uvAoAlphaDepthFB = new FB_UvAoAlphaDepth(w, h, bufferElem, normalDepthTextures, uvAoAlphaTextures, haxeUVTexture);
 		uvAoAlphaDepth = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 		
-		// ------ render all normals together to use for lightning -------
+		// ------ render normals together to use for lightning -------
 		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures);
 		normalDepth = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 
-		// ------ render all lights while using normalDepthFB texture -----
+		// ------ render lights while using normalDepthFB texture -----
 		lightFB = new FB_Light(w, h, bufferLight, normalDepth);
 		light = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 
@@ -82,7 +82,7 @@ class Chain extends Display
 
 		lightFB.setFramebuffer(light, peoteView);
 		lightFB.addToPeoteViewFramebuffer(peoteView);
-
+		
 		super.addToPeoteView(peoteView, atDisplay, addBefore);
 	}
 	

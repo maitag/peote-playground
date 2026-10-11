@@ -44,8 +44,9 @@ class Main extends Application
 	var chain:Chain;
 	
 	// buffers
-	var bufferElem:Buffer<Elem> = new Buffer<Elem>(1024, 512);
-	var bufferLight:Buffer<ElemLight> = new Buffer<ElemLight>(1024, 512);
+	// var bufferTest = new Buffer<Elem>(111);
+	var bufferElem:Buffer<Elem>;
+	var bufferLight:Buffer<ElemLight>;
 
 	// elements into control
 	var elems = new Array<Elem>();
@@ -58,6 +59,10 @@ class Main extends Application
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.BLACK);
+
+		bufferElem = new Buffer<Elem>(1024, 512);
+		bufferLight = new Buffer<ElemLight>(1024, 512);
+
 
 		var textureConfig:TextureConfig = {
 			format:TextureFormat.RGBA,
@@ -82,7 +87,11 @@ class Main extends Application
 		chain.width *= Std.int(chain.zoom);
 		chain.height*= Std.int(chain.zoom);
 
+		// #if html5 // to traverse
+		// Timer.delay(()->{peoteView.addDisplay(chain);}, 300);
+		// #else
 		peoteView.addDisplay(chain);
+		// #end
 		
 		// ---------- add some elements by default ----------
 		var x:Int = 10;
@@ -211,7 +220,7 @@ class Main extends Application
 	var ui_light_debug = new BoolValue(false);
 	var ui_mode = new RadioValue(0);
 
-	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140,
+	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,
 	[
 		Col([
 			RadioButton("Light", 80, ui_mode, 0, (v)->{ trace(v); } )
@@ -252,7 +261,7 @@ class Main extends Application
 	// var ui_elem_r = new FloatValue(0.0);
 	// var ui_elem_g = new FloatValue(0.0);
 	// var ui_elem_b = new FloatValue(0.0);
-	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 300,
+	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 300, //Color.GREEN1,
 	[
 		Col([
 			RadioButton("Element", 80, ui_mode, 1, (v)->{ trace(v); } )
@@ -338,9 +347,22 @@ class Main extends Application
 		}
 	}
 	// ----------------- MOUSE EVENTS ------------------------------
-	
+	var uiLightAtFront=true;
 	override function onMouseDown (x:Float, y:Float, button:MouseButton):Void {
-		if (uiElem.isPointInside(Std.int(x), Std.int(y))||uiLight.isPointInside(Std.int(x), Std.int(y))) return;
+		if (uiElem.isPointInside(Std.int(x), Std.int(y))) {
+			if (uiLightAtFront) {
+				uiElem.swapDisplay(uiLight);
+				uiLightAtFront = false;
+			}
+			return;
+		}
+		if (uiLight.isPointInside(Std.int(x), Std.int(y))) {
+			if (!uiLightAtFront) {
+				uiLight.swapDisplay(uiElem);
+				uiLightAtFront = true;
+			}
+			return;
+		}
 		downX = Std.int(x);
 		downY = Std.int(y);
 		isMouseDown = true;
