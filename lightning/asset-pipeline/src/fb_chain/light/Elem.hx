@@ -5,8 +5,8 @@ import peote.view.*;
 class Elem implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@posX public var x:Int = 0;
-	@posY public var y:Int = 0;
+	@posX @formula("x+px") public var x:Int = 0;
+	@posY @formula("y+py") public var y:Int = 0;
 	
 	@varying @custom public var depth:Float = 0.0;
 	
@@ -17,8 +17,8 @@ class Elem implements Element
 	@varying @rotation public var r:Float = 0.0;
 
 	// pivot point for rotation
-	@pivotX var px:Int = 0;
-	@pivotY var py:Int = 0;
+	@pivotX @const @formula("w*0.5") var px:Int = 0;
+	@pivotY @const @formula("h*0.5") var py:Int = 0;
 
 	// tile number for animation
 	@texTile("uvAoAlpha", "normalDepth") @anim("Tile", "repeat") var tile:Int = 0;
@@ -30,15 +30,14 @@ class Elem implements Element
 
 	// --------------------------------------------------------------------------
 	
-	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, r:Float = 0.0, px:Int = 0, py:Int = 0)
+	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, tile:Int, sheet:Int)
 	{
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		this.r = r;
-		this.px = px;
-		this.py = py;
+		this.tile = tile;
+		this.sheet = sheet;
 	}
 
 }
