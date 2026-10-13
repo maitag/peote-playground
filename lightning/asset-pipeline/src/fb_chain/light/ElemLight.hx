@@ -9,6 +9,7 @@ class ElemLight implements Element
 	@varying @posY public var y:Int = 50;
 	
 	@varying @custom public var depth:Float = 0.0;
+	@varying @custom @const @formula("sin(10.0)") public var test:Float = 3.4;
 	
 	// size in pixel
 	@varying @sizeX public var size:Int = 100;

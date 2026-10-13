@@ -99,5 +99,39 @@ class Chain extends Display
 		lightFB.removeFromPeoteViewFramebuffer(peoteView);
 		lightFB.removeFramebuffer();		
 	}
+
+	public var xOffset_FB(get,set):Float;
+	function get_xOffset_FB():Float return uvAoAlphaDepthFB.xOffset;
+	function set_xOffset_FB(v:Float) return uvAoAlphaDepthFB.xOffset = normalDepthFB.xOffset = lightFB.xOffset = v;
+
+	public var yOffset_FB(get,set):Float;
+	function get_yOffset_FB():Float return uvAoAlphaDepthFB.yOffset;
+	function set_yOffset_FB(v:Float) return uvAoAlphaDepthFB.yOffset = normalDepthFB.yOffset = lightFB.yOffset = v;
+
+	public var zoom_FB(get,set):Float;
+	function get_zoom_FB():Float return uvAoAlphaDepthFB.zoom;
+	function set_zoom_FB(v:Float) return uvAoAlphaDepthFB.zoom = normalDepthFB.zoom = lightFB.zoom = v;
+
+	public function zoomAt(mouse_x:Float, mouse_y:Float, deltaY:Float, zoomstep:Float, min:Float=0.25, max:Float=20) {
+		if ( deltaY > 0) {
+			if (zoom_FB >= max) return;
+			xOffset_FB -= zoomstep * (mouse_x - xOffset_FB) - (mouse_x - xOffset_FB);
+			yOffset_FB -= zoomstep * (mouse_y - yOffset_FB) - (mouse_y - yOffset_FB);
+			zoom_FB *= zoomstep;
+		}
+		else {
+			if (zoom_FB <= min) return;
+			xOffset_FB -= (mouse_x - xOffset_FB) / zoomstep - (mouse_x - xOffset_FB);
+			yOffset_FB -= (mouse_y - yOffset_FB) / zoomstep - (mouse_y - yOffset_FB);
+			zoom_FB /= zoomstep;
+		}
+	}
+
+	public function localX_FB(x:Float):Float return uvAoAlphaDepthFB.localX(localX(x));
+	public function localY_FB(y:Float):Float return uvAoAlphaDepthFB.localY(localY(y));
+
+	public function pickElement_FB(x:Float, y:Float):Int {
+		return peoteView.getElementAt( localX(x), localY(y), uvAoAlphaDepthFB, uvAoAlphaDepthFB.iterator().next());
+	}
 	
 }

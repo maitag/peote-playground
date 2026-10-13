@@ -5,8 +5,8 @@ import peote.view.*;
 class Elem implements Element
 {
 	// position in pixel (relative to upper left corner of Display)
-	@posX @formula("x+px") public var x:Int = 0;
-	@posY @formula("y+py") public var y:Int = 0;
+	@posX public var x:Int = 0;
+	@posY public var y:Int = 0;
 	
 	@varying @custom public var depth:Float = 0.0;
 	
@@ -26,8 +26,7 @@ class Elem implements Element
 	// texture unit (sheet index!)
 	@texUnit("uvAoAlpha", "normalDepth") public var sheet:Int=2;
 
-	// var OPTIONS = { texRepeatX:true, texRepeatY:true };
-
+	var OPTIONS = { picking:true }; // texRepeatX:true, texRepeatY:true
 	// --------------------------------------------------------------------------
 	
 	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, tile:Int, sheet:Int)

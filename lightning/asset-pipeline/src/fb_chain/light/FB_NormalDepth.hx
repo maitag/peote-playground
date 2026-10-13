@@ -21,6 +21,8 @@ abstract FB_NormalDepth(Display) to Display
 				float s = sin(a);
 				float c = -cos(a);
 				mat2 m = mat2(c, -s, s, c);
+				// float c = cos(a);
+				// mat2 m = mat2(c, s, -s, c);
 				return m * v;
 			}
 
@@ -46,7 +48,14 @@ abstract FB_NormalDepth(Display) to Display
 
 					// normalize and rotate vector
 					// N = normalDepthTex.xyz;
-					N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
+					// N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
+					
+					// DIRTY FIX OF THE GLITCH IF LIGHT is not round NEAR THE FACE:
+					N = normalDepthTex.xyz * 2.0 - 1.0;
+					// if (length(N) < 0.05) N = vec3(0.0, 0.0, 1.0); // flattn it and point it upwards here
+					// else
+						N = normalize(N * 2.0 - 1.0); // <- why again (glitch is still exists but why looks better now???) ?
+
 
 					// LOOK into blender how to flip the normals if no use of EXTRA rotation here:
 					N.xy = rotate(N.xy, vRotZ.x);
@@ -66,4 +75,5 @@ abstract FB_NormalDepth(Display) to Display
 		
 		this.addProgram(program);
 	}
+
 }

@@ -58,7 +58,7 @@ class Main extends Application
 
 	public function startSample(window:Window)
 	{
-		peoteView = new PeoteView(window, Color.BLACK);
+		peoteView = new PeoteView(window, Color.GREY1);
 
 		bufferElem = new Buffer<Elem>(1024, 512);
 		bufferLight = new Buffer<ElemLight>(1024, 512);
@@ -78,14 +78,15 @@ class Main extends Application
 		Load.image( "assets/haxe.png", false, function(image:Image) haxeUVTexture.setData(image) );
 
 		// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
-		chain = new Chain(peoteView, 0, 0, 512, 512, 
+		// chain = new Chain(peoteView, 4, 4, 592, 592,
+		chain = new Chain(peoteView, 0, 0, window.width, window.height,
 			bufferElem, bufferLight, 
 			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
 		);
 
-		chain.zoom=2;
-		chain.width *= Std.int(chain.zoom);
-		chain.height*= Std.int(chain.zoom);
+		chain.zoom=1;
+		// chain.width *= Std.int(chain.zoom);
+		// chain.height*= Std.int(chain.zoom);
 
 		// #if html5 // to traverse
 		// Timer.delay(()->{peoteView.addDisplay(chain);}, 300);
@@ -131,7 +132,9 @@ class Main extends Application
 
 		peoteView.start();
 		
-		// add mouse events to move the light (to not run before it was instantiated):
+		// add mouse events:
+		window.onMouseDown.add(_onMouseDown);
+		window.onMouseUp.add(_onMouseUp);
 		window.onMouseMove.add(_onMouseMove);
 		window.onMouseWheel.add(_onMouseWheel);
 	}
@@ -143,9 +146,10 @@ class Main extends Application
 	}
 
 	function delLight(index:Int) {
+		if (lights.length == 0) return;
 		bufferLight.removeElement(lights[index]);
 		lights.splice( index, 1 );
-		ui_light.value--;
+		if (ui_light.value>0) ui_light.value--;
 	}
 
 	function addElem(x:Int, y:Int, tile:Tile) {
@@ -168,16 +172,17 @@ class Main extends Application
 
 		var sheet = Tiles.sheets[tile.sheet];
 		// var e = new Elem(x, y, sheet.width, sheet.height, sheet.gap, tile.sheet);
-		var e = new Elem(x, y, sheet.width, sheet.height, tile.anim(0).start, tile.sheet);
+		var e = new Elem(x+(sheet.width>>1), y+(sheet.height>>1), sheet.width, sheet.height, tile.anim(0).start, tile.sheet);
 		elems.push( e );
 		bufferElem.addElement(e);
 		ui_elem.value = elems.length - 1;
 	}
 
 	function delElem(index:Int) {
+		if (elems.length == 0) return;
 		bufferElem.removeElement(elems[index]);
 		elems.splice( index, 1 );
-		ui_elem.value--;
+		if (ui_elem.value>0) ui_elem.value--;
 	}
 
 	function chooseLight(index:Int) {
@@ -218,7 +223,7 @@ class Main extends Application
 	var ui_light_b = new FloatValue(0.0);
 
 	var ui_light_debug = new BoolValue(false);
-	var ui_mode = new RadioValue(0);
+	var ui_mode = new RadioValue(1);
 
 	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,
 	[
@@ -261,7 +266,7 @@ class Main extends Application
 	// var ui_elem_r = new FloatValue(0.0);
 	// var ui_elem_g = new FloatValue(0.0);
 	// var ui_elem_b = new FloatValue(0.0);
-	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 300, //Color.GREEN1,
+	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 400, //Color.GREEN1,
 	[
 		Col([
 			RadioButton("Element", 80, ui_mode, 1, (v)->{ trace(v); } )
@@ -296,90 +301,134 @@ class Main extends Application
 	var mx:Int = 0;
 	var my:Int = 0;
 	var isMouseDown = false;
-	var downX:Int = 0;
-	var downY:Int = 0;
+	var downX:Float = 0;
+	var downY:Float = 0;
 	var isShift = false;
+	var isCtrl = false;
+	var uiLightAtFront=true;
+	var dragChain = false;
+
+	function _onMouseDown (x:Float, y:Float, button:MouseButton):Void
+	{
+		if (uiElem.isPointInside(Std.int(x), Std.int(y))) {
+			if (uiLightAtFront) {
+				uiElem.swapDisplay(uiLight);
+				uiLightAtFront = false;
+				ui_mode.value = 1;
+			}
+			return;
+		}
+
+		if (uiLight.isPointInside(Std.int(x), Std.int(y))) {
+			if (!uiLightAtFront) {
+				uiLight.swapDisplay(uiElem);
+				uiLightAtFront = true;
+				ui_mode.value = 0;
+			}
+			return;
+		}
+
+		isMouseDown = true;
+		
+		var picked:Int = chain.pickElement_FB(x, y);
+		if (picked>=0) {
+			ui_elem.value = elems.indexOf(bufferElem.getElement(picked));
+			downX = elem.x - chain.localX_FB(x);
+			downY = elem.y - chain.localY_FB(y);
+		}
+		else {
+			downX = x-chain.xOffset_FB;
+			downY = y-chain.yOffset_FB;
+			dragChain = true;
+		}
+	}
+
+	function _onMouseUp (x:Float, y:Float, button:MouseButton):Void {
+		isMouseDown = false;
+		dragChain = false;
+	}
 	
-	function _onMouseMove (x:Float, y:Float):Void {
+	function _onMouseMove (x:Float, y:Float):Void
+	{
 		mx = Std.int(x);
 		my = Std.int(y);
 		if (isMouseDown) {
 			if (ui_mode.value == 0) {
-				light.x = Std.int(x/peoteView.zoom/chain.zoom);
-				light.y = Std.int(y/peoteView.zoom/chain.zoom);
+				if (lights.length == 0) return;
+				light.x = Std.int(chain.localX_FB(x));
+				light.y = Std.int(chain.localY_FB(y));
 				bufferLight.updateElement(light);
 				ui_light_x.value = light.x;
 				ui_light_y.value = light.y;
 			}
 			else {
-				elem.x = Std.int(x/peoteView.zoom/chain.zoom);
-				elem.y = Std.int(y/peoteView.zoom/chain.zoom);
-				bufferElem.updateElement(elem);
-				ui_elem_x.value = elem.x;
-				ui_elem_y.value = elem.y;
+				if (dragChain) {
+					chain.xOffset_FB = (mx - downX);
+					chain.yOffset_FB = (my - downY);
+				}
+				else {
+					if (elems.length == 0) return;
+					elem.x = Std.int(chain.localX_FB(x)+downX);
+					elem.y = Std.int(chain.localY_FB(y)+downY);
+					bufferElem.updateElement(elem);
+					ui_elem_x.value = elem.x;
+					ui_elem_y.value = elem.y;
+				}
 			}
 		}	
 	}	
 	
-	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void {
+	function _onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:MouseWheelMode):Void
+	{
 		if (uiElem.isPointInside(mx, my)||uiLight.isPointInside(mx, my)) return;
-		if (ui_mode.value == 0) {
-			if (isShift) {
-				light.size += ( (deltaY > 0) ? 1 : -1  ) * 10;
-				ui_light_size.value = light.size;
-			}
-			else {
+		if (isShift) 
+		{
+			if (ui_mode.value == 0) {
+				if (lights.length == 0) return;
 				light.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.005;
 				ui_light_depth.value = light.depth;
-			}
-			bufferLight.updateElement(light);
-		}
-		else {
-			if (isShift) {
-				elem.r += ( (deltaY > 0) ? 1 : -1  ) * 5;
-				ui_elem_r.value = elem.r;
+				bufferLight.updateElement(light);
 			}
 			else {
+				if (elems.length == 0) return;
 				elem.depth += ( (deltaY > 0) ? 1 : -1  ) * 0.005;
 				ui_elem_depth.value = elem.depth;
+				bufferElem.updateElement(elem);
 			}
-			bufferElem.updateElement(elem);
+		}
+		else if (isCtrl)
+		{
+			if (ui_mode.value == 0) {
+				if (lights.length == 0) return;
+				light.size += ( (deltaY > 0) ? 1 : -1  ) * 10;
+				ui_light_size.value = light.size;
+				bufferLight.updateElement(light);
+			}
+			else {
+				if (elems.length == 0) return;
+				elem.r += ( (deltaY > 0) ? 1 : -1  ) * 5;
+				ui_elem_r.value = elem.r;
+				bufferElem.updateElement(elem);
+			}
+		}
+		else {
+			chain.zoomAt(mx, my, deltaY, 1.2);
+			// chain.zoom_FB = Control.round( chain.zoom_FB, 1 );
 		}
 	}
-	// ----------------- MOUSE EVENTS ------------------------------
-	var uiLightAtFront=true;
-	override function onMouseDown (x:Float, y:Float, button:MouseButton):Void {
-		if (uiElem.isPointInside(Std.int(x), Std.int(y))) {
-			if (uiLightAtFront) {
-				uiElem.swapDisplay(uiLight);
-				uiLightAtFront = false;
-			}
-			return;
-		}
-		if (uiLight.isPointInside(Std.int(x), Std.int(y))) {
-			if (!uiLightAtFront) {
-				uiLight.swapDisplay(uiElem);
-				uiLightAtFront = true;
-			}
-			return;
-		}
-		downX = Std.int(x);
-		downY = Std.int(y);
-		isMouseDown = true;
-	}
-	override function onMouseUp (x:Float, y:Float, button:MouseButton):Void isMouseDown = false;
-
-	// override function onMouseMove (x:Float, y:Float):Void { }
-	// override function onMouseWheel (deltaX:Float, deltaY:Float, deltaMode:lime.ui.MouseWheelMode):Void {}
-	// override function onMouseMoveRelative (x:Float, y:Float):Void {}
 
 	// ----------------- KEYBOARD EVENTS ---------------------------
-	override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+	override function onKeyDown (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void
+	{
 		if (keyCode == KeyCode.LEFT_SHIFT) isShift = true;
+		if (keyCode == KeyCode.LEFT_CTRL) isCtrl = true;
 		else if (keyCode == KeyCode.SPACE) if (peoteView.isRun) peoteView.stop() else peoteView.start();
-	}	
-	override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void {
+	}
+
+	override function onKeyUp (keyCode:lime.ui.KeyCode, modifier:lime.ui.KeyModifier):Void
+	{
 		if (keyCode == KeyCode.LEFT_SHIFT) isShift = false;
+		if (keyCode == KeyCode.LEFT_CTRL) isCtrl = false;
 	}
 
 	// ----------------- TOUCH EVENTS ------------------------------
