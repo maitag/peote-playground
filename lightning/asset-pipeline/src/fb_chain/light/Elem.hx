@@ -21,21 +21,25 @@ class Elem implements Element
 	@pivotY @const @formula("h*0.5") var py:Int = 0;
 
 	// tile number for animation
-	@texTile("uvAoAlpha", "normalDepth") @anim("Tile", "repeat") var tile:Int = 0;
+	@texTile("uvAoAlpha", "normalDepth") @anim("Tile") public var tile:Int = 0;
 
 	// texture unit (sheet index!)
-	@texUnit("uvAoAlpha", "normalDepth") public var sheet:Int=2;
+	@texUnit("uvAoAlpha", "normalDepth") public var sheet:Int=0;
 
 	var OPTIONS = { picking:true }; // texRepeatX:true, texRepeatY:true
 	// --------------------------------------------------------------------------
 	
-	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, tile:Int, sheet:Int)
+
+	public var tileID:Int = 0;
+	public var animID:Int = 0;
+
+	public function new(x:Int = 0, y:Int = 0, w:Int = 64, h:Int = 64, tileID:Int, sheet:Int)
 	{
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		this.tile = tile;
+		this.tileID = tileID;
 		this.sheet = sheet;
 	}
 

@@ -84,29 +84,17 @@ class Main extends Application
 			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
 		);
 
-		chain.zoom=1;
-		// chain.width *= Std.int(chain.zoom);
-		// chain.height*= Std.int(chain.zoom);
+		// chain.zoom=1; chain.width *= Std.int(chain.zoom); chain.height*= Std.int(chain.zoom);
 
-		// #if html5 // to traverse
-		// Timer.delay(()->{peoteView.addDisplay(chain);}, 300);
-		// #else
 		peoteView.addDisplay(chain);
-		// #end
 		
 		// ---------- add some elements by default ----------
 		var x:Int = 10;
 		var y:Int = 10;
 
-		for (tileID in TileID)
-		{
-			trace(TileID.names[tileID]);
-
-			var tile = Tiles.tile(tileID);
-			
-			addElem(x, y, tile);
-
-			var sheet = Tiles.sheets[tile.sheet];
+		for (tileID in TileID) {
+			addElem(x, y, tileID);
+			var sheet = Tiles.sheets[Tiles.tile(tileID).sheet];
 			x += sheet.width + 10;
 			// if (x > chain.width) y += sheet.height + 10;
 			if (x > 127) {
@@ -139,50 +127,48 @@ class Main extends Application
 		window.onMouseWheel.add(_onMouseWheel);
 	}
 	
+	// -----------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------
+
 	function addLight(x:Int, y:Int, size:Int, color:Color) {
 		lights.push( new ElemLight(x, y, size, color) );
 		ui_light.value = lights.length - 1;
 		bufferLight.addElement(light);
+		chooseLight(ui_light.value);
+	}
+
+	function addElem(x:Int, y:Int, tileID:TileID) {
+		var tile = Tiles.tile(tileID);
+		var sheet = Tiles.sheets[tile.sheet];
+
+		var e = new Elem(x+(sheet.width>>1), y+(sheet.height>>1), sheet.width, sheet.height, tileID, tile.sheet);
+		
+		e.animID = 0;
+		e.tile   =  tile.anim( tile.animID[0] ).start;
+		
+		elems.push( e );
+		
+		bufferElem.addElement(e);
+		ui_elem.value = elems.length - 1;
+
+		chooseElem(ui_elem.value);
 	}
 
 	function delLight(index:Int) {
-		if (lights.length == 0) return;
+		if (lights.length == 1) return; // keep one at least
 		bufferLight.removeElement(lights[index]);
 		lights.splice( index, 1 );
-		if (ui_light.value>0) ui_light.value--;
-	}
-
-	function addElem(x:Int, y:Int, tile:Tile) {
-		/*for (animID in tile.animID)
-			{
-				trace("  "+ AnimID.names[animID], tile.sheet, tile.anim(animID).start, tile.anim(animID).end);
-
-				var e = new Elem(x, y, sheet.width, sheet.height, sheet.gap, tile.sheet);
-				
-				// TODO: add element fun
-				var anim = tile.anim(animID);
-				e.animTile(anim.start, anim.end);
-				e.timeTile(0, (anim.end - anim.start + 1)/Tiles.FPS);
-		
-				bufferElem.addElement(e);
-
-				x += sheet.width + 10;
-				if (x > chain.width) y += sheet.height + 10;
-			}*/
-
-		var sheet = Tiles.sheets[tile.sheet];
-		// var e = new Elem(x, y, sheet.width, sheet.height, sheet.gap, tile.sheet);
-		var e = new Elem(x+(sheet.width>>1), y+(sheet.height>>1), sheet.width, sheet.height, tile.anim(0).start, tile.sheet);
-		elems.push( e );
-		bufferElem.addElement(e);
-		ui_elem.value = elems.length - 1;
+		ui_light.value--;
+		chooseLight(ui_light.value);
 	}
 
 	function delElem(index:Int) {
-		if (elems.length == 0) return;
+		if (elems.length == 1) return; // keep one at least
 		bufferElem.removeElement(elems[index]);
 		elems.splice( index, 1 );
-		if (ui_elem.value>0) ui_elem.value--;
+		ui_elem.value--;
+		chooseElem(ui_elem.value);
 	}
 
 	function chooseLight(index:Int) {
@@ -207,6 +193,27 @@ class Main extends Application
 		// ui_elem_r.value = elem.color.rF;
 		// ui_elem_g.value = elem.color.gF;
 		// ui_elem_b.value = elem.color.bF;
+
+		chooseElemAnim(elem.animID);
+	}
+
+	function chooseElemAnim(index:Int) {
+		var tile = Tiles.tile(elem.tileID);
+
+		if (index < 0) index = tile.animID.length-1;
+		else if (index > tile.animID.length-1) index = 0;
+
+		elem.animID = index;
+		ui_elem_animName.value = AnimID.names[ tile.animID[index] ];
+		ui_elem_anim.value = index;
+	}
+
+	function playElemAnim() {
+		var tile = Tiles.tile(elem.tileID);
+		var anim = tile.anim(tile.animID[elem.animID]);
+		elem.animTile(anim.start, anim.end);
+		elem.timeTile(peoteView.time, (anim.end - anim.start + 1)/Tiles.FPS);
+		bufferElem.updateElement(elem);
 	}
 
 	// -----------------------------------------------------------
@@ -266,6 +273,9 @@ class Main extends Application
 	// var ui_elem_r = new FloatValue(0.0);
 	// var ui_elem_g = new FloatValue(0.0);
 	// var ui_elem_b = new FloatValue(0.0);
+	var ui_elem_anim = new IntValue(0);
+	var ui_elem_animName = new StringValue("");
+	
 	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 400, //Color.GREEN1,
 	[
 		Col([
@@ -287,9 +297,18 @@ class Main extends Application
 				Col([Label("r", 10), InputFloat(Right, ui_elem_r, (v:Float) ->{ elem.r=v; bufferElem.updateElement(elem); })])
 			])
 		]),
-	].concat([ for (id in TileID)
-		Button( TileID.names[id], 24, ()->{
-			addElem(150, 150, Tiles.tile(id));
+		Col([
+			Button("play",44, ()->{playElemAnim();} ),
+		]),
+		Col([
+			Button  ("<", 24, ()->chooseElemAnim(ui_elem_anim.value-1) ),
+			OutputString(109, Center, ui_elem_animName),
+			Button  (">", 24, ()->chooseElemAnim(ui_elem_anim.value+1) )
+		]),
+		Label("add:")
+	].concat([ for (tileID in TileID)
+		Button( TileID.names[tileID], 24, ()->{
+			addElem(150, 150, tileID);
 		})
 	]));
 
@@ -332,7 +351,9 @@ class Main extends Application
 		
 		var picked:Int = chain.pickElement_FB(x, y);
 		if (picked>=0) {
-			ui_elem.value = elems.indexOf(bufferElem.getElement(picked));
+			// ui_elem.value = elems.indexOf(bufferElem.getElement(picked));
+			// ui_elem_animName.value = AnimID.names[ elem.animID ];
+			chooseElem(elems.indexOf(bufferElem.getElement(picked)));
 			downX = elem.x - chain.localX_FB(x);
 			downY = elem.y - chain.localY_FB(y);
 		}

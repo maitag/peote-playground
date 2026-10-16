@@ -51,6 +51,7 @@ abstract FB_NormalDepth(Display) to Display
 					// N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
 					
 					// DIRTY FIX OF THE GLITCH IF LIGHT is not round NEAR THE FACE:
+					// TODO: scale the depth before normalize! (look at blender and mapping there!)
 					N = normalDepthTex.xyz * 2.0 - 1.0;
 					// if (length(N) < 0.05) N = vec3(0.0, 0.0, 1.0); // flattn it and point it upwards here
 					// else
