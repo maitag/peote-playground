@@ -43,31 +43,34 @@ abstract FB_NormalDepth(Display) to Display
 				{
 					// TODO: scale factor in depend of size, by split the depth component or by extra attribute!
 					gl_FragDepth = ( normalDepthTex.a / 3.0 + depth);
-					// gl_FragDepth = ( normalDepthTex.a + depth);
+					// gl_FragDepth = ( u_debug0 + depth);
 					
 
 					// normalize and rotate vector
-					// N = normalDepthTex.xyz;
-					// N = normalize(normalDepthTex.xyz * 2.0 - 1.0);
-					
-					// DIRTY FIX OF THE GLITCH IF LIGHT is not round NEAR THE FACE:
-					// TODO: scale the depth before normalize! (look at blender and mapping there!)
 					N = normalDepthTex.xyz * 2.0 - 1.0;
+					
 					// if (length(N) < 0.05) N = vec3(0.0, 0.0, 1.0); // flattn it and point it upwards here
-					// else
-						N = normalize(N * 2.0 - 1.0); // <- why again (glitch is still exists but why looks better now???) ?
-
-
-					// LOOK into blender how to flip the normals if no use of EXTRA rotation here:
-					N.xy = rotate(N.xy, vRotZ.x);
+					// N.z = N.z * u_debug0;
+					
+					// LOOK into blender how to flip the normals if use of EXTRA rotation here:
+					// N.xy = rotate(N.xy, vRotZ.x);
+										
+					N = normalize(N);
 				}
-				else gl_FragDepth =  1.0; 
+				else gl_FragDepth = 1.0; 
 
 
 				// return vec4(N.x, N.y, N.z, normalDepthTex.a);
-				return vec4(N.x, N.y, N.z, gl_FragDepth);
+				// return vec4(N.x,N.z,N.y, gl_FragDepth);
+				return vec4(N, gl_FragDepth);
 			}
-		");
+		",
+		[
+			"u_debug0"=>Main.u_debug0,
+			"u_debug1"=>Main.u_debug1,
+			"u_debug2"=>Main.u_debug2,
+		]
+		);
 				
 		program.setColorFormula( "normalDepthAlpha(normalDepth, depth)", true);
 		

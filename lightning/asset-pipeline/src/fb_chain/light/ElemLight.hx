@@ -21,11 +21,12 @@ class ElemLight implements Element
 	//color
 	@color public var color:Color;
 
-	public function new(x:Int = 50, y:Int = 50, size:Int = 100, color:Int = Color.WHITE) {
+	public function new(x:Int = 50, y:Int = 50, size:Int = 100, color:Int = Color.WHITE, depth:Float = 0.0) {
 		this.x = x;
 		this.y = y;
 		this.size = size;
 		this.color = color;
+		this.depth = depth;
 	}
 
 }

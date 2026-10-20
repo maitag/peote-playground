@@ -1,5 +1,6 @@
 package;
 
+import peote.view.Uniform.UniformFloat;
 import asset.Tile;
 import asset.Sheet;
 import haxe.CallStack;
@@ -56,6 +57,11 @@ class Main extends Application
 	var lights = new Array<ElemLight>();
 	var light(get, never):ElemLight; function get_light() return lights[ui_light.value];
 
+	// debug uniforms
+	static public var u_debug0 = new UniformFloat(1.0);
+	static public var u_debug1 = new UniformFloat(1.0);
+	static public var u_debug2 = new UniformFloat(1.0);
+
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.GREY1);
@@ -102,14 +108,19 @@ class Main extends Application
 				x = 0;
 			}
 		}
-
-		chooseElem(0);
+		chooseElem(9);
+		// for (tileID in TileID) trace(TileID.names[tileID]);
 		
 		// ---------- add lights -----------
 		addLight(10, 10, 256, Color.YELLOW);
 		addLight(100, 100, 256, Color.RED);
 		addLight(200, 150, 256, Color.BLUE);//0xffff66ff);
-		chooseLight(2);
+		addLight(100, 385, 360, Color.ORANGE);
+
+		//debug
+		addLight(49, 205, 430, Color.WHITE, 0.195); ui_mode.value=0;
+		
+		chooseLight(4);
 
 		// ----------- ui-control -----------
 		peoteView.addDisplay( uiElem = uiElemControl() );
@@ -131,8 +142,8 @@ class Main extends Application
 	// -----------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------
 
-	function addLight(x:Int, y:Int, size:Int, color:Color) {
-		lights.push( new ElemLight(x, y, size, color) );
+	function addLight(x:Int, y:Int, size:Int, color:Color, depth:Float = 0.0) {
+		lights.push( new ElemLight(x, y, size, color, depth) );
 		ui_light.value = lights.length - 1;
 		bufferLight.addElement(light);
 		chooseLight(ui_light.value);
@@ -234,6 +245,9 @@ class Main extends Application
 
 	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,
 	[
+		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug0.value=v;trace(v);}),
+		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug1.value=v;trace(v);}),
+		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug2.value=v;trace(v);}),
 		Col([
 			RadioButton("Light", 80, ui_mode, 0, (v)->{ trace(v); } )
 			// ,Checkbox("debug", 60, ui_light_debug, (v)->{ trace(v); } ) // <- LATER ;:) -> into buffet la grAnde .)

@@ -41,7 +41,7 @@ class Chain extends Display
 		
 		// ------ render normals together to use for lightning -------
 		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures);
-		normalDepth = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
+		normalDepth = new Texture(w, h, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 
 		// ------ render lights while using normalDepthFB texture -----
 		lightFB = new FB_Light(w, h, bufferLight, normalDepth);
