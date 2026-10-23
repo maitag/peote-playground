@@ -12,7 +12,7 @@ import peote.view.math.Vec3;
 import peote.view.math.Vec3i;
 import peote.view.Uniform.UniformVec3;
 import peote.view.Uniform.UniformVec3i;
-import peote.view.Uniform.UniformUInt;
+import peote.view.Uniform.UniformInt;
 
 import peote.ui.PeoteUIDisplay;
 import peote.ui.config.HAlign;
@@ -250,7 +250,7 @@ class Main extends Application
 	// debug uniforms
 	static public var u_debug_rotate = new UniformVec3( new Vec3(0,0,0) );
 	static public var u_debug_invert = new UniformVec3i( new Vec3i(0,0,0) );
-	static public var u_debug_swap = new UniformUInt(0);
+	static public var u_debug_swap = new UniformInt(0);
 
 
 	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,

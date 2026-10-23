@@ -52,15 +52,15 @@ abstract FB_NormalDepth(Display) to Display
 					N = rotateY(N, u_debug_rotate.y);
 					N = rotateZ(N, u_debug_rotate.z);
 					
-					if (u_debug_swap==1u) N.xyz = N.xzy;
-					if (u_debug_swap==2u) N.xyz = N.yxz;
-					if (u_debug_swap==3u) N.xyz = N.yzx;
-					if (u_debug_swap==4u) N.xyz = N.zxy;
-					if (u_debug_swap==5u) N.xyz = N.zyx;
+					if (u_debug_swap==1) N.xyz = N.xzy;
+					if (u_debug_swap==2) N.xyz = N.yxz;
+					if (u_debug_swap==3) N.xyz = N.yzx;
+					if (u_debug_swap==4) N.xyz = N.zxy;
+					if (u_debug_swap==5) N.xyz = N.zyx;
 					
-					if (u_debug_invert.x==1u) N.x=-N.x;
-					if (u_debug_invert.y==1u) N.y=-N.y;
-					if (u_debug_invert.z==1u) N.z=-N.z;
+					if (u_debug_invert.x==1) N.x=-N.x;
+					if (u_debug_invert.y==1) N.y=-N.y;
+					if (u_debug_invert.z==1) N.z=-N.z;
 
 					// N = normalize(N); // <----- is NEED for OVERNORMALIZATION ? lol^^
 					
