@@ -1,8 +1,5 @@
 package;
 
-import peote.view.Uniform.UniformFloat;
-import asset.Tile;
-import asset.Sheet;
 import haxe.CallStack;
 import haxe.Timer;
 
@@ -11,12 +8,20 @@ import lime.graphics.Image;
 import lime.ui.*;
 
 import peote.view.*;
+import peote.view.math.Vec3;
+import peote.view.math.Vec3i;
+import peote.view.Uniform.UniformVec3;
+import peote.view.Uniform.UniformVec3i;
+import peote.view.Uniform.UniformUInt;
+
 import peote.ui.PeoteUIDisplay;
 import peote.ui.config.HAlign;
 import peote.ui.tool.Control;
 import peote.ui.tool.ControlItem;
 import peote.ui.tool.ControlValues;
 
+import asset.Tile;
+import asset.Sheet;
 import asset.Util;
 import asset.generated.Tiles;
 import asset.generated.Tiles.TileID;
@@ -56,11 +61,6 @@ class Main extends Application
 	// lights into control
 	var lights = new Array<ElemLight>();
 	var light(get, never):ElemLight; function get_light() return lights[ui_light.value];
-
-	// debug uniforms
-	static public var u_debug0 = new UniformFloat(1.0);
-	static public var u_debug1 = new UniformFloat(1.0);
-	static public var u_debug2 = new UniformFloat(1.0);
 
 	public function startSample(window:Window)
 	{
@@ -118,7 +118,7 @@ class Main extends Application
 		addLight(100, 385, 360, Color.ORANGE);
 
 		//debug
-		addLight(49, 205, 430, Color.WHITE, 0.195); ui_mode.value=0;
+		addLight(49, 205, 430, Color.WHITE, 0.01); ui_mode.value=0;
 		
 		chooseLight(4);
 
@@ -230,6 +230,7 @@ class Main extends Application
 	// -----------------------------------------------------------
 	// ----------------- UI CONTROL ------------------------------
 	// -----------------------------------------------------------
+
 	var ui_light = new IntValue(0);
 	var ui_light_x = new IntValue(0);
 	var ui_light_y = new IntValue(0);
@@ -240,14 +241,20 @@ class Main extends Application
 	var ui_light_g = new FloatValue(0.0);
 	var ui_light_b = new FloatValue(0.0);
 
-	var ui_light_debug = new BoolValue(false);
+	// var ui_light_debug = new BoolValue(false);
+
 	var ui_mode = new RadioValue(1);
+
+	var ui_debug_swap = new RadioValue(0);
+
+	// debug uniforms
+	static public var u_debug_rotate = new UniformVec3( new Vec3(0,0,0) );
+	static public var u_debug_invert = new UniformVec3i( new Vec3i(0,0,0) );
+	static public var u_debug_swap = new UniformUInt(0);
+
 
 	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,
 	[
-		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug0.value=v;trace(v);}),
-		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug1.value=v;trace(v);}),
-		// Slider("", 70, new FloatValue(0), -180.0, 180.0, (v)->{u_debug2.value=v;trace(v);}),
 		Col([
 			RadioButton("Light", 80, ui_mode, 0, (v)->{ trace(v); } )
 			// ,Checkbox("debug", 60, ui_light_debug, (v)->{ trace(v); } ) // <- LATER ;:) -> into buffet la grAnde .)
@@ -276,6 +283,34 @@ class Main extends Application
 				Col([Label("b", 10), Slider("", 70, ui_light_b, 0.0, 1.0, (v)->{ light.color.bF=v; bufferLight.updateElement(light);} )])
 			]),
 		]),
+
+
+		Separator,
+
+		// --- TO DEBUG NORMALE MAP ---
+		Label("DEBUG FACE NORMALES:"),
+		Col( [
+			RadioButton("xyz", 36, ui_debug_swap, 0, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("xzy", 36, ui_debug_swap, 1, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("yxz", 36, ui_debug_swap, 2, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("yzx", 36, ui_debug_swap, 3, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("zxy", 36, ui_debug_swap, 4, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("zyx", 36, ui_debug_swap, 5, (v)->{ u_debug_swap.value = v; } ),
+		]),
+		Col( [
+			Checkbox("x", 30, new BoolValue(false), (v)->{ u_debug_invert.value.x = v ? 1 : 0; } ),
+			Slider("", 170, new FloatValue(0), -180.0, 180.0, (v)->{u_debug_rotate.value.x = v; trace("rotate x:"+v);}),
+		]),
+		Col( [
+			Checkbox("y", 30, new BoolValue(false), (v)->{ u_debug_invert.value.y = v ? 1 : 0; } ),
+			Slider("", 170, new FloatValue(0), -180.0, 180.0, (v)->{u_debug_rotate.value.y = v; trace("rotate y:"+v);}),
+		]),
+		Col( [
+			Checkbox("z", 30, new BoolValue(false), (v)->{ u_debug_invert.value.z = v ? 1 : 0; } ),
+			Slider("", 170, new FloatValue(0), -180.0, 180.0, (v)->{u_debug_rotate.value.z = v; trace("rotate z:"+v);}),
+		])
+
+
 	]);
 		
 	// -----------------------------------------------------------------

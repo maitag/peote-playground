@@ -41,8 +41,9 @@ class Chain extends Display
 		
 		// ------ render normals together to use for lightning -------
 		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures);
+		// normalDepth = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 		normalDepth = new Texture(w, h, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
-
+		
 		// ------ render lights while using normalDepthFB texture -----
 		lightFB = new FB_Light(w, h, bufferLight, normalDepth);
 		light = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
@@ -62,7 +63,10 @@ class Chain extends Display
 		program.setTexture(uvAoAlphaDepth, "uvAoAlphaDepth", false);
 		program.setTexture(light, "light", false);
 		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
-		// program.setColorFormula( "vec4( vec3(light/1.5), 1.0)");
+		// program.setColorFormula( "vec4( vec3(light), 1.0)");
+		
+		// program.setTexture(normalDepth, "normalDepth", false);
+		// program.setColorFormula("normalDepth");
 				
 		addProgram(program);
 
