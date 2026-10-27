@@ -6,7 +6,7 @@ import peote.view.intern.BufferInterface;
 @:forward
 abstract FB_UvAoAlphaDepth(Display) to Display
 {
-	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTextures:Array<Texture>, uvAoAlphaTextures:Array<Texture>, haxeUVTexture:Texture)
+	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTextures:Array<Texture>, uvAoAlphaTextures:Array<Texture>, haxeUVTexture:Texture, usePackedNormals:Bool)
 	{	
 		this = new Display(0, 0, w, h);
 		
@@ -18,12 +18,14 @@ abstract FB_UvAoAlphaDepth(Display) to Display
 		program.setTexture(haxeUVTexture, "haxeUV");
 		
 		program.injectIntoFragmentShader(
-		"	
-			vec4 uvAoAlphaDepth( vec4 normalDepthTexture, vec4 uvAoAlphaTexture, int haxeUVTextureID, float depth)
+		'	
+			vec4 uvAoAlphaDepth( vec4 normalDepthTex, vec4 uvAoAlphaTexture, int haxeUVTextureID, float depth)
 			{
 				// z-buffer
-				if (normalDepthTexture.a < 1.0) gl_FragDepth = ( normalDepthTexture.a / 3.0 + depth);
-				// if (normalDepthTexture.a < 1.0) gl_FragDepth = ( normalDepthTexture.a + depth);
+				${(usePackedNormals)
+					? "if (normalDepthTex.b < 1.0) gl_FragDepth = ( depth + normalDepthTex.b * 0.5 + 0.5); // unpack into range [0.5, 1.0]"
+					: "if (normalDepthTex.a < 1.0) gl_FragDepth = ( depth + normalDepthTex.a); // unpack into range [0.5, 1.0]"
+				}
 				else gl_FragDepth =  1.0;
 				
 				vec4 uvTex = getTextureColor( haxeUVTextureID, vec2(uvAoAlphaTexture.r, uvAoAlphaTexture.g) );
@@ -39,7 +41,7 @@ abstract FB_UvAoAlphaDepth(Display) to Display
 				// testing uv-map:
 				// return vec4( uvAoAlphaTexture.r, uvAoAlphaTexture.g, 0.0, uvAoAlphaTexture.a );
 			}
-		");
+		');
 		
 		program.setColorFormula( "uvAoAlphaDepth(normalDepth, uvAoAlpha, haxeUV_ID, depth)", true);
 		

@@ -10,6 +10,7 @@ import lime.ui.*;
 import peote.view.*;
 import peote.view.math.Vec3;
 import peote.view.math.Vec3i;
+import peote.view.Uniform.UniformFloat;
 import peote.view.Uniform.UniformVec3;
 import peote.view.Uniform.UniformVec3i;
 import peote.view.Uniform.UniformInt;
@@ -62,6 +63,9 @@ class Main extends Application
 	var lights = new Array<ElemLight>();
 	var light(get, never):ElemLight; function get_light() return lights[ui_light.value];
 
+	var useFloatNormals = true; // use float Texture for normal pass	
+	var usePackedNormals = false; // use packed normales	
+
 	public function startSample(window:Window)
 	{
 		peoteView = new PeoteView(window, Color.GREY1);
@@ -77,7 +81,9 @@ class Main extends Application
 			powerOfTwo: false
 		};
 
-		var normalDepthTextures = Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig, false);
+		var normalDepthTextures = (usePackedNormals)
+			? Util.loadTextures(Tiles.sheets, "normalPack_depth", textureConfig, false)
+			: Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig, false);
 		var uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig, false);
 
 		var haxeUVTexture = new Texture(256, 256, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
@@ -87,7 +93,9 @@ class Main extends Application
 		// chain = new Chain(peoteView, 4, 4, 592, 592,
 		chain = new Chain(peoteView, 0, 0, window.width, window.height,
 			bufferElem, bufferLight, 
-			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture	
+			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture,
+			useFloatNormals, // use float Texture for normal pass	
+			usePackedNormals, // use packed normales
 		);
 
 		// chain.zoom=1; chain.width *= Std.int(chain.zoom); chain.height*= Std.int(chain.zoom);
@@ -118,7 +126,7 @@ class Main extends Application
 		addLight(100, 385, 360, Color.ORANGE);
 
 		//debug
-		addLight(49, 205, 430, Color.WHITE, 0.01); ui_mode.value=0;
+		addLight(49, 205, 230, Color.WHITE, 0.0); ui_mode.value=0;
 		
 		chooseLight(4);
 
@@ -310,7 +318,6 @@ class Main extends Application
 			Slider("", 170, new FloatValue(0), -180.0, 180.0, (v)->{u_debug_rotate.value.z = v; trace("rotate z:"+v);}),
 		])
 
-
 	]);
 		
 	// -----------------------------------------------------------------
@@ -359,7 +366,9 @@ class Main extends Application
 		Button( TileID.names[tileID], 24, ()->{
 			addElem(150, 150, tileID);
 		})
-	]));
+	]).concat([Separator])
+	
+	);
 
 
 	// ------------------------------------------------------------

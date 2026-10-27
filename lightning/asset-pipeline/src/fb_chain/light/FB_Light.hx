@@ -6,7 +6,7 @@ import peote.view.intern.BufferInterface;
 @:forward
 abstract FB_Light(Display) to Display
 {
-	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTexture:Texture)
+	public function new(w:Int, h:Int, buffer:BufferInterface, normalDepthTexture:Texture, useFloatNormals:Bool)
 	{	
 		this = new Display(0, 0, w, h);
 		
@@ -17,6 +17,8 @@ abstract FB_Light(Display) to Display
 		
 		// for HTML5 (without it can not link the UBOs between vertex and fragmentshader)
 		if (PeoteGL.Version.isES3) program.setFragmentFloatPrecision("high");
+		// program.setFragmentFloatPrecision("high");
+		// program.setFragmentSamplerPrecision("high");
 		
 		program.injectIntoFragmentShader('
 			${ (PeoteGL.Version.isES3) ? // UBOs for HTML5
@@ -51,30 +53,48 @@ abstract FB_Light(Display) to Display
 				
 				// ----- fetch pixel from beforehand FB_NormalDepth pass ------
 				// vec4 normalTextureRGBZ = getTextureColor( normalDepthID, (vPos + (vTexCoord - 0.5)*vSize)/texRes );
+
                	vec4 normalTextureRGBZ = getTextureColor( normalDepthID, (displayOffset + vPos + (vTexCoord - 0.5)*vSize)/texRes );				
-				normalTextureRGBZ = normalTextureRGBZ * 2.0 - 1.0; // <----- comment this out for FLOAT_RGBA fbo-textureformat
-               					
+				${(useFloatNormals) ? "" : "
+					normalTextureRGBZ = normalTextureRGBZ * 2.0 - 1.0; // unpack for RGBA fbo-textureformat
+					// normalTextureRGBZ.xyz = normalTextureRGBZ.xyz * 2.0 - 1.0;
+					// normalTextureRGBZ.a = normalTextureRGBZ.a * 2.0 - 1.0;
+					"
+				}
+
+
 				// ----- light-vector from light-elements origin to position of normal-map ones
-				vec3 light = vec3(  0.5 - vTexCoord , depth - normalTextureRGBZ.a );
+				// vec3 light = vec3( 0.5 - vTexCoord , depth - normalTextureRGBZ.a );
+				vec3 light = vec3( (0.5 - vTexCoord) , (depth*2.0 - normalTextureRGBZ.a) * 0.5 );
 				
 					
 				// ----- light falloff (attenuation) ----
 				float D = length(light);
 				// float attenuation = 1.0 / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) );
+				// float attenuation = 1.0 / ( falloff.x + (falloff.y * D) + (falloff.z * D * D) + 0.01); // to avoid division by 0.0
 				// float attenuation = clamp(1.0 - D * D / (0.5 * 0.5), 0.0, 1.0); attenuation *= attenuation;
 				float attenuation = max(1.0 - D * D / (0.25), 0.0); attenuation *= attenuation;
-				// attenuation = 1.0; // <- debug
+				//  attenuation = 1.0; // <- debug
 
 
 				// Face NORMALE
-				vec3 N = normalTextureRGBZ.xyz;  // N = normalize(N); // N = vec3(0.0, 0.0, -1.0); // <- to debug
-				
+				vec3 N = normalTextureRGBZ.xyz; // N = vec3(0.0, 0.0, -1.0); // <- to debug
+
 				// Light NORMALE
 				vec3 L = normalize(light);
 
-				// DIFFUSE (dot product to determine diffuse by light and face-normal direction)
+				// DIFFUSE Lambertian Shading (dot product to determine diffuse by light and face-normal direction)
 				vec3 diffuse = lightColor * max( dot(N, L),  0.0); // TODO: try 0.1 for more into ambient-space!
 				
+				// edge softening
+				// float NdotV = max(dot(N, vec3(0.0, 0.0, -1.0) ), 0.0);
+				// float edgeSoftener = smoothstep(0.0, 0.01, NdotV);
+				// diffuse *= edgeSoftener;
+
+
+				// TODO: grieseln entfernen wenn licht von hinten
+				// if (length(N) < 0.001) diffuse=vec3(1.0,0.0,0.0);
+
     
 				// TODO: ------ phong specular -------				
 				// vec3 LR = reflect(-L,N); // <- reflect the light vector at surface normale
@@ -89,6 +109,7 @@ abstract FB_Light(Display) to Display
 				
 				// return vec4(vec3(normalTextureRGBZ.a), 1.0); // to test the depth-map
 				// return vec4(normalTextureRGBZ.xyz, 1.0); // to test that normal-map is same as inside of blender
+				// return vec4(N, 1.0); // to test that normal-map is same as inside of blender
 				// return vec4(vTexCoord.x*2.0-1.0 ,0.0,vTexCoord.y*2.0-1.0 , 1.0); // to test light-space
 				// return vec4(vTexCoord.x-0.5 ,0.0,vTexCoord.y-0.5 , 1.0); // to test light-space
 				return vec4(intensity, 1.0);

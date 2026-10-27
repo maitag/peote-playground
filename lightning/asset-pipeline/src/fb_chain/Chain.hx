@@ -27,7 +27,8 @@ class Chain extends Display
 	
 	public function new(peoteView:PeoteView, x:Int, y:Int, w:Int, h:Int, 
 		bufferElem:BufferInterface, bufferLight:BufferInterface,
-		normalDepthTextures:Array<Texture>, uvAoAlphaTextures:Array<Texture>, haxeUVTexture:Texture)
+		normalDepthTextures:Array<Texture>, uvAoAlphaTextures:Array<Texture>, haxeUVTexture:Texture,
+		useFloatNormalPass=false, usePackedNormals=false)
 	{	
 		super(x, y, w, h); // na S U P E R *lol
 		
@@ -36,16 +37,20 @@ class Chain extends Display
 		//-------------------------------------------------
 
 		// --- render uv-mapped, ao-prelightned with alpha and in depth ---
-		uvAoAlphaDepthFB = new FB_UvAoAlphaDepth(w, h, bufferElem, normalDepthTextures, uvAoAlphaTextures, haxeUVTexture);
+		uvAoAlphaDepthFB = new FB_UvAoAlphaDepth(w, h, bufferElem, normalDepthTextures, uvAoAlphaTextures, haxeUVTexture, usePackedNormals);
 		uvAoAlphaDepth = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 		
 		// ------ render normals together to use for lightning -------
-		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures);
-		// normalDepth = new Texture(w, h, 1, {format:TextureFormat.FLOAT_RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
-		normalDepth = new Texture(w, h, 1, {format:TextureFormat.RGBA, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
-		
+		normalDepthFB = new FB_NormalDepth(w, h, bufferElem, normalDepthTextures, useFloatNormalPass, usePackedNormals);
+		normalDepth = new Texture(w, h, 1, {
+				format:(useFloatNormalPass) ? TextureFormat.FLOAT_RGBA : TextureFormat.RGBA,
+				smoothExpand: false,
+				smoothShrink: false,
+				powerOfTwo: false
+		});
+
 		// ------ render lights while using normalDepthFB texture -----
-		lightFB = new FB_Light(w, h, bufferLight, normalDepth);
+		lightFB = new FB_Light(w, h, bufferLight, normalDepth, useFloatNormalPass);
 		light = new Texture(w, h, 1, {format:TextureFormat.RGB, smoothExpand: false, smoothShrink: false, powerOfTwo: false} );
 
 
@@ -62,9 +67,11 @@ class Chain extends Display
 		program.setFormula("h", Util.toFloatString(h), false);
 		program.setTexture(uvAoAlphaDepth, "uvAoAlphaDepth", false);
 		program.setTexture(light, "light", false);
+	
 		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
 		// program.setColorFormula( "vec4( vec3(light), 1.0)");
 		
+		// program.setTexture(normalDepthTextures[0], "normalDepth", false);
 		// program.setTexture(normalDepth, "normalDepth", false);
 		// program.setColorFormula("normalDepth");
 				
