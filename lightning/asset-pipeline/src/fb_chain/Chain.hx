@@ -68,7 +68,13 @@ class Chain extends Display
 		program.setTexture(uvAoAlphaDepth, "uvAoAlphaDepth", false);
 		program.setTexture(light, "light", false);
 	
-		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
+		program.injectIntoFragmentShader([
+			"u_debug_chainCompose"=>Main.u_debug_chainCompose
+		],false
+		);
+
+		// program.setColorFormula( "vec4( vec3(uvAoAlphaDepth/1.5 + light/1.5), uvAoAlphaDepth.a)");
+		program.setColorFormula( "vec4( vec3(uvAoAlphaDepth*u_debug_chainCompose.x + light*u_debug_chainCompose.y), uvAoAlphaDepth.a)");
 		// program.setColorFormula( "vec4( vec3(light), 1.0)");
 		
 		// program.setTexture(normalDepthTextures[0], "normalDepth", false);

@@ -33,7 +33,7 @@ abstract FB_UvAoAlphaDepth(Display) to Display
 				// global mapping for testing purpose
 				// vec4 uvTex = getTextureColor( haxeUVTextureID, vec2(vTexCoord.x, vTexCoord.y) );
 
-				// return vec4( uvTex.rgb * uvAoAlphaTexture.b, uvTex.a * uvAoAlphaTexture.a );
+				// return vec4( uvTex.rgb*u_debug_chainCompose.w * uvAoAlphaTexture.b*u_debug_chainCompose.z, uvTex.a * uvAoAlphaTexture.a );
 				// return vec4( vec3(1.0,1.0,1.0) * uvAoAlphaTexture.b, uvAoAlphaTexture.a );
 				return vec4( vec3(0.1,0.1,0.1) * uvAoAlphaTexture.b, uvAoAlphaTexture.a );
 				// return vec4( vec3(0.0,0.0,0.0), uvAoAlphaTexture.a );
@@ -41,7 +41,11 @@ abstract FB_UvAoAlphaDepth(Display) to Display
 				// testing uv-map:
 				// return vec4( uvAoAlphaTexture.r, uvAoAlphaTexture.g, 0.0, uvAoAlphaTexture.a );
 			}
-		');
+		',
+		[
+			"u_debug_chainCompose"=>Main.u_debug_chainCompose
+		]
+);
 		
 		program.setColorFormula( "uvAoAlphaDepth(normalDepth, uvAoAlpha, haxeUV_ID, depth)", true);
 		

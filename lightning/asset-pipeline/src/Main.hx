@@ -1,7 +1,6 @@
 package;
 
 import haxe.CallStack;
-import haxe.Timer;
 
 import lime.app.Application;
 import lime.graphics.Image;
@@ -9,20 +8,22 @@ import lime.ui.*;
 
 import peote.view.*;
 import peote.view.math.Vec3;
+import peote.view.math.Vec4;
 import peote.view.math.Vec3i;
-import peote.view.Uniform.UniformFloat;
+// import peote.view.Uniform.UniformFloat;
 import peote.view.Uniform.UniformVec3;
+import peote.view.Uniform.UniformVec4;
 import peote.view.Uniform.UniformVec3i;
 import peote.view.Uniform.UniformInt;
 
 import peote.ui.PeoteUIDisplay;
-import peote.ui.config.HAlign;
+// import peote.ui.config.HAlign;
 import peote.ui.tool.Control;
 import peote.ui.tool.ControlItem;
 import peote.ui.tool.ControlValues;
 
-import asset.Tile;
-import asset.Sheet;
+// import asset.Tile;
+// import asset.Sheet;
 import asset.Util;
 import asset.generated.Tiles;
 import asset.generated.Tiles.TileID;
@@ -51,7 +52,6 @@ class Main extends Application
 	var chain:Chain;
 	
 	// buffers
-	// var bufferTest = new Buffer<Elem>(111);
 	var bufferElem:Buffer<Elem>;
 	var bufferLight:Buffer<ElemLight>;
 
@@ -63,8 +63,12 @@ class Main extends Application
 	var lights = new Array<ElemLight>();
 	var light(get, never):ElemLight; function get_light() return lights[ui_light.value];
 
-	var useFloatNormals = true; // use float Texture for normal pass	
-	var usePackedNormals = false; // use packed normales	
+	// asset textures
+	var normalDepthTextures:Array<Texture>;
+	var uvAoAlphaTextures:Array<Texture>;
+
+	var useFloatNormals = false; // use float Texture for normal pass	
+	var usePackedNormals = false; // use packed normales
 
 	public function startSample(window:Window)
 	{
@@ -81,16 +85,15 @@ class Main extends Application
 			powerOfTwo: false
 		};
 
-		var normalDepthTextures = (usePackedNormals)
+		normalDepthTextures = (usePackedNormals)
 			? Util.loadTextures(Tiles.sheets, "normalPack_depth", textureConfig, false)
 			: Util.loadTextures(Tiles.sheets, "normal_depth", textureConfig, false);
-		var uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig, false);
+		uvAoAlphaTextures   = Util.loadTextures(Tiles.sheets, "uv_ao_alpha" , textureConfig, false);
 
 		var haxeUVTexture = new Texture(256, 256, {format:TextureFormat.RGBA, smoothExpand: true, smoothShrink: true});
 		Load.image( "assets/haxe.png", false, function(image:Image) haxeUVTexture.setData(image) );
 
 		// -------- combine both fb-textures (add dynamic lights to the pre-lighted) --------- 
-		// chain = new Chain(peoteView, 4, 4, 592, 592,
 		chain = new Chain(peoteView, 0, 0, window.width, window.height,
 			bufferElem, bufferLight, 
 			normalDepthTextures, uvAoAlphaTextures, haxeUVTexture,
@@ -98,11 +101,9 @@ class Main extends Application
 			usePackedNormals, // use packed normales
 		);
 
-		// chain.zoom=1; chain.width *= Std.int(chain.zoom); chain.height*= Std.int(chain.zoom);
-
 		peoteView.addDisplay(chain);
 		
-		// ---------- add some elements by default ----------
+		// ---------- add some elements  ------------
 		var x:Int = 10;
 		var y:Int = 10;
 
@@ -117,9 +118,8 @@ class Main extends Application
 			}
 		}
 		chooseElem(9);
-		// for (tileID in TileID) trace(TileID.names[tileID]);
 		
-		// ---------- add lights -----------
+		// ---------- add some lights ------------
 		addLight(10, 10, 256, Color.YELLOW);
 		addLight(100, 100, 256, Color.RED);
 		addLight(200, 150, 256, Color.BLUE);//0xffff66ff);
@@ -139,7 +139,7 @@ class Main extends Application
 
 		peoteView.start();
 		
-		// add mouse events:
+		// add lime mouse events:
 		window.onMouseDown.add(_onMouseDown);
 		window.onMouseUp.add(_onMouseUp);
 		window.onMouseMove.add(_onMouseMove);
@@ -160,7 +160,6 @@ class Main extends Application
 	function addElem(x:Int, y:Int, tileID:TileID) {
 		var tile = Tiles.tile(tileID);
 		var sheet = Tiles.sheets[tile.sheet];
-
 		var e = new Elem(x+(sheet.width>>1), y+(sheet.height>>1), sheet.width, sheet.height, tileID, tile.sheet);
 		
 		e.animID = 0;
@@ -238,6 +237,9 @@ class Main extends Application
 	// -----------------------------------------------------------
 	// ----------------- UI CONTROL ------------------------------
 	// -----------------------------------------------------------
+	var ui_mode = new RadioValue(1);
+
+	// ----------------- LIGHT -----------------------
 
 	var ui_light = new IntValue(0);
 	var ui_light_x = new IntValue(0);
@@ -249,19 +251,16 @@ class Main extends Application
 	var ui_light_g = new FloatValue(0.0);
 	var ui_light_b = new FloatValue(0.0);
 
-	// var ui_light_debug = new BoolValue(false);
-
-	var ui_mode = new RadioValue(1);
-
-	var ui_debug_swap = new RadioValue(0);
+	var ui_debug_swapNormales = new RadioValue(0);
 
 	// debug uniforms
 	static public var u_debug_rotate = new UniformVec3( new Vec3(0,0,0) );
 	static public var u_debug_invert = new UniformVec3i( new Vec3i(0,0,0) );
 	static public var u_debug_swap = new UniformInt(0);
+	static public var u_debug_chainCompose = new UniformVec4(new Vec4(0.5, 0.75, 0.25, 0.75));
+ 
 
-
-	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 140, //Color.BLUE1,
+	function uiLightControl():Control return new Control("light control", "assets/font/hack_ascii_small.json", window.width-296, 0, 296, 600, //Color.BLUE1,
 	[
 		Col([
 			RadioButton("Light", 80, ui_mode, 0, (v)->{ trace(v); } )
@@ -286,11 +285,42 @@ class Main extends Application
 				Col([Label("s", 10), InputInt(Right, ui_light_size, (v:Int) ->{ light.size=v; bufferLight.updateElement(light); })])
 			]),
 			Row(90, [
-				Col([Label("r", 10), Slider("", 70, ui_light_r, 0.0, 1.0, (v)->{ light.color.rF=v; bufferLight.updateElement(light);} )]),
-				Col([Label("g", 10), Slider("", 70, ui_light_g, 0.0, 1.0, (v)->{ light.color.gF=v; bufferLight.updateElement(light);} )]),
-				Col([Label("b", 10), Slider("", 70, ui_light_b, 0.0, 1.0, (v)->{ light.color.bF=v; bufferLight.updateElement(light);} )])
+				Col([Label("r", 10), Slider("", 70, ui_light_r, 0.0, 1.0, (v)->{ light.color.rF=v; bufferLight.updateElement(light);})]),
+				Col([Label("g", 10), Slider("", 70, ui_light_g, 0.0, 1.0, (v)->{ light.color.gF=v; bufferLight.updateElement(light);})]),
+				Col([Label("b", 10), Slider("", 70, ui_light_b, 0.0, 1.0, (v)->{ light.color.bF=v; bufferLight.updateElement(light);})])
 			]),
 		]),
+
+
+		Separator,
+		Col( [
+			Label("AO/UV", 50),
+			Slider("", 170, new FloatValue(0.5), 0.0, 1.0, (v)->{ u_debug_chainCompose.value.x = v; trace("AO/UV:"+v);}),
+		]),
+		Col( [
+			Label("Light", 50),
+			Slider("", 170, new FloatValue(0.75), 0.0, 1.0, (v)->{ u_debug_chainCompose.value.y = v; trace("Light:"+v);}),
+		]),
+		Separator,
+		/*Col( [
+			Label("AO", 50),
+			Slider("", 170, new FloatValue(0.25), 0.0, 1.0, (v)->{ u_debug_chainCompose.value.z = v; trace("AO:"+v);}),
+		]),
+		Col( [
+			Label("UV", 50),
+			Slider("", 170, new FloatValue(0.75), 0.0, 1.0, (v)->{ u_debug_chainCompose.value.w = v; trace("UV:"+v);}),
+		]),*/
+		Col( [
+			Label("normalDepthTextures", 170),
+			Checkbox("hard","smooth", 60, new BoolValue(false), (v)->{ for (t in normalDepthTextures) t.setSmooth(v?true:false, v?true:false);} ),
+		]),
+		Col( [
+			Label("uvAoAlphaTextures", 170),
+			Checkbox("hard","smooth", 60, new BoolValue(false), (v)->{ for (t in uvAoAlphaTextures  ) t.setSmooth(v?true:false, v?true:false);} ),
+		]),
+		// Checkbox("hard","smooth", 80, new BoolValue(false), (v)->{ chain.uvAoAlphaDepth.setSmooth(v?true:false, v?true:false); }),
+		// Checkbox("hard","smooth", 80, new BoolValue(false), (v)->{ chain.normalDepth.setSmooth(v?true:false, v?true:false); }),
+		// Checkbox("hard","smooth", 80, new BoolValue(false), (v)->{ chain.light.setSmooth(v?true:false, v?true:false); }),
 
 
 		Separator,
@@ -298,12 +328,12 @@ class Main extends Application
 		// --- TO DEBUG NORMALE MAP ---
 		Label("DEBUG FACE NORMALES:"),
 		Col( [
-			RadioButton("xyz", 36, ui_debug_swap, 0, (v)->{ u_debug_swap.value = v; } ),
-			RadioButton("xzy", 36, ui_debug_swap, 1, (v)->{ u_debug_swap.value = v; } ),
-			RadioButton("yxz", 36, ui_debug_swap, 2, (v)->{ u_debug_swap.value = v; } ),
-			RadioButton("yzx", 36, ui_debug_swap, 3, (v)->{ u_debug_swap.value = v; } ),
-			RadioButton("zxy", 36, ui_debug_swap, 4, (v)->{ u_debug_swap.value = v; } ),
-			RadioButton("zyx", 36, ui_debug_swap, 5, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("xyz", 36, ui_debug_swapNormales, 0, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("xzy", 36, ui_debug_swapNormales, 1, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("yxz", 36, ui_debug_swapNormales, 2, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("yzx", 36, ui_debug_swapNormales, 3, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("zxy", 36, ui_debug_swapNormales, 4, (v)->{ u_debug_swap.value = v; } ),
+			RadioButton("zyx", 36, ui_debug_swapNormales, 5, (v)->{ u_debug_swap.value = v; } ),
 		]),
 		Col( [
 			Checkbox("x", 30, new BoolValue(false), (v)->{ u_debug_invert.value.x = v ? 1 : 0; } ),
@@ -320,7 +350,8 @@ class Main extends Application
 
 	]);
 		
-	// -----------------------------------------------------------------
+	// ----------------- ELEMENT -----------------------
+
 	var ui_elem = new IntValue(0);
 	var ui_elem_x = new IntValue(0);
 	var ui_elem_y = new IntValue(0);
@@ -332,7 +363,7 @@ class Main extends Application
 	var ui_elem_anim = new IntValue(0);
 	var ui_elem_animName = new StringValue("");
 	
-	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203, 142, 203, 400, //Color.GREEN1,
+	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203-296, 0, 203, 600, //Color.GREEN1,
 	[
 		Col([
 			RadioButton("Element", 80, ui_mode, 1, (v)->{ trace(v); } )
@@ -409,8 +440,6 @@ class Main extends Application
 		
 		var picked:Int = chain.pickElement_FB(x, y);
 		if (picked>=0) {
-			// ui_elem.value = elems.indexOf(bufferElem.getElement(picked));
-			// ui_elem_animName.value = AnimID.names[ elem.animID ];
 			chooseElem(elems.indexOf(bufferElem.getElement(picked)));
 			downX = elem.x - chain.localX_FB(x);
 			downY = elem.y - chain.localY_FB(y);
