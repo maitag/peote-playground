@@ -1,5 +1,6 @@
 package;
 
+import peote.view.math.Rnd;
 import haxe.CallStack;
 
 import lime.app.Application;
@@ -74,8 +75,8 @@ class Main extends Application
 	{
 		peoteView = new PeoteView(window, Color.GREY1);
 
-		bufferElem = new Buffer<Elem>(1024, 512);
-		bufferLight = new Buffer<ElemLight>(1024, 512);
+		bufferElem = new Buffer<Elem>(4096, 262144);
+		bufferLight = new Buffer<ElemLight>(4096, 4096);
 
 
 		var textureConfig:TextureConfig = {
@@ -147,7 +148,7 @@ class Main extends Application
 	}
 	
 	// -----------------------------------------------------------------------------------
-	// -----------------------------------------------------------------------------------
+	// -------------------------------- F U N C ------------------------------------------
 	// -----------------------------------------------------------------------------------
 
 	function addLight(x:Int, y:Int, size:Int, color:Color, depth:Float = 0.0) {
@@ -157,14 +158,20 @@ class Main extends Application
 		chooseLight(ui_light.value);
 	}
 
-	function addElem(x:Int, y:Int, tileID:TileID) {
+	function addElem(x:Int, y:Int, tileID:TileID, ?w:Int, ?h:Int, depth:Float = 0.0) {
 		var tile = Tiles.tile(tileID);
 		var sheet = Tiles.sheets[tile.sheet];
-		var e = new Elem(x+(sheet.width>>1), y+(sheet.height>>1), sheet.width, sheet.height, tileID, tile.sheet);
+
+		if (w == null) w = sheet.width;
+		if (h == null) h = sheet.height;
+
+		var e = new Elem( x+(w>>1), y+(h>>1), w, h, tileID, tile.sheet );
 		
 		e.animID = 0;
 		e.tile   =  tile.anim( tile.animID[0] ).start;
 		
+		e.depth = depth;
+
 		elems.push( e );
 		
 		bufferElem.addElement(e);
@@ -274,7 +281,7 @@ class Main extends Application
 					Button  (">", 24, ()->chooseLight(ui_light.value+1) )
 				]),
 				Col([
-					Button  ("Add", 40, ()->addLight(150,150,200,Color.ORANGE) ),
+					Button  ("Add", 40, ()->addLight(150,150,200, Color.ORANGE) ),
 					Button  ("Del", 40, ()->delLight(ui_light) )
 				]),
 				Col([Label("d", 18), InputFloat(60, Right, ui_light_depth, 3, (v:Float) ->{ light.depth=v; bufferLight.updateElement(light); })])
@@ -362,6 +369,8 @@ class Main extends Application
 	// var ui_elem_b = new FloatValue(0.0);
 	var ui_elem_anim = new IntValue(0);
 	var ui_elem_animName = new StringValue("");
+
+	var ui_elem_bench = new IntValue(0);
 	
 	function uiElemControl():Control return new Control("Assets", "assets/font/hack_ascii_small.json", window.width-203-296, 0, 203, 600, //Color.GREEN1,
 	[
@@ -397,7 +406,32 @@ class Main extends Application
 		Button( TileID.names[tileID], 24, ()->{
 			addElem(150, 150, tileID);
 		})
-	]).concat([Separator])
+	]).concat([
+		// Separator,
+		Label("benchmark:"),
+		/*Button  ("add 160x160", 50, ()->{
+			for (y in 0...160 ) {
+				for (x in 0...160) {
+					var size:Int = 8;
+					addLight(200 + x*size+(size>>1), 10 + y*size+(size>>1), size*3, Color.random(), -0.1);
+					addElem (200 + x*size, 10 + y*size, TileID.HAXE, size, size);
+				}
+			}
+		}),*/
+		Button  ("add 10 000 lights", 50, ()->{
+			for (i in 0...10000 ) {
+				addLight(Rnd.int(4096), Rnd.int(4096), Rnd.intLimit(30,80), Color.random(), Rnd.floatLimit(-0.2,0.1));
+			}
+		}),
+		Button  ("add 100 000 elems", 50, ()->{
+			for (i in 0...100000 ) {
+				var size:Int = Rnd.intLimit(6,16);
+				addElem(Rnd.int(4096), Rnd.int(4096), TileID.HAXE, size, size, Rnd.float(0.2));
+			}
+			ui_elem_bench.value += 100000;
+		}),
+		OutputInt(109, Right, ui_elem_bench),
+	])
 	
 	);
 
@@ -405,7 +439,6 @@ class Main extends Application
 	// ------------------------------------------------------------
 	// ----------------- LIME EVENTS ------------------------------
 	// ------------------------------------------------------------	
-
 	var mx:Int = 0;
 	var my:Int = 0;
 	var isMouseDown = false;

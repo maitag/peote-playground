@@ -13,7 +13,7 @@
 	<app main="Main" path="bin" file="Main" />
 	<!-- <app main="TestAsset" path="bin" file="TestAsset" /> -->
 
-	<!-- <haxedef name="peoteview_fps" /> -->
+	<haxedef name="peoteview_fps" />
 	<!-- <define name="stats" if="html5" /> -->
 	
 	<source path="src" />
